@@ -51,9 +51,8 @@ long *lptr;
 	*ptr = 0;
 
 	/* bss clear */
-	lptr = (long *)_fbss;
-	for (i = 0; (int)lptr < (int)_end; ++i) {
-		 *lptr++ = 0;
+	for (lptr = (long *)_fbss; lptr < (long *)_end; ++lptr) {
+		 *lptr = 0;
 	}
 
 	mrb_state *mrb;
