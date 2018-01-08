@@ -1,0 +1,25 @@
+#define INITIAL_SP      0x80800000
+
+	.globl  main
+	.globl  _init
+
+	.text
+	.globl	start
+	.ent	start
+	.set	reorder
+start:
+	li      $sp, INITIAL_SP
+	nop
+	/* allocate space for result */
+	addiu	$sp, $sp, -8
+	jal	main
+	/* store the result */
+	sw	$2, 4($sp)
+	addiu	$sp, $sp, 8
+	/* watchdog reset */
+	li	$3, 0xb800311c
+	li	$4, 0
+	sb	$4,0($3)
+loop:	
+	j	loop
+	.end start
