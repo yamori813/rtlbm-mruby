@@ -1,4 +1,8 @@
 o = Object.new
-100.times do |i|
-   o.myputs "index:" + i.to_s
+hsc = HomeSpotCube.new("MORIMORI")
+i = 0
+#100.times do |i|
+while 1 do
+#   o.myputs "index:" + i.to_s
+   i = i + 1
 end

@@ -13,6 +13,7 @@
 #include <asm/offset.h>
 #include <linux/config.h>
 #endif
+#define CONFIG_CPU_R3000
 
 #define SAVE_AT                                          \
 		.set	push;                            \

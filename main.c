@@ -41,12 +41,22 @@ mrb_value myputs(mrb_state *mrb, mrb_value self){
 	return mrb_nil_value();
 }
 
-void GPIO_isr(void)
+int count = 0;
+
+void Timer_isr(void)
 {
-	put('m');
+unsigned long *lptr;
+unsigned long reg;
+
+	/* uart intr disable */
+	lptr = (unsigned long *)0xb8003114;
+	reg = *lptr;
+	*lptr = reg | 1 << 29;
+	++count;
+	put('T');
 }
 
-struct irqaction irq_GPIO = {GPIO_isr, (void *)NULL};
+struct irqaction irq_Timer = {Timer_isr, (void *)NULL};
 
 int
 main(int argc, char *argv[])
@@ -66,12 +76,19 @@ long *lptr;
 
 	intr_init();
 
-#define GPIO_IRQ_NO 16
-	request_IRQ(GPIO_IRQ_NO, &irq_GPIO, NULL);
+	lptr = (unsigned long *)0xb8003114;
+	*lptr = *lptr | (1 << 31);
+	lptr = (unsigned long *)0xb8003110;
+	*lptr = *lptr | (1 << 31);
+	lptr = (unsigned long *)0xb8003108;
+	*lptr = (16 << 16);
+	lptr = (unsigned long *)0xb8003100;
+	*lptr = 0x8000000;
+	request_IRQ(14, &irq_Timer, NULL);
 
 	mrb_state *mrb;
 	mrb = mrb_open();
-	mrb_define_method(mrb, mrb->object_class,"myputs", myputs,
+	mrb_define_method(mrb, mrb->object_class, "myputs", myputs,
 	    MRB_ARGS_REQ(1));
 	mrb_load_irep( mrb, bytecode);
 	mrb_close(mrb);

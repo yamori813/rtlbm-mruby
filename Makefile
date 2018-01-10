@@ -17,7 +17,7 @@ CROSS_LDSCRIPT = main.ld
 
 CROSS_ASFLAGS = -G 0 -mno-abicalls -fno-pic -I./mruby/include/ -fomit-frame-pointer
 
-OBJS = main.o intr.o syscalls.o start.o inthandler.o
+OBJS = main.o intr.o traps.o syscalls.o start.o inthandler.o
 
 all: main.bin 
 
@@ -33,6 +33,9 @@ main.o: main.c hoge.rb
 
 intr.o: intr.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c intr.c
+
+traps.o: traps.c
+	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c traps.c
 
 syscalls.o: syscalls.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c syscalls.c

@@ -5,7 +5,10 @@
 #define	CP0_EPC		$14
 #define	ST0_CU0		0x10000000
 
-#define	GIMR0		0x00
-#define	GISR		0x04
+#define	GIMR		0xb8003000
+#define	GISR		0xb8003004
+#define	IRR1		0xb800300c
+#define	IRR2		0xb8003010
+#define	IRR3		0xb8003014
 
 #define	NR_IRQS		64
