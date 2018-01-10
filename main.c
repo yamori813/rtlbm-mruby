@@ -55,6 +55,8 @@ long *lptr;
 		 *lptr = 0;
 	}
 
+	intr_init();
+
 	mrb_state *mrb;
 	mrb = mrb_open();
 	mrb_define_method(mrb, mrb->object_class,"myputs", myputs,

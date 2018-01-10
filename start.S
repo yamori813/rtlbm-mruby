@@ -1,4 +1,5 @@
-#define INITIAL_SP      0x80800000
+#define INITIAL_SP	0x80800000
+#define CP0_CAUSE	$13
 
 	.globl  main
 	.globl  _init
@@ -23,3 +24,20 @@ start:
 loop:	
 	j	loop
 	.end start
+
+	.globl	exception_matrix
+	.ent	exception_matrix
+	.set	reorder
+exception_matrix:
+	mfc0	$27, CP0_CAUSE   
+	nop
+	nop
+	la	$26, exception_handlers
+	andi    $27, $27, 0x7c
+	addu    $26, $26, $27
+	lw      $26, ($26)
+	jr      $26
+	nop
+	nop
+	.end exception_matrix
+
