@@ -2,6 +2,8 @@
 #include <mruby/string.h>
 #include <mruby/irep.h>
 
+#include "intr.h"
+
 #include "hoge.c"
 
 extern char _end[];
@@ -39,6 +41,13 @@ mrb_value myputs(mrb_state *mrb, mrb_value self){
 	return mrb_nil_value();
 }
 
+void GPIO_isr(void)
+{
+	put('m');
+}
+
+struct irqaction irq_GPIO = {GPIO_isr, (void *)NULL};
+
 int
 main(int argc, char *argv[])
 {
@@ -56,6 +65,9 @@ long *lptr;
 	}
 
 	intr_init();
+
+#define GPIO_IRQ_NO 16
+	request_IRQ(GPIO_IRQ_NO, &irq_GPIO, NULL);
 
 	mrb_state *mrb;
 	mrb = mrb_open();
