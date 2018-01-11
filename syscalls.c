@@ -31,11 +31,14 @@ _sbrk (incr)
 
    return (void *) prev_heap_end;
 }
+
 char * sbrk (int) __attribute__((weak, alias ("_sbrk")));
+
+extern int count;
 
 int sys_now()
 {
-	return 0;
+	return count;
 }
 
 int strncmp()

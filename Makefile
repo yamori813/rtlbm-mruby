@@ -6,7 +6,7 @@ CROSS_CC = mips-cc
 CROSS_OBJCOPY = mips-objcopy
 CROSS_LD = mips-ld
 
-CROSS_CFLAGS = -I./newlib-2.5.0.20171222/newlib/libc/include/ -I./mruby/include/ 
+CROSS_CFLAGS = -I./newlib-2.5.0.20171222/newlib/libc/include/ -I./mruby/include/ -Ilwip-2.0.3/src/include -Ilwip-2.0.3/rtl/include
 CROSS_CFLAGS += -march=4181 -Os -g -fno-pic -mno-abicalls
 CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
 CROSS_CFLAGS += -pipe -mlong-calls
@@ -17,7 +17,7 @@ CROSS_LDSCRIPT = main.ld
 
 CROSS_ASFLAGS = -G 0 -mno-abicalls -fno-pic -I./mruby/include/ -fomit-frame-pointer
 
-OBJS = main.o timer.o intr.o traps.o syscalls.o start.o inthandler.o
+OBJS = main.o timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o
 
 all: main.bin 
 
@@ -34,8 +34,14 @@ main.o: main.c hoge.rb
 timer.o: timer.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c timer.c
 
+net.o: net.c
+	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c net.c
+
 intr.o: intr.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c intr.c
+
+rtl_ether.o: rtl_ether.c
+	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c rtl_ether.c
 
 traps.o: traps.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c traps.c

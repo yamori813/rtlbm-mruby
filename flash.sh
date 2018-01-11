@@ -3,6 +3,7 @@
 TERGET=main
 IMG=${TERGET}.rtl
 
+make clean
 make
 ENTRY=`readelf -h ${TERGET}.elf | awk '/Entry point address/{print $4}'`
 echo ${ENTRY}

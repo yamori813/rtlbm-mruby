@@ -61,7 +61,7 @@ long *lptr;
 
 	timer_init();
 
-//lwip_init();
+	net_init();
 
 	mrb_state *mrb;
 	mrb = mrb_open();
