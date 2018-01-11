@@ -41,23 +41,6 @@ mrb_value myputs(mrb_state *mrb, mrb_value self){
 	return mrb_nil_value();
 }
 
-int count = 0;
-
-void Timer_isr(void)
-{
-unsigned long *lptr;
-unsigned long reg;
-
-	/* uart intr disable */
-	lptr = (unsigned long *)0xb8003114;
-	reg = *lptr;
-	*lptr = reg | 1 << 29;
-	++count;
-	put('T');
-}
-
-struct irqaction irq_Timer = {Timer_isr, (void *)NULL};
-
 int
 main(int argc, char *argv[])
 {
@@ -76,15 +59,9 @@ long *lptr;
 
 	intr_init();
 
-	lptr = (unsigned long *)0xb8003114;
-	*lptr = *lptr | (1 << 31);
-	lptr = (unsigned long *)0xb8003110;
-	*lptr = *lptr | (1 << 31);
-	lptr = (unsigned long *)0xb8003108;
-	*lptr = (16 << 16);
-	lptr = (unsigned long *)0xb8003100;
-	*lptr = 0x8000000;
-	request_IRQ(14, &irq_Timer, NULL);
+	timer_init();
+
+//lwip_init();
 
 	mrb_state *mrb;
 	mrb = mrb_open();

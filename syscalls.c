@@ -32,3 +32,13 @@ _sbrk (incr)
    return (void *) prev_heap_end;
 }
 char * sbrk (int) __attribute__((weak, alias ("_sbrk")));
+
+int sys_now()
+{
+	return 0;
+}
+
+int strncmp()
+{
+	return 0;
+}
