@@ -2,6 +2,7 @@
 
 #include "system.h"
 #include "rtlregs.h"
+#include "asicregs.h"
 #include "mipsregs.h"
 #include "intr.h"
 

@@ -2,6 +2,7 @@
 #include "stackframe.h"
 #include "offset.h"
 
+#include "asicregs.h"
 #include "rtlregs.h"
 
 	.globl	irq_dispatch

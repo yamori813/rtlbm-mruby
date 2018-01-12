@@ -10,14 +10,16 @@ CROSS_CFLAGS = -I./newlib-2.5.0.20171222/newlib/libc/include/ -I./mruby/include/
 CROSS_CFLAGS += -march=4181 -Os -g -fno-pic -mno-abicalls
 CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
 CROSS_CFLAGS += -pipe -mlong-calls
+CROSS_CFLAGS += -DRTL8196C
 
 CROSS_LDFLAGS = -static -L./mruby/build/realtek/lib -Lnewlib-2.5.0.20171222/mips/newlib/ -Lrsdk/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/4181/ -Llwip-2.0.3/rtl/
 CROSS_LDLIB = -lmruby -lc -lgcc -llwip
 CROSS_LDSCRIPT = main.ld
 
 CROSS_ASFLAGS = -G 0 -mno-abicalls -fno-pic -I./mruby/include/ -fomit-frame-pointer
+CROSS_ASFLAGS += -DCONFIG_RTL8196B -DCONFIG_RTL865XB
 
-OBJS = main.o timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o
+OBJS = main.o timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o
 
 all: main.bin 
 
@@ -42,6 +44,9 @@ intr.o: intr.c
 
 rtl_ether.o: rtl_ether.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c rtl_ether.c
+
+rtl_switch.o: rtl_switch.c
+	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c rtl_switch.c
 
 traps.o: traps.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c traps.c

@@ -41,6 +41,8 @@ mrb_value myputs(mrb_state *mrb, mrb_value self){
 	return mrb_nil_value();
 }
 
+char eth0_mac[6]={0x56, 0xaa, 0xa5, 0x5a, 0x7d, 0xe8};
+
 int
 main(int argc, char *argv[])
 {
@@ -60,6 +62,8 @@ long *lptr;
 	intr_init();
 
 	timer_init();
+
+	switch_init(eth0_mac);
 
 	net_init();
 
