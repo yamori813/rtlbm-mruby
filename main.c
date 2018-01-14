@@ -29,13 +29,18 @@ int i;
 	*prt = ch;
 }
 
+void print(char *ptr)
+{
+	while(*ptr != '\0') {
+		put(*ptr);
+		++ptr;
+	}
+}
+
 mrb_value myputs(mrb_state *mrb, mrb_value self){
-	char *ptr;
 	mrb_value val;
 	mrb_get_args(mrb, "S", &val);
-	for (ptr = RSTRING_PTR(val); *ptr != '\0'; ++ptr) {
-		put(*ptr);
-	}
+	print(RSTRING_PTR(val));
 	put('\r');
 	put('\n');
 	return mrb_nil_value();
@@ -66,6 +71,11 @@ long *lptr;
 	switch_init(eth0_mac);
 
 	net_init();
+/*
+	while(1) {
+		net_poll();
+	}
+*/
 
 	mrb_state *mrb;
 	mrb = mrb_open();

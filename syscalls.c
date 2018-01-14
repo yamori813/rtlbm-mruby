@@ -1,6 +1,7 @@
 #include <_ansi.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdarg.h>
 
 extern char _end[];
 
@@ -34,14 +35,20 @@ _sbrk (incr)
 
 char * sbrk (int) __attribute__((weak, alias ("_sbrk")));
 
-extern int count;
+/* copy from FreeBSD kernel code */
 
-int sys_now()
+int
+strncmp(const char *s1, const char *s2, size_t n)
 {
-	return count;
-}
-
-int strncmp()
-{
-	return 0;
+ 
+	if (n == 0)
+		return (0);
+	do {
+		if (*s1 != *s2++)
+			return (*(const unsigned char *)s1 -
+			    *(const unsigned char *)(s2 - 1));
+		if (*s1++ == '\0')
+			break;
+	} while (--n != 0);
+	return (0);
 }

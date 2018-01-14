@@ -5,7 +5,7 @@ i = 0
 while 1 do
    o.myputs "index:" + i.to_s
    start = hsc.count()
-   while hsc.count() < start + 5 do
+   while hsc.count() < start + 50 do
    end
    i = i + 1
 end

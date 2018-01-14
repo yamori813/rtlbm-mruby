@@ -12,6 +12,13 @@ typedef uint16_t uint16;
 #define GIGA_PHY_ID     0x16
 
 typedef struct {
+    uint16      mac47_32;
+    uint16      mac31_16;
+    uint16      mac15_0;
+    uint16              align;
+} macaddr_t;
+
+typedef struct {
          /* word 0 */
         uint32  reserved1:12;
         uint32  fid:2;
@@ -35,13 +42,6 @@ typedef struct {
     /* word 7 */
     uint32          reservw7;
 } vlan_table_t;
-
-typedef struct {
-    uint16      mac47_32;
-    uint16      mac31_16;
-    uint16      mac15_0;
-    uint16              align;
-} macaddr_t;
 
 typedef struct {
     /* word 0 */
@@ -73,7 +73,6 @@ typedef struct {
     /* word 7 */
     uint32          reservw7;
 } netif_table_t;
-
 
 enum {
     TYPE_L2_SWITCH_TABLE = 0,
@@ -197,7 +196,6 @@ int32 swTable_addEntry(uint32 tableType, uint32 eidx, void *entryContent_P)
         return 0;
 }
 
-
 void FullAndSemiReset( void )
 {
 
@@ -227,7 +225,6 @@ void rtl8651_restartAsicEthernetPHYNway(uint32 port, uint32 phyid)
 	rtl8651_setAsicEthernetPHYReg( phyid, 0, statCtrlReg0 );
 }
 
-
 int32 rtl8651_setAsicFlowControlRegister(uint32 port, uint32 enable, uint32 phyid)
 {
         uint32 statCtrlReg4;
@@ -253,7 +250,6 @@ int32 rtl8651_setAsicFlowControlRegister(uint32 port, uint32 enable, uint32 phyi
 
         return ;
 }
-
 
 void Set_GPHYWB(unsigned int phyid, unsigned int page, unsigned int reg,
     unsigned int mask, unsigned int val)
@@ -291,7 +287,7 @@ unsigned int wphyid_end=1;   //end
 
 void Setting_RTL8196C_PHY_REV_B()
 {
-int i=0;
+int i;
 
 	for(i=0; i<5; i++)
 		REG32(PCRP0+i*4) |= (EnForceMode);

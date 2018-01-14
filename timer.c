@@ -13,9 +13,25 @@ unsigned long reg;
 	reg = *lptr;
 	*lptr = reg | 1 << 29;
 	++count;
+	net_poll();
 }
 
 struct irqaction irq_Timer = {Timer_isr, (void *)NULL};
+
+int timer_count1()
+{
+int *ptr;
+	
+	ptr = (unsigned long *)0xb8003108;
+	return *ptr;
+}
+
+/* for lwip */
+
+int sys_now()
+{
+        return count * 1000 + timer_count1() / 8388;
+}
 
 void timer_init()
 {
@@ -28,7 +44,7 @@ unsigned long *lptr;
 	lptr = (unsigned long *)0xb8003108;
 	*lptr = (16 << 16);
 	lptr = (unsigned long *)0xb8003100;
-	*lptr = 0x8000000;
+	*lptr = 0x00800000;
 	request_IRQ(14, &irq_Timer, NULL);
 }
 
