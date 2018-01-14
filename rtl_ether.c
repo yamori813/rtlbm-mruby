@@ -40,21 +40,7 @@
 #include "rtlregs.h"
 #include "system.h"
 
-#define	RTL865X_SWNIC_TXRING_MAX_RING	4
-
-static unsigned int*  txPkthdrRing;
-static unsigned int*  rxPkthdrRing;
-uint32_t* rxMbufRing;
-
-/*
- * This file is a skeleton for developing Ethernet network interface
- * drivers for lwIP. Add code to the low_level functions and do a
- * search-and-replace for the word "ethernetif" to replace it with
- * something that better describes your network interface.
- */
-
 #include "lwip/opt.h"
-
 
 #include "lwip/def.h"
 #include "lwip/mem.h"
@@ -64,6 +50,12 @@ uint32_t* rxMbufRing;
 #include "lwip/ethip6.h"
 #include "lwip/etharp.h"
 #include "netif/ethernet.h"
+
+#define	RTL865X_SWNIC_TXRING_MAX_RING	4
+
+static unsigned int*  txPkthdrRing;
+static unsigned int*  rxPkthdrRing;
+uint32_t* rxMbufRing;
 
 /* Define those to better describe your network interface. */
 #define IFNAME0 'e'
@@ -83,7 +75,7 @@ struct ethernetif {
 /* Forward declarations. */
 //static void  ethernetif_input(struct netif *netif);
 
-
+#ifdef RTLBM_MRUBY_DEBUG
 dumppkt(unsigned char *dat, int len)
 {
 int i;
@@ -95,6 +87,7 @@ char buf[8];
 	}
 	print("\r\n");
 }
+#endif
 
 /**
  * In this function, the hardware should be initialized.
@@ -103,44 +96,31 @@ char buf[8];
  * @param netif the already initialized lwip network interface structure
  *        for this ethernetif
  */
+
 static void
 low_level_init(struct netif *netif)
 {
-  struct ethernetif *ethernetif = netif->state;
 char eth0_mac[6]={0x56, 0xaa, 0xa5, 0x5a, 0x7d, 0xe8};
+struct ethernetif *ethernetif = netif->state;
 
-  /* set MAC hardware address length */
-  netif->hwaddr_len = ETHARP_HWADDR_LEN;
+	/* set MAC hardware address length */
+	netif->hwaddr_len = ETHARP_HWADDR_LEN;
 
-  /* set MAC hardware address */
-  netif->hwaddr[0] = eth0_mac[0];
-  netif->hwaddr[1] = eth0_mac[1];
-  netif->hwaddr[2] = eth0_mac[2];
-  netif->hwaddr[3] = eth0_mac[3];
-  netif->hwaddr[4] = eth0_mac[4];
-  netif->hwaddr[5] = eth0_mac[5];
+	/* set MAC hardware address */
+	netif->hwaddr[0] = eth0_mac[0];
+	netif->hwaddr[1] = eth0_mac[1];
+	netif->hwaddr[2] = eth0_mac[2];
+	netif->hwaddr[3] = eth0_mac[3];
+	netif->hwaddr[4] = eth0_mac[4];
+	netif->hwaddr[5] = eth0_mac[5];
 
-  /* maximum transfer unit */
-  netif->mtu = 1500;
+	/* maximum transfer unit */
+	netif->mtu = 1500;
 
-  /* device capabilities */
-  /* don't set NETIF_FLAG_ETHARP if this device is not an ethernet one */
-  netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
-
-#if LWIP_IPV6 && LWIP_IPV6_MLD
-  /*
-   * For hardware/netifs that implement MAC filtering.
-   * All-nodes link-local is handled by default, so we must let the hardware know
-   * to allow multicast packets in.
-   * Should set mld_mac_filter previously. */
-  if (netif->mld_mac_filter != NULL) {
-    ip6_addr_t ip6_allnodes_ll;
-    ip6_addr_set_allnodes_linklocal(&ip6_allnodes_ll);
-    netif->mld_mac_filter(netif, &ip6_allnodes_ll, NETIF_ADD_MAC_FILTER);
-  }
-#endif /* LWIP_IPV6 && LWIP_IPV6_MLD */
-
-  /* Do whatever else is needed to initialize interface. */
+	/* device capabilities */
+	/* don't set NETIF_FLAG_ETHARP if this device is not an ethernet one */
+	netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP |
+	    NETIF_FLAG_LINK_UP;
 }
 
 /**
@@ -171,6 +151,7 @@ uint8_t pktbuf[2048];
 uint8_t* pktbuf_alligned;
 int len;
 unsigned int *uncachering;
+struct ethernetif *ethernetif = netif->state;
 
 	pktbuf_alligned = (uint8_t*) (( (uint32_t) pktbuf & 0xfffffffc) |
 	    0xa0000000);
@@ -207,47 +188,8 @@ unsigned int *uncachering;
 	++txcount;
 	if (txcount == 4)
 		txcount = 0;
-/*
-char str[64];
-sprintf(str, "%02x %d \r\n", *pktbuf_alligned, q->len);
-print(str);
-*/
-#if 0
-  struct ethernetif *ethernetif = netif->state;
-  struct pbuf *q;
 
-  initiate transfer();
-
-#if ETH_PAD_SIZE
-  pbuf_header(p, -ETH_PAD_SIZE); /* drop the padding word */
-#endif
-
-  for (q = p; q != NULL; q = q->next) {
-    /* Send the data from the pbuf to the interface, one pbuf at a
-       time. The size of the data in each pbuf is kept in the ->len
-       variable. */
-    send data from(q->payload, q->len);
-  }
-
-  signal that packet should be sent();
-
-  MIB2_STATS_NETIF_ADD(netif, ifoutoctets, p->tot_len);
-  if (((u8_t*)p->payload)[0] & 1) {
-    /* broadcast or multicast packet*/
-    MIB2_STATS_NETIF_INC(netif, ifoutnucastpkts);
-  } else {
-    /* unicast packet */
-    MIB2_STATS_NETIF_INC(netif, ifoutucastpkts);
-  }
-  /* increase ifoutdiscards or ifouterrors on error */
-
-#if ETH_PAD_SIZE
-  pbuf_header(p, ETH_PAD_SIZE); /* reclaim the padding word */
-#endif
-
-  LINK_STATS_INC(link.xmit);
-#endif
-  return ERR_OK;
+	return ERR_OK;
 }
 
 /**
@@ -338,7 +280,6 @@ void
 ethernetif_input(struct netif *netif)
 {
 struct ethernetif *ethernetif;
-struct eth_hdr *ethhdr;
 
 	ethernetif = netif->state;
 
@@ -487,48 +428,32 @@ uint8_t * pClusterList;
 	ptr = (unsigned int *)CPUIIMR;
 	*ptr = TX_DONE_IE_ALL | RX_DONE_IE_ALL;
 
-  struct ethernetif *ethernetif;
+	struct ethernetif *ethernetif;
 
-  LWIP_ASSERT("netif != NULL", (netif != NULL));
+	ethernetif = mem_malloc(sizeof(struct ethernetif));
+	if (ethernetif == NULL) {
+		LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_init: out of memory\n"));
+		return ERR_MEM;
+	}
 
-  ethernetif = mem_malloc(sizeof(struct ethernetif));
-  if (ethernetif == NULL) {
-    LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_init: out of memory\n"));
-    return ERR_MEM;
-  }
+	txcount = 0;
 
-#if LWIP_NETIF_HOSTNAME
-  /* Initialize interface hostname */
-  netif->hostname = "lwip";
-#endif /* LWIP_NETIF_HOSTNAME */
+	netif->state = ethernetif;
+	netif->name[0] = IFNAME0;
+	netif->name[1] = IFNAME1;
+	/* We directly use etharp_output() here to save a function call.
+	 * You can instead declare your own function an call etharp_output()
+	 * from it if you have to do some checks before sending (e.g. if link
+	 * is available...) */
 
-  txcount = 0;
-
-  /*
-   * Initialize the snmp variables and counters inside the struct netif.
-   * The last argument should be replaced with your link speed, in units
-   * of bits per second.
-   */
-//  MIB2_INIT_NETIF(netif, snmp_ifType_ethernet_csmacd, LINK_SPEED_OF_YOUR_NETIF_IN_BPS);
-
-  netif->state = ethernetif;
-  netif->name[0] = IFNAME0;
-  netif->name[1] = IFNAME1;
-  /* We directly use etharp_output() here to save a function call.
-   * You can instead declare your own function an call etharp_output()
-   * from it if you have to do some checks before sending (e.g. if link
-   * is available...) */
-  netif->output = etharp_output;
-#if LWIP_IPV6
-  netif->output_ip6 = ethip6_output;
-#endif /* LWIP_IPV6 */
-  netif->linkoutput = low_level_output;
+	netif->output = etharp_output;
+	netif->linkoutput = low_level_output;
 
 //  ethernetif->ethaddr = (struct eth_addr *)&(netif->hwaddr[0]);
 
-  /* initialize the hardware */
-  low_level_init(netif);
+	/* initialize the hardware */
+	low_level_init(netif);
 
-  return ERR_OK;
+	return ERR_OK;
 }
 
