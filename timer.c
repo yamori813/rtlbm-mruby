@@ -13,7 +13,7 @@ unsigned long reg;
 	reg = *lptr;
 	*lptr = reg | 1 << 29;
 	++count;
-	net_poll();
+//	net_poll();
 }
 
 struct irqaction irq_Timer = {Timer_isr, (void *)NULL};

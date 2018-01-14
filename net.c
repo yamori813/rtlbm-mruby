@@ -73,7 +73,7 @@ long *lptr;
 
 	lwip_init();
 	netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,
-	   ethernet_input);
+	    ethernet_input);
 	netif_set_default(&netif);
 	netif_set_up(&netif);
 

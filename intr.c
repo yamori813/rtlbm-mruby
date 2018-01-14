@@ -56,7 +56,7 @@ extern void put(char *);
 
 asmlinkage void dummy_handler(struct pt_regs *regs)
 {
-	put('o');
+	print("unknown exception");
 }
 
 void set_except_vector(int n, void *addr)
@@ -110,7 +110,7 @@ struct irqaction *action;
 	{
 		action->handler(irqnr, action->dev_id, regs);
 	} else {
-		put('e');
+		print("unknown interrupt");
 		for(;;) ;
 	}
 }
