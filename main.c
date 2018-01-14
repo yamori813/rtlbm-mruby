@@ -71,11 +71,9 @@ long *lptr;
 	switch_init(eth0_mac);
 
 	net_init();
-/*
 	while(1) {
 		net_poll();
 	}
-*/
 
 	mrb_state *mrb;
 	mrb = mrb_open();

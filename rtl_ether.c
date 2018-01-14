@@ -279,6 +279,7 @@ struct ethernetif *ethernetif = netif->state;
  *       dropped because of memory failure (except for the TCP timers).
  */
 
+
 static err_t
 low_level_output(struct netif *netif, struct pbuf *p)
 {
@@ -288,9 +289,13 @@ struct pbuf *q;
 uint8_t* pktbuf;
 int len;
 struct ethernetif *ethernetif = netif->state;
+int i;
 
 put('X');
-put('0'+txPos);
+	for (i = 0; i < 4; ++i) {
+	 	if ((int32_t)txPkthdrRing[i] & DESC_SWCORE_OWNED)
+			put('x');
+	}
 	pPkthdr = (struct pktHdr *) ((int32_t) txPkthdrRing[txPos]
 	    & ~(DESC_OWNED_BIT | DESC_WRAP));
 
@@ -311,7 +316,7 @@ put('0'+txPos);
 	txPkthdrRing[txPos] |= DESC_SWCORE_OWNED;
 
 	ptr = (unsigned int *)CPUICR;
-	*ptr |= TXFD;
+	*ptr |= TXFD | TXCMD;
 
 	++txPos;
 	if (txPos == 4)
@@ -329,7 +334,7 @@ put('0'+txPos);
  *         NULL on memory error
  */
 
-struct pbuf *que = NULL;
+struct pbuf *que;
 
 void
 low_level_input(struct netif *netif)
@@ -351,7 +356,7 @@ int i;
 put('0' +i);
 			pPkthdr = (struct pktHdr *) (rxPkthdrRing[i] & 
 					~(DESC_OWNED_BIT | DESC_WRAP));
-			data = (int)pPkthdr->ph_mbuf->m_data | 0xa0000000;
+			data = (int)pPkthdr->ph_mbuf->m_data;
 			len = pPkthdr->ph_len;
 
 			/* We allocate a pbuf chain of pbufs from the pool. */
@@ -360,10 +365,12 @@ put('0' +i);
 			if (p != NULL) {
 				pbuf_take(p, data, len);
 				que = p;
+#if 0
 				if (netif->input(p, netif) != ERR_OK) {
 					pbuf_free(p);
 					p = NULL;
 				}
+#endif
 			} else {
 				/* pbuf error */
 			}
@@ -428,6 +435,8 @@ struct ethernetif *ethernetif;
 		LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_init: out of memory\n"));
 		return ERR_MEM;
 	}
+
+	que = NULL;
 
 	netif->state = ethernetif;
 	netif->name[0] = IFNAME0;

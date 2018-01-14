@@ -49,17 +49,16 @@ long reg;
 struct irqaction irq_Ether = {Ether_isr, (void *)NULL};
 
 extern struct pbuf *que;
-
 void net_poll()
 {
-
 	if (que != NULL) {
-put('P');
 		if (netif.input(que, &netif) != ERR_OK) {
 			pbuf_free(que);
+			que = NULL;
 		}
-		que = NULL;
+
 	}
+
 	sys_check_timeouts();
 }
 

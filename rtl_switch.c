@@ -8,8 +8,17 @@
 typedef uint32_t uint32;
 typedef int32_t int32;
 typedef uint16_t uint16;
+typedef uint8_t uint8;
 
 #define GIGA_PHY_ID     0x16
+
+#define               RTL8651_ASICTABLE_ENTRY_LENGTH (8 * sizeof(uint32))
+#define         RTL8651_ASICTABLE_BASE_OF_ALL_TABLES            0xBB000000
+
+#define         rtl8651_asicTableAccessAddrBase(type) (RTL8651_ASICTABLE_BASE_OF_ALL_TABLES + ((type)<<16) )
+
+
+extern char eth0_mac[6];
 
 typedef struct {
     uint16      mac47_32;
@@ -17,6 +26,11 @@ typedef struct {
     uint16      mac15_0;
     uint16              align;
 } macaddr_t;
+
+typedef struct ether_addr_s {
+        uint8 octet[6];
+} ether_addr_t;
+
 
 typedef struct {
          /* word 0 */
@@ -74,6 +88,59 @@ typedef struct {
     uint32          reservw7;
 } netif_table_t;
 
+typedef struct {
+#ifndef _LITTLE_ENDIAN
+    /* word 0 */
+    uint16          mac39_24;
+    uint16          mac23_8;
+
+    /* word 1 */
+    uint32          reserv0: 6;
+    uint32          auth: 1;
+    uint32          fid:2;
+    uint32          nxtHostFlag : 1;
+    uint32          srcBlock    : 1;
+    uint32          agingTime   : 2;
+    uint32          isStatic    : 1;
+    uint32          toCPU       : 1;
+    uint32          extMemberPort   : 3;
+    uint32          memberPort : 6;
+    uint32          mac47_40    : 8;
+
+#else /*LITTLE_ENDIAN*/
+    /* word 0 */
+    uint16          mac23_8;
+    uint16          mac39_24;
+                
+    /* word 1 */
+    uint32          mac47_40    : 8;
+    uint32          memberPort : 6;
+    uint32          extMemberPort   : 3;
+    uint32          toCPU       : 1;
+    uint32          isStatic    : 1;
+    uint32          agingTime   : 2;
+    uint32          srcBlock    : 1;
+    uint32          nxtHostFlag : 1;
+    uint32          fid:2;
+    uint32          auth:1;     
+    uint32          reserv0:6;  
+
+#endif /*LITTLE_ENDIAN*/
+    /* word 2 */
+    uint32          reservw2;
+    /* word 3 */
+    uint32          reservw3;
+    /* word 4 */
+    uint32          reservw4;
+    /* word 5 */
+    uint32          reservw5;
+    /* word 6 */
+    uint32          reservw6;
+    /* word 7 */
+    uint32          reservw7;
+} rtl865xc_tblAsic_l2Table_t;
+
+
 enum {
     TYPE_L2_SWITCH_TABLE = 0,
     TYPE_ARP_TABLE,
@@ -92,6 +159,104 @@ enum {
     TYPE_RATE_LIMIT_TABLE,
     TYPE_ALG_TABLE,
 };
+
+static uint8 fidHashTable[]={0x00,0x0f,0xf0,0xff};
+
+static void _rtl8651_asicTableAccessForward(uint32 tableType, uint32 eidx, void *entryContent_P) {
+  //      ASSERT_CSP(entryContent_P);
+
+
+        while ( (READ_MEM32(SWTACR) & ACTION_MASK) != ACTION_DONE );//Wait for command done
+
+#ifdef RTL865X_FAST_ASIC_ACCESS
+
+        {
+                register uint32 index;
+
+                for( index = 0; index < _rtl8651_asicTableSize[tableType]; index++ )
+                {
+                        WRITE_MEM32(TCR0+(index<<2), *((uint32 *)entryContent_P + index));
+                }
+
+        }
+#else
+        WRITE_MEM32(TCR0, *((uint32 *)entryContent_P + 0));
+        WRITE_MEM32(TCR1, *((uint32 *)entryContent_P + 1));
+        WRITE_MEM32(TCR2, *((uint32 *)entryContent_P + 2));
+        WRITE_MEM32(TCR3, *((uint32 *)entryContent_P + 3));
+        WRITE_MEM32(TCR4, *((uint32 *)entryContent_P + 4));
+        WRITE_MEM32(TCR5, *((uint32 *)entryContent_P + 5));
+        WRITE_MEM32(TCR6, *((uint32 *)entryContent_P + 6));
+        WRITE_MEM32(TCR7, *((uint32 *)entryContent_P + 7));
+#endif  
+        WRITE_MEM32(SWTAA, ((uint32) rtl8651_asicTableAccessAddrBase(tableType) + eidx * RTL8651_ASICTABLE_ENTRY_LENGTH));//Fill address
+}
+
+static int32 _rtl8651_forceAddAsicEntry(uint32 tableType, uint32 eidx, void *entryContent_P) {
+
+        #ifdef RTL865XC_ASIC_WRITE_PROTECTION
+        if (RTL865X_TLU_BUG_FIXED)      /* No need to stop HW table lookup process */
+        {       /* No need to stop HW table lookup process */
+                WRITE_MEM32(SWTCR0,EN_STOP_TLU|READ_MEM32(SWTCR0));
+                while ( (READ_MEM32(SWTCR0) & STOP_TLU_READY)==0);
+        }
+        #endif
+
+        _rtl8651_asicTableAccessForward(tableType, eidx, entryContent_P);
+
+        WRITE_MEM32(SWTACR, ACTION_START | CMD_FORCE);//Activate add command
+        while ( (READ_MEM32(SWTACR) & ACTION_MASK) != ACTION_DONE );//Wait for command done
+
+        #ifdef RTL865XC_ASIC_WRITE_PROTECTION
+        if (RTL865X_TLU_BUG_FIXED)      /* No need to stop HW table lookup process */
+        {
+                WRITE_MEM32(SWTCR0,~EN_STOP_TLU&READ_MEM32(SWTCR0));
+        }
+        #endif
+
+        return 1;
+}
+
+uint32 rtl8651_filterDbIndex(ether_addr_t * macAddr,uint16 fid) {
+    return ( macAddr->octet[0] ^ macAddr->octet[1] ^
+                    macAddr->octet[2] ^ macAddr->octet[3] ^
+                    macAddr->octet[4] ^ macAddr->octet[5] ^fidHashTable[fid]) & 0xFF;
+}
+
+static int32 rtl8651_setAsicL2Table(ether_addr_t        *mac, uint32 column)
+{
+        rtl865xc_tblAsic_l2Table_t entry;
+        uint32  row;
+
+        row = rtl8651_filterDbIndex(mac, 0);
+        if((row >= RTL8651_L2TBL_ROW) || (column >= RTL8651_L2TBL_COLUMN))
+                return 0;
+        if(mac->octet[5] != ((row^(fidHashTable[0])^ mac->octet[0] ^ mac->octet[1] ^ mac->octet[2] ^ mac->octet[3] ^ mac->octet[4] ) & 0xff))
+                return 0;
+
+        memset(&entry, 0,sizeof(entry));
+        entry.mac47_40 = mac->octet[0];
+        entry.mac39_24 = (mac->octet[1] << 8) | mac->octet[2];
+        entry.mac23_8 = (mac->octet[3] << 8) | mac->octet[4];
+
+//      entry.extMemberPort = 0;   
+        entry.memberPort = 7;
+        entry.toCPU = 1;
+        entry.isStatic = 1;
+//      entry.nxtHostFlag = 1;
+
+        /* RTL865xC: modification of age from ( 2 -> 3 -> 1 -> 0 ) to ( 3 -> 2 -> 1 -> 0 ). modification of granularity 100 sec to 150 sec
+. */
+        entry.agingTime = 0x03;
+        
+//      entry.srcBlock = 0;
+        entry.fid=0;
+        entry.auth=1;
+
+        return _rtl8651_forceAddAsicEntry(TYPE_L2_SWITCH_TABLE, row<<2 | column, &entry);
+}
+
+
 
 void rtl8651_setAsicEthernetPHYReg(uint32 phyId, uint32 regId, uint32 wData)
 {
@@ -437,6 +602,8 @@ int port;
 		/* Set Flow Control capability. */
 		rtl8651_restartAsicEthernetPHYNway(port+1, port);       
 	}
+
+//	rtl8651_setAsicL2Table((ether_addr_t*)(&eth0_mac), 0);
 
 	/* rx broadcast and unicast packet */
 	REG32(FFCR) = EN_UNUNICAST_TOCPU | EN_UNMCAST_TOCPU;
