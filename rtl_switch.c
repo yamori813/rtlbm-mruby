@@ -4,163 +4,31 @@
 
 #include "asicregs.h"
 #include "rtlregs.h"
-
-typedef uint32_t uint32;
-typedef int32_t int32;
-typedef uint16_t uint16;
-typedef uint8_t uint8;
-
-#define GIGA_PHY_ID     0x16
-
-#define               RTL8651_ASICTABLE_ENTRY_LENGTH (8 * sizeof(uint32))
-#define         RTL8651_ASICTABLE_BASE_OF_ALL_TABLES            0xBB000000
-
-#define         rtl8651_asicTableAccessAddrBase(type) (RTL8651_ASICTABLE_BASE_OF_ALL_TABLES + ((type)<<16) )
-
-
-extern char eth0_mac[6];
-
-typedef struct {
-    uint16      mac47_32;
-    uint16      mac31_16;
-    uint16      mac15_0;
-    uint16              align;
-} macaddr_t;
-
-typedef struct ether_addr_s {
-        uint8 octet[6];
-} ether_addr_t;
-
-
-typedef struct {
-         /* word 0 */
-        uint32  reserved1:12;
-        uint32  fid:2;
-        uint32     extEgressUntag  : 3;
-        uint32     egressUntag : 6;
-        uint32     extMemberPort   : 3;
-        uint32     memberPort  : 6;
-
-    /* word 1 */
-    uint32          reservw1;
-    /* word 2 */
-    uint32          reservw2;
-    /* word 3 */
-    uint32          reservw3;
-    /* word 4 */
-    uint32          reservw4;
-    /* word 5 */
-    uint32          reservw5;
-    /* word 6 */
-    uint32          reservw6;
-    /* word 7 */
-    uint32          reservw7;
-} vlan_table_t;
-
-typedef struct {
-    /* word 0 */
-    uint32          mac18_0:19;
-    uint32          vid          : 12;
-    uint32          valid       : 1;    
-    /* word 1 */
-    uint32         inACLStartL:2;       
-    uint32         enHWRoute : 1;       
-    uint32         mac47_19:29;
-
-    /* word 2 */
-    uint32         mtuL       : 3;
-    uint32         macMask :3;  
-    uint32         outACLEnd : 7;       
-    uint32         outACLStart : 7;     
-    uint32         inACLEnd : 7;        
-    uint32         inACLStartH: 5;      
-    /* word 3 */
-    uint32          reserv10   : 20;
-    uint32          mtuH       : 12;
-
-    /* word 4 */
-    uint32          reservw4;
-    /* word 5 */
-    uint32          reservw5;
-    /* word 6 */
-    uint32          reservw6;
-    /* word 7 */
-    uint32          reservw7;
-} netif_table_t;
-
-typedef struct {
-#ifndef _LITTLE_ENDIAN
-    /* word 0 */
-    uint16          mac39_24;
-    uint16          mac23_8;
-
-    /* word 1 */
-    uint32          reserv0: 6;
-    uint32          auth: 1;
-    uint32          fid:2;
-    uint32          nxtHostFlag : 1;
-    uint32          srcBlock    : 1;
-    uint32          agingTime   : 2;
-    uint32          isStatic    : 1;
-    uint32          toCPU       : 1;
-    uint32          extMemberPort   : 3;
-    uint32          memberPort : 6;
-    uint32          mac47_40    : 8;
-
-#else /*LITTLE_ENDIAN*/
-    /* word 0 */
-    uint16          mac23_8;
-    uint16          mac39_24;
-                
-    /* word 1 */
-    uint32          mac47_40    : 8;
-    uint32          memberPort : 6;
-    uint32          extMemberPort   : 3;
-    uint32          toCPU       : 1;
-    uint32          isStatic    : 1;
-    uint32          agingTime   : 2;
-    uint32          srcBlock    : 1;
-    uint32          nxtHostFlag : 1;
-    uint32          fid:2;
-    uint32          auth:1;     
-    uint32          reserv0:6;  
-
-#endif /*LITTLE_ENDIAN*/
-    /* word 2 */
-    uint32          reservw2;
-    /* word 3 */
-    uint32          reservw3;
-    /* word 4 */
-    uint32          reservw4;
-    /* word 5 */
-    uint32          reservw5;
-    /* word 6 */
-    uint32          reservw6;
-    /* word 7 */
-    uint32          reservw7;
-} rtl865xc_tblAsic_l2Table_t;
-
-
-enum {
-    TYPE_L2_SWITCH_TABLE = 0,
-    TYPE_ARP_TABLE,
-    TYPE_L3_ROUTING_TABLE,
-    TYPE_MULTICAST_TABLE,
-    TYPE_NETINTERFACE_TABLE,
-    TYPE_EXT_INT_IP_TABLE,
-    TYPE_VLAN_TABLE,
-    TYPE_VLAN1_TABLE,
-    TYPE_SERVER_PORT_TABLE,
-    TYPE_L4_TCP_UDP_TABLE,
-    TYPE_L4_ICMP_TABLE,
-    TYPE_PPPOE_TABLE,
-    TYPE_ACL_RULE_TABLE,
-    TYPE_NEXT_HOP_TABLE,
-    TYPE_RATE_LIMIT_TABLE,
-    TYPE_ALG_TABLE,
-};
+#include "rtl_switch.h"
 
 static uint8 fidHashTable[]={0x00,0x0f,0xf0,0xff};
+
+static void _rtl8651_clearSpecifiedAsicTable(uint32 type, uint32 count) 
+{
+        struct { uint32 _content[8]; } entry;
+        uint32 idx;
+        
+        bzero(&entry, sizeof(entry));
+        for (idx=0; idx<count; idx++)// Write into hardware
+                swTable_addEntry(type, idx, &entry);
+}
+
+int enable_10M_power_saving(int phyid , int regnum,int data)
+{   
+        unsigned int uid,tmp;  
+        rtl8651_getAsicEthernetPHYReg( phyid, regnum, &tmp );
+        uid=tmp;
+        uid =data;
+        rtl8651_setAsicEthernetPHYReg( phyid, regnum, uid );
+        rtl8651_getAsicEthernetPHYReg( phyid, regnum, &tmp );
+        uid=tmp;
+        return 0;
+}
 
 static void _rtl8651_asicTableAccessForward(uint32 tableType, uint32 eidx, void *entryContent_P) {
   //      ASSERT_CSP(entryContent_P);
@@ -483,6 +351,24 @@ int i;
 		REG32(PCRP0+i*4) &= ~(EnForceMode);
 }
 
+void dumpmem(int *mem, int size)
+{
+int i, j, k;
+char str[32];
+
+	for (k = 0; k * 16 < size; ++k) {
+		sprintf(str, "%08x:       ", mem);
+		print(str);
+		for(i = 0; i < 4; ++i) {
+			if (i == 3)
+				sprintf(str, "%08x\r\n", *mem++);
+			else
+				sprintf(str, "%08x        ", *mem++);
+			print(str);
+		}
+	}
+}
+
 void dumptable(int *table)
 {
 int i, j;
@@ -490,7 +376,7 @@ char str[32];
 
 	for(i = 0; i < 8; ++i) {
 		sprintf(str, "%08x ", *table);
-		for (j = 0; str[j] != '\0'; ++j) put(str[j]);
+		print(str);
 		++table;
 	}
 	put('\r');
@@ -507,14 +393,14 @@ char str[32];
 		for(k = 0; k < 8; ++k) {
 			rtl8651_getAsicEthernetPHYReg(k, i, &data);
 			sprintf(str, "%04x ", data);
-			for (j = 0; str[j] != '\0'; ++j) put(str[j]);
+			print(str);
 		}
 		put('\r');
 		put('\n');
 	}
 }
 
-void setup_vlan()
+void setup_vlan(int vid)
 {
 vlan_table_t    entryContent;
 
@@ -522,7 +408,7 @@ vlan_table_t    entryContent;
 	entryContent.memberPort = ALL_PORT_MASK;
 	entryContent.egressUntag = ALL_PORT_MASK;
 	entryContent.fid = 0;
-	swTable_addEntry(TYPE_VLAN_TABLE, 8, &entryContent);
+	swTable_addEntry(TYPE_VLAN_TABLE, vid, &entryContent);
 }
 
 void setup_netif(char *eth0_mac)
@@ -533,7 +419,8 @@ macaddr_t	gMac;
 	memcpy((void *)&gMac, (void *)eth0_mac, 6);
 	
 	bzero( (void *) &entryContent, sizeof(entryContent) );
-	entryContent.vid = 8;
+//	entryContent.vid = 8;
+	entryContent.vid = 1;
 	entryContent.valid = 1;
 
 	entryContent.mac47_19 = ((gMac.mac47_32 << 13) |
@@ -558,12 +445,28 @@ macaddr_t	gMac;
 void switch_init(char *macaddr)
 {
 int port;
+int i;
 
 	FullAndSemiReset();
 
 	phydump();
 
 	Setting_RTL8196C_PHY_REV_B();
+
+        // SERVER_PORT_TABLE, ALG_TABLE and L4_ICMP_TABLE are removed in real chip
+        _rtl8651_clearSpecifiedAsicTable(TYPE_L2_SWITCH_TABLE, RTL8651_L2TBL_ROW*RTL8651_L2TBL_COLUMN);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_ARP_TABLE, RTL8651_ARPTBL_SIZE);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_L3_ROUTING_TABLE, RTL8651_ROUTINGTBL_SIZE);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_MULTICAST_TABLE, RTL8651_IPMULTICASTTBL_SIZE);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_NETINTERFACE_TABLE, RTL865XC_NETINTERFACE_NUMBER);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_VLAN_TABLE, RTL865XC_VLAN_NUMBER);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_EXT_INT_IP_TABLE, RTL8651_IPTABLE_SIZE);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_L4_TCP_UDP_TABLE, RTL8651_TCPUDPTBL_SIZE);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_PPPOE_TABLE, RTL8651_PPPOE_NUMBER);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_ACL_RULE_TABLE, RTL8651_ACLTBL_SIZE);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_NEXT_HOP_TABLE, RTL8651_NEXTHOPTBL_SIZE);
+        _rtl8651_clearSpecifiedAsicTable(TYPE_RATE_LIMIT_TABLE, RTL8651_RATELIMITTBL_SIZE);     
+
 
 	REG32(PCRP0) &= (0xFFFFFFFF-(0x00400000|MacSwReset));
 	REG32(PCRP1) &= (0xFFFFFFFF-(0x00400000|MacSwReset));
@@ -581,6 +484,11 @@ int port;
 	    EnablePHYIf | MacSwReset;
 	REG32(PCRP4) = REG32(PCRP4) | (4 << ExtPHYID_OFFSET) | AcptMaxLen_16K |
 	    EnablePHYIf | MacSwReset;
+	REG32(PITCR) = REG32(PITCR) & 0xFFFFF3FF;
+        REG32(PCRP5) = 0 | (0x10<<ExtPHYID_OFFSET) |
+                        EnForceMode| ForceLink|ForceSpeed100M |ForceDuplex |
+                        MIIcfg_RXER | EnablePHYIf | MacSwReset; 
+
 
 	/* Set PVID of all ports to 8 */
 	REG32(PVCR0) = (0x8 << 16) | 0x8;
@@ -603,14 +511,14 @@ int port;
 		rtl8651_restartAsicEthernetPHYNway(port+1, port);       
 	}
 
-//	rtl8651_setAsicL2Table((ether_addr_t*)(&eth0_mac), 0);
+	rtl8651_setAsicL2Table((ether_addr_t*)(&eth0_mac), 0);
 
 	/* rx broadcast and unicast packet */
 	REG32(FFCR) = EN_UNUNICAST_TOCPU | EN_UNMCAST_TOCPU;
 
 	setup_netif((char *)macaddr);
 
-	setup_vlan();
+	setup_vlan(8);
 
 	netif_table_t    netif;
 	swTable_readEntry(TYPE_NETINTERFACE_TABLE, 0, &netif);
@@ -620,4 +528,12 @@ int port;
 	swTable_readEntry(TYPE_VLAN_TABLE, 8, &vlan);
 	dumptable((int *)&vlan);
 
+	for (i = 0;i < 5; ++i)
+		enable_10M_power_saving(i, 0x18,0x0310);
+
+	dumpmem((int *)0xBB804000, 64);
+	dumpmem((int *)0xBB804100, 64);
+	dumpmem((int *)0xBB804200, 64);
+	dumpmem((int *)0xBB804400, 64);
+	dumpmem((int *)0xBB804a00, 64);
 }
