@@ -1,17 +1,16 @@
+#include <stdint.h>
+
 typedef uint32_t uint32;
 typedef int32_t int32;
 typedef uint16_t uint16;
 typedef uint8_t uint8;
+typedef int8_t int8;
 
-#define GIGA_PHY_ID     0x16
-
-#define               RTL8651_ASICTABLE_ENTRY_LENGTH (8 * sizeof(uint32))
-#define         RTL8651_ASICTABLE_BASE_OF_ALL_TABLES            0xBB000000
-
-#define         rtl8651_asicTableAccessAddrBase(type) (RTL8651_ASICTABLE_BASE_OF_ALL_TABLES + ((type)<<16) )
-
-
-extern char eth0_mac[6];
+#define	GIGA_PHY_ID	0x16
+#define	FAILED 0
+#define SUCCESS 1
+#define TRUE 1
+#define ASSERT_CSP {}
 
 typedef struct {
     uint16      mac47_32;

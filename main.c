@@ -68,7 +68,8 @@ long *lptr;
 
 	timer_init();
 
-	switch_init(eth0_mac);
+	swCore_init();
+	vlan_init();
 
 	net_init();
 	while(1) {
@@ -84,3 +85,4 @@ long *lptr;
 
 	return 1;
 }
+

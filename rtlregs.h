@@ -6,6 +6,7 @@
 #define	ST0_CU0		0x10000000
 
 #define        GIMR            0xb8003000
+#define        GIMR_REG        0xb8003000
 #define        GISR            0xb8003004
 #define        IRR1            0xb800300c
 #define        IRR2            0xb8003010

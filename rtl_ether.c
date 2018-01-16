@@ -260,6 +260,8 @@ struct ethernetif *ethernetif = netif->state;
 	ptr = (unsigned int *)CPUIIMR;
 	*ptr = TX_DONE_IE_ALL | RX_DONE_IE_ALL;
 
+	REG32(MDCIOCR)=0x96181441;      // enable Giga port 8211B LED
+
 	txPos = 0;
 }
 
@@ -306,8 +308,13 @@ put('X');
 		len = q->len + 4;
 
 	pktbuf = (unsigned int)pPkthdr->ph_mbuf->m_data;
+	bzero((void *) pktbuf, 2048);
 
 	pbuf_copy_partial(p, pktbuf, p->tot_len, 0);
+//dumppkt(pktbuf, len);
+dumpmem((int *)0xbb801300, 64);
+dumpmem((int *)0xbb801800, 64);
+dumpmem((int *)0xbb801b00, 64);
 
 	pPkthdr->ph_mbuf->m_len = len;
 	pPkthdr->ph_mbuf->m_extsize = len;

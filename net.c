@@ -47,7 +47,7 @@ long reg;
 }
 
 struct irqaction irq_Ether = {Ether_isr, (void *)NULL};
-
+char eth0_mac_httpd[6];
 extern struct pbuf *que;
 void net_poll()
 {
@@ -66,9 +66,9 @@ void net_init()
 {
 long *lptr;
 
-	IP4_ADDR(&ipaddr, 192,168,1,2);
+	IP4_ADDR(&ipaddr, 10,10,10,2);
 	IP4_ADDR(&netmask, 255,255,255,0);
-	IP4_ADDR(&gw, 192,168,1,100);
+	IP4_ADDR(&gw, 10,10,10,3);
 
 	lwip_init();
 	netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,

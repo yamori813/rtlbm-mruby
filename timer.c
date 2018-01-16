@@ -47,3 +47,26 @@ unsigned long *lptr;
 	request_IRQ(14, &irq_Timer, NULL);
 }
 
+
+__delay()
+{
+int *ptr;
+unsigned int lastcount, now;
+	
+	ptr = (unsigned long *)0xb8003108;
+	lastcount = *ptr;
+	while(1) {
+		now = *ptr;
+		if (now < lastcount)
+			now += 0x80000000; 
+		
+		if (now - lastcount > 0x40000000)
+			break;
+	}
+}
+
+delay_ms()
+{
+	__delay();
+}     
+
