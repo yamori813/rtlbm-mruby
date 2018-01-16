@@ -48,16 +48,43 @@ long reg;
 
 struct irqaction irq_Ether = {Ether_isr, (void *)NULL};
 char eth0_mac_httpd[6];
-extern struct pbuf *que;
+
+static struct udp_pcb *udpecho_raw_pcb;
+
+static void
+udpecho_raw_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
+                 const ip_addr_t *addr, u16_t port)
+{
+  LWIP_UNUSED_ARG(arg);
+  if (p != NULL) {
+    /* send received packet back to sender */
+//    udp_sendto(upcb, p, addr, port);
+      print("MORI MORI UDP");
+    /* free the pbuf */
+    pbuf_free(p);
+  }
+}
+
+void
+udpecho_raw_init(void)
+{
+  udpecho_raw_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
+  if (udpecho_raw_pcb != NULL) {
+    err_t err;
+
+    err = udp_bind(udpecho_raw_pcb, IP_ANY_TYPE, 7000);
+    if (err == ERR_OK) {
+      udp_recv(udpecho_raw_pcb, udpecho_raw_recv, NULL);
+    } else {
+      /* abort? output diagnostic? */
+    }
+  } else {
+    /* abort? output diagnostic? */
+  }
+}
+
 void net_poll()
 {
-	if (que != NULL) {
-		if (netif.input(que, &netif) != ERR_OK) {
-			pbuf_free(que);
-			que = NULL;
-		}
-
-	}
 
 	sys_check_timeouts();
 }
@@ -75,6 +102,8 @@ long *lptr;
 	    ethernet_input);
 	netif_set_default(&netif);
 	netif_set_up(&netif);
+
+	udpecho_raw_init();
 
 	lptr = (unsigned long *)IRR1;
 	*lptr |= (3 << 0);

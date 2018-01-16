@@ -315,10 +315,10 @@ dumpmem((int *)0xbb801300, 64);
 dumpmem((int *)0xbb801800, 64);
 dumpmem((int *)0xbb801b00, 64);
 dumpmem((int *)0xBB804100, 64);
-*/
 	char *str[32];
 	sprintf(str, "len %d.", p->len);
 	print(str);
+*/
 
 	pPkthdr->ph_len = len;
 	pPkthdr->ph_mbuf->m_len = pPkthdr->ph_len;
@@ -376,8 +376,8 @@ put('0' +i);
 
 			if (p != NULL) {
 				pbuf_take(p, data, len);
-				que = p;
-#if 0
+//				que = p;
+#if 1
 				if (netif->input(p, netif) != ERR_OK) {
 					pbuf_free(p);
 					p = NULL;

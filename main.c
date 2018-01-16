@@ -73,12 +73,6 @@ long *lptr;
 
 	net_init();
 
-	dumpmem((int *)0xb8010000, 128);
-
-	while(1) {
-		net_poll();
-	}
-
 	mrb_state *mrb;
 	mrb = mrb_open();
 	mrb_define_method(mrb, mrb->object_class, "myputs", myputs,
