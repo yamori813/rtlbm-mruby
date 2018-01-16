@@ -260,7 +260,7 @@ struct ethernetif *ethernetif = netif->state;
 	ptr = (unsigned int *)CPUIIMR;
 	*ptr = TX_DONE_IE_ALL | RX_DONE_IE_ALL;
 
-	REG32(MDCIOCR)=0x96181441;      // enable Giga port 8211B LED
+//	REG32(MDCIOCR)=0x96181441;      // enable Giga port 8211B LED
 
 	txPos = 0;
 }
@@ -287,7 +287,6 @@ low_level_output(struct netif *netif, struct pbuf *p)
 {
 unsigned int *ptr;
 struct pktHdr * pPkthdr;
-struct pbuf *q;
 uint8_t* pktbuf;
 int len;
 struct ethernetif *ethernetif = netif->state;
@@ -301,29 +300,35 @@ put('X');
 	pPkthdr = (struct pktHdr *) ((int32_t) txPkthdrRing[txPos]
 	    & ~(DESC_OWNED_BIT | DESC_WRAP));
 
-	q = p;
-	if (q->len < 60)
+	if (p->len < 60)
 		len = 64;
 	else
-		len = q->len + 4;
+		len = p->len + 4;
 
 	pktbuf = (unsigned int)pPkthdr->ph_mbuf->m_data;
 	bzero((void *) pktbuf, 2048);
 
 	pbuf_copy_partial(p, pktbuf, p->tot_len, 0);
 //dumppkt(pktbuf, len);
+/*
 dumpmem((int *)0xbb801300, 64);
 dumpmem((int *)0xbb801800, 64);
 dumpmem((int *)0xbb801b00, 64);
+dumpmem((int *)0xBB804100, 64);
+*/
+	char *str[32];
+	sprintf(str, "len %d.", p->len);
+	print(str);
 
-	pPkthdr->ph_mbuf->m_len = len;
-	pPkthdr->ph_mbuf->m_extsize = len;
+	pPkthdr->ph_len = len;
+	pPkthdr->ph_mbuf->m_len = pPkthdr->ph_len;
+	pPkthdr->ph_mbuf->m_extsize = pPkthdr->ph_len;
 
 	pPkthdr->ph_portlist = ALL_PORT_MASK;
 	txPkthdrRing[txPos] |= DESC_SWCORE_OWNED;
 
 	ptr = (unsigned int *)CPUICR;
-	*ptr |= TXFD | TXCMD;
+	*ptr |= TXFD;
 
 	++txPos;
 	if (txPos == 4)

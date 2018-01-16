@@ -158,7 +158,8 @@ vlan_table_t    entryContent;
 	entryContent.memberPort = ALL_PORT_MASK;
 	entryContent.egressUntag = ALL_PORT_MASK;
 	entryContent.fid = 0;
-	swTable_addEntry(TYPE_VLAN_TABLE, vid, &entryContent);
+	if (swTable_addEntry(TYPE_VLAN_TABLE, vid, &entryContent) != 0)
+		print("vlan swTable_addEntry error");
 }
 
 static void setup_netif(ether_addr_t *mac, int vid, int mtu)
@@ -169,10 +170,10 @@ netif_table_t	entryContent;
 	entryContent.vid = vid;
 	entryContent.valid = 1;
 
-	entryContent.mac47_19 = (mac->octet[0] << 16) | (mac->octet[1] << 8) |
-	    mac->octet[2];
-	entryContent.mac18_0 = (mac->octet[3] << 16) | (mac->octet[4] << 8 ) |
-	    mac->octet[5];
+	entryContent.mac47_19 = ((mac->octet[0] << 21) | (mac->octet[1] << 13) |
+	    (mac->octet[2] << 5) | (mac->octet[3] >> 3)) & 0xFFFFFFF;
+	entryContent.mac18_0 = ((mac->octet[3] << 16) | (mac->octet[4] << 8 ) |
+	    mac->octet[5]) & 0x7FFFF;
 
 	entryContent.inACLStartH = (0 >> 2) & 0x1f;
 	entryContent.inACLStartL = 0 & 0x3;
@@ -185,12 +186,15 @@ netif_table_t	entryContent;
 
 	entryContent.mtuH = mtu >> 3;
 	entryContent.mtuL = mtu & 0x7;
-	swTable_addEntry(TYPE_NETINTERFACE_TABLE, 0, &entryContent);
+	if (swTable_addEntry(TYPE_NETINTERFACE_TABLE, 0, &entryContent) != 0)
+		print("netif swTable_addEntry error");
 }
 
 vlan_init()
 {
 int i;
+
+	REG32(PIN_MUX_SEL)=REG32(PIN_MUX_SEL)&(0xFFFFFFFF-0x00300000);
 
 	for (i = 0;i < 5; ++i)
 		enable_10M_power_saving(i, 0x18, 0x0310);
@@ -199,6 +203,28 @@ int i;
 
         setup_vlan(8);
 
+	netif_table_t	netif;
+	swTable_readEntry(TYPE_NETINTERFACE_TABLE, 0, &netif);
+	dumptable(&netif);
+
+	vlan_table_t    vlan;
+	swTable_readEntry(TYPE_VLAN_TABLE, 8, &vlan);
+	dumptable(&vlan);
 	dumpphy();
 	dumpmem((int *)0xBB804100, 64);
 }
+
+unsigned int read_gpio_hw_setting()
+{
+	unsigned int tmp;
+	int b2;
+
+	REG32(PEFGHCNR)   = REG32(PEFGHCNR)   & (~(0x8<<8));  //set (GP2)=(F3)= gpio
+	REG32(PEFGHPTYPE) = REG32(PEFGHPTYPE) & (~(0x8<<8));  //change t o GPIO mode
+	REG32(PEFGHDIR)   = REG32(PEFGHDIR)   & (~(0x8<<8));  //0 input, 1 output, set inpur
+	tmp = REG32(PEFGHDAT);
+	b2 = (tmp&(0x08<<8))>>11;
+	tmp = (b2<<1)&0x2;      
+	return tmp;     
+}
+

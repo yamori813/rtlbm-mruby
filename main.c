@@ -72,6 +72,9 @@ long *lptr;
 	vlan_init();
 
 	net_init();
+
+	dumpmem((int *)0xb8010000, 128);
+
 	while(1) {
 		net_poll();
 	}
