@@ -1,8 +1,8 @@
 This projct use these libraryis.
 
 newlib-2.5.0.20171222  
-lwip-2.0.3 
-mruby
+lwip-2.0.3  
+mruby  
 
 Source code 
 
