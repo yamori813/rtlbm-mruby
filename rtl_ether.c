@@ -133,9 +133,6 @@ struct ethernetif *ethernetif = netif->state;
 	netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP |
 	    NETIF_FLAG_LINK_UP;
 
-
-	put('E');
-
 	size_of_cluster = 2048;
 
 	/* only 1 ring and 4 dicriptors implimentation at tx and rx*/
@@ -292,11 +289,6 @@ int len;
 struct ethernetif *ethernetif = netif->state;
 int i;
 
-put('X');
-	for (i = 0; i < 4; ++i) {
-	 	if ((int32_t)txPkthdrRing[i] & DESC_SWCORE_OWNED)
-			put('x');
-	}
 	pPkthdr = (struct pktHdr *) ((int32_t) txPkthdrRing[txPos]
 	    & ~(DESC_OWNED_BIT | DESC_WRAP));
 
@@ -365,7 +357,6 @@ int i;
 	for (i = 0; i < 4; ++i) {
 		if ((rxPkthdrRing[i] & DESC_OWNED_BIT) ==
 		    DESC_RISC_OWNED ) {
-put('0' +i);
 			pPkthdr = (struct pktHdr *) (rxPkthdrRing[i] & 
 					~(DESC_OWNED_BIT | DESC_WRAP));
 			data = (int)pPkthdr->ph_mbuf->m_data;

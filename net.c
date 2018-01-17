@@ -35,11 +35,9 @@ long reg;
 
 	lptr = (unsigned long *)CPUIISR;
 	if( *lptr & TX_DONE_IE0 ) {
-		put('T');
 		reg = *lptr | TX_DONE_IE0;
 	}
 	if( *lptr & RX_DONE_IE0 ) {
-		put('R');
 		ethernetif_input(&netif);
 		reg = *lptr | RX_DONE_IE0;
 	}
@@ -51,6 +49,8 @@ char eth0_mac_httpd[6];
 
 static struct udp_pcb *udpecho_raw_pcb;
 
+char udpbuff[1024];
+
 static void
 udpecho_raw_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
                  const ip_addr_t *addr, u16_t port)
@@ -59,7 +59,8 @@ udpecho_raw_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
   if (p != NULL) {
     /* send received packet back to sender */
 //    udp_sendto(upcb, p, addr, port);
-      print("MORI MORI UDP");
+      pbuf_copy_partial(p, udpbuff, p->tot_len, 0);
+      udpbuff[p->tot_len] = '\0';
     /* free the pbuf */
     pbuf_free(p);
   }
@@ -103,6 +104,7 @@ long *lptr;
 	netif_set_default(&netif);
 	netif_set_up(&netif);
 
+	udpbuff[0] = '\0';
 	udpecho_raw_init();
 
 	lptr = (unsigned long *)IRR1;
