@@ -28,6 +28,7 @@ rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714
 
 I build on FreeBSD/amd64 10.4 used by linux emuration.  
 
+```
 +-- newlib-2.5.0.20171222  
 |       |  
 |       +--- mips  
@@ -39,3 +40,4 @@ I build on FreeBSD/amd64 10.4 used by linux emuration.
 +-- lwip-2.0.3  
         |  
         +-- rtk  
+```
