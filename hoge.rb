@@ -1,14 +1,19 @@
+#
+# rtlbm-mruby mruby script
+# used mruby-rtlbm-hsc gem
+#
+# echo -n "GREEN" | nc -w 0 -u 10.10.10.2 7000
+#
+
 o = Object.new
 hsc = HomeSpotCube.new()
 i = 0
-#100.times do |i|
 while 1 do
    o.myputs "index:" + i.to_s
-   start = hsc.count()
+   start = hsc.count() 
    while hsc.count() < start + 50 do
    end
    udpstr = hsc.udprecv()
-   udpstr.chop
    if udpstr.length != 0 then
      if udpstr == "GREEN" then
        hsc.led(2)
