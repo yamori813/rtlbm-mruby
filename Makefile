@@ -1,12 +1,12 @@
 #
-# mruby on RTL8196 Bare Metal 
+# mruby-1.4.0 on RTL8196 Bare Metal 
 #
 
 CROSS_CC = mips-cc
 CROSS_OBJCOPY = mips-objcopy
 CROSS_LD = mips-ld
 
-CROSS_CFLAGS = -I./newlib-2.5.0.20171222/newlib/libc/include/ -I./mruby/include/ -Ilwip-2.0.3/src/include -Ilwip-2.0.3/rtl/include
+CROSS_CFLAGS = -I./newlib-2.5.0.20171222/newlib/libc/include/ -I./mruby-1.4.0/include/ -Ilwip-2.0.3/src/include -Ilwip-2.0.3/rtl/include
 CROSS_CFLAGS += -march=4181 -Os -g -fno-pic -mno-abicalls
 CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
 CROSS_CFLAGS += -pipe -mlong-calls
@@ -15,11 +15,11 @@ CROSS_CFLAGS += -DCONFIG_RTL865XC=1
 CROSS_CFLAGS += -DRTL8196 -DRTL8196B -DRTL8196C=1
 CROSS_CFLAGS += -DRTLBM_MRUBY_DEBUG
 
-CROSS_LDFLAGS = -static -L./mruby/build/realtek/lib -Lnewlib-2.5.0.20171222/mips/newlib/ -Lrsdk/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/4181/ -Llwip-2.0.3/rtl/
+CROSS_LDFLAGS = -static -L./mruby-1.4.0/build/realtek/lib -Lnewlib-2.5.0.20171222/mips/newlib/ -Lrsdk/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/4181/ -Llwip-2.0.3/rtl/
 CROSS_LDLIB = -lmruby -lc -lgcc -llwip
 CROSS_LDSCRIPT = main.ld
 
-CROSS_ASFLAGS = -G 0 -mno-abicalls -fno-pic -I./mruby/include/ -fomit-frame-pointer
+CROSS_ASFLAGS = -G 0 -mno-abicalls -fno-pic -I./mruby-1.4.0/include/ -fomit-frame-pointer
 CROSS_ASFLAGS += -DCONFIG_RTL8196B -DCONFIG_RTL865XB
 
 OBJS = main.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o
@@ -33,7 +33,7 @@ inthandler.o: inthandler.S
 	$(CROSS_CC) -O2 $(CROSS_ASFLAGS) -c inthandler.S
 
 main.o: main.c hoge.rb
-	./mruby/build/host/bin/mrbc -Bbytecode hoge.rb
+	./mruby-1.4.0/build/host/bin/mrbc -Bbytecode hoge.rb
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c main.c
 
 rtl_timer.o: rtl_timer.c
