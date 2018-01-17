@@ -29,6 +29,8 @@ rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714
 I build on FreeBSD/amd64 10.4 used by linux emuration.  
 
 ```
++-- rsdk (synblic link to rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714)
+|
 +-- newlib-2.5.0.20171222  
 |       |  
 |       +--- mips  
