@@ -220,9 +220,12 @@ unsigned int read_gpio_hw_setting()
 	unsigned int tmp;
 	int b2;
 
-	REG32(PEFGHCNR)   = REG32(PEFGHCNR)   & (~(0x8<<8));  //set (GP2)=(F3)= gpio
-	REG32(PEFGHPTYPE) = REG32(PEFGHPTYPE) & (~(0x8<<8));  //change t o GPIO mode
-	REG32(PEFGHDIR)   = REG32(PEFGHDIR)   & (~(0x8<<8));  //0 input, 1 output, set inpur
+	/* set (GP2)=(F3)= gpio */
+	REG32(PEFGHCNR) = REG32(PEFGHCNR) & (~(0x8<<8));
+	/* changet o GPIO mode */
+	REG32(PEFGHPTYPE) = REG32(PEFGHPTYPE) & (~(0x8<<8));
+	/* 0 input, 1 output, set inpur */
+	REG32(PEFGHDIR) = REG32(PEFGHDIR) & (~(0x8<<8));
 	tmp = REG32(PEFGHDAT);
 	b2 = (tmp&(0x08<<8))>>11;
 	tmp = (b2<<1)&0x2;      
