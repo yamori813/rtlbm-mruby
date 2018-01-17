@@ -22,7 +22,7 @@ CROSS_LDSCRIPT = main.ld
 CROSS_ASFLAGS = -G 0 -mno-abicalls -fno-pic -I./mruby/include/ -fomit-frame-pointer
 CROSS_ASFLAGS += -DCONFIG_RTL8196B -DCONFIG_RTL865XB
 
-OBJS = main.o timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o
+OBJS = main.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o
 
 all: main.bin 
 
@@ -36,8 +36,8 @@ main.o: main.c hoge.rb
 	./mruby/build/host/bin/mrbc -Bbytecode hoge.rb
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c main.c
 
-timer.o: timer.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c timer.c
+rtl_timer.o: rtl_timer.c
+	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c rtl_timer.c
 
 net.o: net.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c net.c
