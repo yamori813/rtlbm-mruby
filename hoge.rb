@@ -1,5 +1,5 @@
 o = Object.new
-hsc = HomeSpotCube.new("MORIMORI")
+hsc = HomeSpotCube.new()
 i = 0
 #100.times do |i|
 while 1 do
