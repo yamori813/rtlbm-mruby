@@ -41,8 +41,6 @@ mrb_value myputs(mrb_state *mrb, mrb_value self){
 	mrb_value val;
 	mrb_get_args(mrb, "S", &val);
 	print(RSTRING_PTR(val));
-	put('\r');
-	put('\n');
 	return mrb_nil_value();
 }
 

@@ -9,9 +9,9 @@ o = Object.new
 hsc = HomeSpotCube.new()
 i = 0
 while 1 do
-   o.myputs "index:" + i.to_s
+   o.myputs "."
    start = hsc.count() 
-   while hsc.count() < start + 50 do
+   while hsc.count() < start + 5 do
    end
    udpstr = hsc.udprecv()
    if udpstr.length != 0 then
@@ -24,6 +24,7 @@ while 1 do
      elsif udpstr == "OFF" then
        hsc.led(0)
      end
+     o.myputs udpstr
    end
    i = i + 1
 end
