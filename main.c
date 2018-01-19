@@ -2,42 +2,12 @@
 #include <mruby/string.h>
 #include <mruby/irep.h>
 
-#include "asicregs.h"
-
 #include "intr.h"
 
 #include "hoge.c"
 
 extern char _end[];
 extern char _fbss[];
-
-void put(char ch)
-{
-unsigned char *prt;
-unsigned char reg;
-int i;
-
-	i = 0;
-	prt = (unsigned char *)UART_LSR_REG;
-	while (1) {
-		++i;
-		if (i >=0x6000)
-			break;
-		reg = *prt;
-		if (reg & 0x20)
-			break;
-	}
-	prt = (unsigned char *)UART_THR_REG;
-	*prt = ch;
-}
-
-void print(char *ptr)
-{
-	while(*ptr != '\0') {
-		put(*ptr);
-		++ptr;
-	}
-}
 
 mrb_value myputs(mrb_state *mrb, mrb_value self){
 	mrb_value val;
@@ -55,14 +25,12 @@ int i;
 unsigned char *ptr;
 long *lptr;
 
-	/* uart intr disable */
-	ptr = (unsigned char *)UART_IER_REG;
-	*ptr = 0;
-
 	/* bss clear */
 	for (lptr = (long *)_fbss; lptr < (long *)_end; ++lptr) {
 		 *lptr = 0;
 	}
+
+	uart_init();
 
 	intr_init();
 
