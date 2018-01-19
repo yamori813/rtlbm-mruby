@@ -14,6 +14,7 @@ intr.c -- inturrupt code
 inthandler.S -- excemtion assembra  
 traps.c -- cache control code  
 
+uart.c -- rtl8196 uart code
 rtl_timer.c -- rtl8196 timer code  
 net.c -- netwrok code  
 rtl_ether.c -- rt8196 ethernet nic support code  
