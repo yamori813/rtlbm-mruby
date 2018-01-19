@@ -2,6 +2,8 @@
 #include <mruby/string.h>
 #include <mruby/irep.h>
 
+#include "asicregs.h"
+
 #include "intr.h"
 
 #include "hoge.c"
@@ -16,7 +18,7 @@ unsigned char reg;
 int i;
 
 	i = 0;
-	prt = (unsigned char *)0xb8002014;
+	prt = (unsigned char *)UART_LSR_REG;
 	while (1) {
 		++i;
 		if (i >=0x6000)
@@ -25,7 +27,7 @@ int i;
 		if (reg & 0x20)
 			break;
 	}
-	prt = (unsigned char *)0xb8002000;
+	prt = (unsigned char *)UART_THR_REG;
 	*prt = ch;
 }
 
@@ -54,7 +56,7 @@ unsigned char *ptr;
 long *lptr;
 
 	/* uart intr disable */
-	ptr = (unsigned char *)0xb8002004;
+	ptr = (unsigned char *)UART_IER_REG;
 	*ptr = 0;
 
 	/* bss clear */
