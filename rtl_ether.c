@@ -285,34 +285,38 @@ low_level_output(struct netif *netif, struct pbuf *p)
 unsigned int *ptr;
 struct pktHdr * pPkthdr;
 uint8_t* pktbuf;
-int len;
 struct ethernetif *ethernetif = netif->state;
 int i;
 
+	for (i = 0; i < 4; ++i) {
+		if(txPkthdrRing[i] | DESC_OWNED_BIT)
+			put('x');
+	}
 	pPkthdr = (struct pktHdr *) ((int32_t) txPkthdrRing[txPos]
 	    & ~(DESC_OWNED_BIT | DESC_WRAP));
 
-	if (p->len < 60)
-		len = 64;
-	else
-		len = p->len + 4;
-
 	pktbuf = (unsigned int)pPkthdr->ph_mbuf->m_data;
-	bzero((void *) pktbuf, 2048);
+
+	if (p->tot_len < 60) {
+		pPkthdr->ph_len = 64;
+		bzero((void *) pktbuf, 64);
+	} else {
+		pPkthdr->ph_len = p->tot_len + 4;
+	}
 
 	pbuf_copy_partial(p, pktbuf, p->tot_len, 0);
+
 //dumppkt(pktbuf, len);
 /*
 dumpmem((int *)0xbb801300, 64);
 dumpmem((int *)0xbb801800, 64);
 dumpmem((int *)0xbb801b00, 64);
 dumpmem((int *)0xBB804100, 64);
+*/
 	char *str[32];
 	sprintf(str, "len %d.", p->len);
 	print(str);
-*/
 
-	pPkthdr->ph_len = len;
 	pPkthdr->ph_mbuf->m_len = pPkthdr->ph_len;
 	pPkthdr->ph_mbuf->m_extsize = pPkthdr->ph_len;
 

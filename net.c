@@ -101,13 +101,15 @@ long *lptr;
 	lwip_init();
 	netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,
 	    ethernet_input);
+
+	lptr = (unsigned long *)IRR1;
+	*lptr |= (3 << 0);
+	request_IRQ(8, &irq_Ether, NULL);
+
 	netif_set_default(&netif);
 	netif_set_up(&netif);
 
 	udpbuff[0] = '\0';
 	udpecho_raw_init();
 
-	lptr = (unsigned long *)IRR1;
-	*lptr |= (3 << 0);
-	request_IRQ(8, &irq_Ether, NULL);
 }
