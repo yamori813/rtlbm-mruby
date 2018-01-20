@@ -217,6 +217,7 @@ int i;
 
 unsigned int read_gpio_hw_setting()
 {
+#ifndef RTL8196C
 	unsigned int tmp;
 	int b2;
 
@@ -230,5 +231,8 @@ unsigned int read_gpio_hw_setting()
 	b2 = (tmp&(0x08<<8))>>11;
 	tmp = (b2<<1)&0x2;      
 	return tmp;     
+#else
+	return 0;
+#endif
 }
 
