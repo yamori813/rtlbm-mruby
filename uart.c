@@ -25,7 +25,7 @@ int i;
 		if (i >=0x6000)
 			break;
 		reg = *prt;
-		if (reg & (0x20 << 24))
+		if (reg & 0x20)
 			break;
 	}
 	prt = (unsigned char *)UART_THR_REG;
