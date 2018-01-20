@@ -10,6 +10,8 @@ void uart_init()
 {
 	/* Disable All Interrupts */
 	REG32(UART_IER_REG) = 0x00000000;
+dumpmem(0xB8000030, 32);
+dumpmem(0xB8003500, 32);
 }
 
 void put(char ch)

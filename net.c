@@ -36,10 +36,14 @@ long reg;
 	lptr = (unsigned long *)CPUIISR;
 	if( *lptr & TX_DONE_IE0 ) {
 		reg = *lptr | TX_DONE_IE0;
+put('T');
+dumpmem((int *)0xbb801b00, 64);
+
 	}
 	if( *lptr & RX_DONE_IE0 ) {
 		ethernetif_input(&netif);
 		reg = *lptr | RX_DONE_IE0;
+put('R');
 	}
 	*lptr = reg;
 }
@@ -84,10 +88,13 @@ udpecho_raw_init(void)
   }
 }
 
+int netstat = 0;
+
 void net_poll()
 {
 
-	sys_check_timeouts();
+	if (netstat == 1)
+		sys_check_timeouts();
 }
 
 void net_init()
@@ -107,9 +114,11 @@ long *lptr;
 	request_IRQ(8, &irq_Ether, NULL);
 
 	netif_set_default(&netif);
-	netif_set_up(&netif);
+	netif_set_up(&netif);   /* send broadcast arp packet */
 
 	udpbuff[0] = '\0';
 	udpecho_raw_init();
+
+	netstat = 1;
 
 }

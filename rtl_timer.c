@@ -12,6 +12,9 @@ unsigned long reg;
 	lptr = (unsigned long *)0xb8003114;
 	reg = *lptr;
 	*lptr = reg | 1 << 29;
+
+	net_poll();
+
 	++count;
 }
 
