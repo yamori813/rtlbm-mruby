@@ -36,14 +36,10 @@ long reg;
 	lptr = (unsigned long *)CPUIISR;
 	if( *lptr & TX_DONE_IE0 ) {
 		reg = *lptr | TX_DONE_IE0;
-put('T');
-dumpmem((int *)0xbb801b00, 64);
-
 	}
 	if( *lptr & RX_DONE_IE0 ) {
 		ethernetif_input(&netif);
 		reg = *lptr | RX_DONE_IE0;
-put('R');
 	}
 	*lptr = reg;
 }

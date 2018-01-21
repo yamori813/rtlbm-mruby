@@ -51,7 +51,7 @@ unsigned long *lptr;
 }
 
 
-__delay()
+delay_ms()
 {
 int *ptr;
 unsigned int lastcount, now;
@@ -68,8 +68,14 @@ unsigned int lastcount, now;
 	}
 }
 
-delay_ms()
+__inline__ void
+__delay(unsigned long loops)
 {
-	__delay();
-}     
-
+	__asm__ __volatile__ (
+		".set\tnoreorder\n"
+		"1:\tbnez\t%0,1b\n\t"
+		"subu\t%0,1\n\t"
+		".set\treorder"
+		:"=r" (loops)
+		:"0" (loops));
+}

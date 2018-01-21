@@ -36,10 +36,13 @@ long *lptr;
 
 	timer_init();
 
+	delay_ms(10);
 	swCore_init();
+	delay_ms(10);
 	vlan_init();
-
+	delay_ms(10);
 	net_init();
+	delay_ms(10);
 
 	mrb_state *mrb;
 	mrb = mrb_open();

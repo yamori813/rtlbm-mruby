@@ -213,6 +213,7 @@ int i;
 	dumpphy();
 	dumpmem((int *)0xBB804100, 64);
 #endif
+	dumpphy();
 }
 
 unsigned int read_gpio_hw_setting()

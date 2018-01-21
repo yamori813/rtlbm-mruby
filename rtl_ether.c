@@ -288,10 +288,12 @@ uint8_t* pktbuf;
 struct ethernetif *ethernetif = netif->state;
 int i;
 
+#if 0
 	for (i = 0; i < 4; ++i) {
 		if(txPkthdrRing[i] | DESC_OWNED_BIT)
 			put('x');
 	}
+#endif
 	pPkthdr = (struct pktHdr *) ((int32_t) txPkthdrRing[txPos]
 	    & ~(DESC_OWNED_BIT | DESC_WRAP));
 
@@ -312,10 +314,10 @@ dumpmem((int *)0xbb801300, 64);
 dumpmem((int *)0xbb801800, 64);
 dumpmem((int *)0xbb801b00, 64);
 dumpmem((int *)0xBB804100, 64);
-*/
 	char *str[32];
 	sprintf(str, "len %d.", p->len);
 	print(str);
+*/
 
 	pPkthdr->ph_mbuf->m_len = pPkthdr->ph_len;
 	pPkthdr->ph_mbuf->m_extsize = pPkthdr->ph_len;
