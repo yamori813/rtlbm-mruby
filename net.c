@@ -97,6 +97,8 @@ void net_init()
 {
 long *lptr;
 
+	swCore_init();
+
 	IP4_ADDR(&ipaddr, 10,10,10,2);
 	IP4_ADDR(&netmask, 255,255,255,0);
 	IP4_ADDR(&gw, 10,10,10,3);
@@ -108,6 +110,8 @@ long *lptr;
 	lptr = (unsigned long *)IRR1;
 	*lptr |= (3 << 0);
 	request_IRQ(8, &irq_Ether, NULL);
+
+	vlan_init();
 
 	netif_set_default(&netif);
 	netif_set_up(&netif);   /* send broadcast arp packet */

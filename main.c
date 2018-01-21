@@ -36,8 +36,6 @@ long *lptr;
 
 	timer_init();
 
-	swCore_init();
-	vlan_init();
 	net_init();
 
 	mrb_state *mrb;
