@@ -12,6 +12,7 @@ CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
 CROSS_CFLAGS += -pipe -mlong-calls
 CROSS_CFLAGS += -DCONFIG_RTL8196C -DCONFIG_RTL8196C_REVISION_B
 CROSS_CFLAGS += -DRTL8196C=1 -DCONFIG_RTL865XC=1
+CROSS_CFLAGS += -DRTL8196=1 -DRTL8196B=1
 CROSS_CFLAGS += -DRTLBM_MRUBY_DEBUG
 
 CROSS_LDFLAGS = -static -L./mruby-1.4.0/build/realtek/lib -Lnewlib-2.5.0.20171222/mips/newlib/ -Lrsdk/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/4181/ -Llwip-2.0.3/rtl/
