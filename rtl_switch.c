@@ -154,6 +154,8 @@ static void setup_vlan(int vid)
 {
 vlan_table_t    entryContent;
 
+	swTable_readEntry(TYPE_VLAN_TABLE, vid, &entryContent);
+
 	bzero( (void *) &entryContent, sizeof(entryContent) );
 	entryContent.memberPort = ALL_PORT_MASK;
 	entryContent.egressUntag = ALL_PORT_MASK;
@@ -165,6 +167,8 @@ vlan_table_t    entryContent;
 static void setup_netif(ether_addr_t *mac, int vid, int mtu)
 {
 netif_table_t	entryContent;
+
+	swTable_readEntry(TYPE_NETINTERFACE_TABLE, 0, &entryContent);
 
 	bzero( (void *) &entryContent, sizeof(entryContent) );
 	entryContent.vid = vid;
