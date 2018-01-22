@@ -5,15 +5,15 @@
 # echo -n "GREEN" | nc -w 0 -u 10.10.10.2 7000
 #
 
-o = Object.new
+rtl = RTL8196C.new("")
 hsc = HomeSpotCube.new()
 i = 0
 while 1 do
-   o.myputs "."
-   start = hsc.count() 
-   while hsc.count() < start + 5 do
+   rtl.print "."
+   start = rtl.count() 
+   while rtl.count() < start + 5 do
    end
-   udpstr = hsc.udprecv()
+   udpstr = rtl.udprecv()
    if udpstr.length != 0 then
      if udpstr == "GREEN" then
        hsc.led(2)
@@ -24,7 +24,7 @@ while 1 do
      elsif udpstr == "OFF" then
        hsc.led(0)
      end
-     o.myputs udpstr
+     rtl.print udpstr
    end
    i = i + 1
 end
