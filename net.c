@@ -107,11 +107,11 @@ long *lptr;
 	netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,
 	    ethernet_input);
 
+	vlan_init();
+
 	lptr = (unsigned long *)IRR1;
 	*lptr |= (3 << 0);
 	request_IRQ(8, &irq_Ether, NULL);
-
-	vlan_init();
 
 	netif_set_default(&netif);
 	netif_set_up(&netif);   /* send broadcast arp packet */
