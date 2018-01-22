@@ -322,7 +322,7 @@ dumpmem((int *)0xBB804100, 64);
 	pPkthdr->ph_mbuf->m_len = pPkthdr->ph_len;
 	pPkthdr->ph_mbuf->m_extsize = pPkthdr->ph_len;
 
-	pPkthdr->ph_vlanId = 8;
+//	pPkthdr->ph_vlanId = 8;
 	pPkthdr->ph_portlist = ALL_PORT_MASK;
 	txPkthdrRing[txPos] |= DESC_SWCORE_OWNED;
 
