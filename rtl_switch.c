@@ -206,6 +206,10 @@ int i;
         setup_netif((ether_addr_t*)(&eth0_mac), 8, 1500);
 
         setup_vlan(8);
+
+	/* This is work around for don't send first arp packet */
+	delay_ms(3000);
+
 #if 0
 	netif_table_t	netif;
 	swTable_readEntry(TYPE_NETINTERFACE_TABLE, 0, &netif);
@@ -217,7 +221,6 @@ int i;
 	dumpphy();
 	dumpmem((int *)0xBB804100, 64);
 #endif
-	dumpphy();
 }
 
 unsigned int read_gpio_hw_setting()
