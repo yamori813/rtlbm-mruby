@@ -1,4 +1,5 @@
 #include <mruby.h>
+#include <mruby/irep.h>
 
 #include "intr.h"
 
