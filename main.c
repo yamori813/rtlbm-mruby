@@ -1,6 +1,4 @@
 #include <mruby.h>
-#include <mruby/string.h>
-#include <mruby/irep.h>
 
 #include "intr.h"
 
