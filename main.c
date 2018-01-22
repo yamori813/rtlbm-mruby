@@ -15,7 +15,6 @@ int
 main(int argc, char *argv[])
 {
 int i;
-unsigned char *ptr;
 long *lptr;
 
 	/* bss clear */
