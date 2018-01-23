@@ -8,16 +8,6 @@
 
 extern char eth0_mac[6];
 
-static void _rtl8651_clearSpecifiedAsicTable(uint32 type, uint32 count) 
-{
-        struct { uint32 _content[8]; } entry;
-        uint32 idx;
-        
-        bzero(&entry, sizeof(entry));
-        for (idx=0; idx<count; idx++)// Write into hardware
-                swTable_addEntry(type, idx, &entry);
-}
-
 static void enable_10M_power_saving(int phyid , int regnum,int data)
 {   
         unsigned int uid,tmp;  
@@ -157,8 +147,8 @@ vlan_table_t    entryContent;
 	swTable_readEntry(TYPE_VLAN_TABLE, vid, &entryContent);
 
 	bzero( (void *) &entryContent, sizeof(entryContent) );
-	entryContent.memberPort = ALL_PORT_MASK;
-	entryContent.egressUntag = ALL_PORT_MASK;
+	entryContent.memberPort = 0x1f;   /* only phy port */
+	entryContent.egressUntag = 0x1f;
 	entryContent.fid = 0;
 	if (swTable_addEntry(TYPE_VLAN_TABLE, vid, &entryContent) != 0)
 		print("vlan swTable_addEntry error");

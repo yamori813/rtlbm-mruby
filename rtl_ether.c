@@ -51,12 +51,15 @@
 #include "rtlregs.h"
 #include "system.h"
 
-#define	RTL865X_SWNIC_TXRING_MAX_RING	4
-
 static unsigned int*  txPkthdrRing;
 static unsigned int*  rxPkthdrRing;
 uint32_t* rxMbufRing;
 int txPos;
+
+#define TX_RING0	4
+#define TX_RING1	2
+#define TX_RING		(TX_RING0 + TX_RING1)
+#define RX_RING		4
 
 /* Define those to better describe your network interface. */
 #define IFNAME0 'e'
@@ -138,37 +141,40 @@ struct ethernetif *ethernetif = netif->state;
 	/* only 1 ring and 4 dicriptors implimentation at tx and rx*/
 
 	/* Allocate Tx descriptors of rings */
-	ptr = (unsigned int *)malloc(4 * RTL865X_SWNIC_TXRING_MAX_RING);
+	ptr = (unsigned int *)malloc(4 * TX_RING);
 	ptr = (unsigned int)ptr | 0xa0000000;
-	memset(ptr, 0, 4 * RTL865X_SWNIC_TXRING_MAX_RING);
+	memset(ptr, 0, 4 * TX_RING);
 	txPkthdrRing = ptr;
 
 	/* Allocate Rx descriptors of rings */
-	ptr = (unsigned int *)malloc(4 * RTL865X_SWNIC_TXRING_MAX_RING);
+	ptr = (unsigned int *)malloc(4 * RX_RING);
 	ptr = (unsigned int)ptr | 0xa0000000;
-	memset(ptr, 0, 4 * RTL865X_SWNIC_TXRING_MAX_RING);
+	memset(ptr, 0, 4 * RX_RING);
 	rxPkthdrRing = ptr;
 
 	/* Allocate MBuf descriptors of rings */
-	ptr = (uint32_t *)malloc(4 * 4);
+	ptr = (uint32_t *)malloc(4 * RX_RING);
 	ptr = (unsigned int)ptr | 0xa0000000;
 	memset(ptr, 0, 4 * 4);
 	rxMbufRing = ptr;
 
 	/* Allocate pkthdr */
-	pPkthdrList = (struct pktHdr *) malloc(sizeof(struct pktHdr) * 8);
+	pPkthdrList = (struct pktHdr *) malloc(sizeof(struct pktHdr) * 
+	    (TX_RING + RX_RING));
 	pPkthdrList = (unsigned int)pPkthdrList | 0xa0000000;
 
 	/* Allocate mbufs */
-	pMbufList = (struct mBuf *) malloc(sizeof(struct mBuf) * 8);
+	pMbufList = (struct mBuf *) malloc(sizeof(struct mBuf) *
+	    (TX_RING + RX_RING));
 	pMbufList = (unsigned int)pMbufList | 0xa0000000;
 
 	/* Allocate clusters */
-	pClusterList = (uint8_t *)malloc(size_of_cluster * 8);
+	pClusterList = (uint8_t *)malloc(size_of_cluster *
+	    (TX_RING + RX_RING));
 	pClusterList = (unsigned int)pClusterList | 0xa0000000;
 
 	/* setup tx ring */
-	for (i = 0; i < RTL865X_SWNIC_TXRING_MAX_RING; ++i) {
+	for (i = 0; i < TX_RING; ++i) {
 		pPkthdr = pPkthdrList++;
 		pMbuf = pMbufList++;
 		bzero((void *) pPkthdr, sizeof(struct pktHdr));
@@ -192,17 +198,18 @@ struct ethernetif *ethernetif = netif->state;
 		txPkthdrRing[i] = (int32_t) pPkthdr | DESC_RISC_OWNED;
 	}
 
-	txPkthdrRing[RTL865X_SWNIC_TXRING_MAX_RING-1] |= DESC_WRAP;
+	txPkthdrRing[TX_RING0 - 1] |= DESC_WRAP;
+	txPkthdrRing[TX_RING - 1] |= DESC_WRAP;
 
 	flush_cache();
 
 	ptr = (unsigned int *)CPUTPDCR0;
-	*ptr = txPkthdrRing;
+	*ptr = &txPkthdrRing[0];
 	ptr = (unsigned int *)CPUTPDCR1;
-	*ptr = 0;
+	*ptr = &txPkthdrRing[TX_RING0];
 
 	/* setup rx ring */
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < RX_RING; i++)
 	{
 		/* Dequeue pkthdr and mbuf */
 		pPkthdr = pPkthdrList++;
@@ -232,8 +239,8 @@ struct ethernetif *ethernetif = netif->state;
 		rxMbufRing[i] = (int32_t) pMbuf | DESC_SWCORE_OWNED;
 	}
 
-	rxPkthdrRing[4 -1] |= DESC_WRAP;
-	rxMbufRing[4 - 1] |= DESC_WRAP;
+	rxPkthdrRing[RX_RING -1] |= DESC_WRAP;
+	rxMbufRing[RX_RING - 1] |= DESC_WRAP;
 
 	ptr = (unsigned int *)CPURPDCR0;
 	*ptr = rxPkthdrRing;
@@ -310,10 +317,11 @@ int i;
 
 //dumppkt(pktbuf, len);
 /*
-dumpmem((int *)0xbb801300, 64);
-dumpmem((int *)0xbb801800, 64);
-dumpmem((int *)0xbb801b00, 64);
 dumpmem((int *)0xBB804100, 64);
+for (i = 0;i < 5; ++i)
+dumpmem(0xbb801100+i*0x80, 16);
+for (i = 0;i < 5; ++i)
+dumpmem(0xbb801800+i*0x80, 16);
 	char *str[32];
 	sprintf(str, "len %d.", p->len);
 	print(str);
@@ -322,15 +330,16 @@ dumpmem((int *)0xBB804100, 64);
 	pPkthdr->ph_mbuf->m_len = pPkthdr->ph_len;
 	pPkthdr->ph_mbuf->m_extsize = pPkthdr->ph_len;
 
-//	pPkthdr->ph_vlanId = 8;
+	pPkthdr->ph_vlanId = 8;
 	pPkthdr->ph_portlist = ALL_PORT_MASK;
+	pPkthdr->ph_srcExtPortNum = 0;
 	txPkthdrRing[txPos] |= DESC_SWCORE_OWNED;
 
 	ptr = (unsigned int *)CPUICR;
 	*ptr |= TXFD;
 
 	++txPos;
-	if (txPos == 4)
+	if (txPos == 6)
 		txPos = 0;
 
 	return ERR_OK;
@@ -371,7 +380,10 @@ int i;
 
 			/* We allocate a pbuf chain of pbufs from the pool. */
 			p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
-
+#if 0
+char str[128];
+sprintf(str, "inlen = %d vid= %d.", len, pPkthdr->ph_vlanId);print(str);
+#endif
 			if (p != NULL) {
 				pbuf_take(p, data, len);
 //				que = p;

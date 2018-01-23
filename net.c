@@ -39,6 +39,9 @@ long reg;
 	if( *lptr & TX_DONE_IE0 ) {
 		reg = *lptr | TX_DONE_IE0;
 	}
+	if( *lptr & TX_DONE_IE1 ) {
+		reg = *lptr | TX_DONE_IE1;
+	}
 	if( *lptr & RX_DONE_IE0 ) {
 		ethernetif_input(&netif);
 		reg = *lptr | RX_DONE_IE0;
