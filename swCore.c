@@ -1351,9 +1351,9 @@ int32 swCore_init()
 #ifndef CONFIG_NFBI
 	{		
 		extern char eth0_mac[6];
-		extern char eth0_mac_httpd[6];
+//		extern char eth0_mac_httpd[6];
 		rtl8651_setAsicL2Table((ether_addr_t*)(&eth0_mac), 0);
-		rtl8651_setAsicL2Table((ether_addr_t*)(&eth0_mac_httpd), 1);
+//		rtl8651_setAsicL2Table((ether_addr_t*)(&eth0_mac_httpd), 1);
 	}
 #endif
 	REG32(FFCR) = EN_UNUNICAST_TOCPU | EN_UNMCAST_TOCPU; // rx broadcast and unicast packet

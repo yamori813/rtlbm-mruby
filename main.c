@@ -8,8 +8,6 @@
 extern char _end[];
 extern char _fbss[];
 
-char eth0_mac[6]={0x56, 0xaa, 0xa5, 0x5a, 0x7d, 0xe8};
-
 int
 main(int argc, char *argv[])
 {

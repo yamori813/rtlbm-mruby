@@ -28,6 +28,8 @@ static ip4_addr_t ipaddr, netmask, gw;
 err_t ethernetif_init(struct netif *netif);
 err_t ethernet_input(struct pbuf *p, struct netif *netif);
 
+char eth0_mac[6]={0x56, 0xaa, 0xa5, 0x5a, 0x7d, 0xe8};
+
 void Ether_isr(void)
 {
 long *lptr;
@@ -45,7 +47,6 @@ long reg;
 }
 
 struct irqaction irq_Ether = {Ether_isr, (void *)NULL};
-char eth0_mac_httpd[6];
 
 static struct udp_pcb *udpecho_raw_pcb;
 
