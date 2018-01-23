@@ -11,7 +11,7 @@ i = 0
 while 1 do
    rtl.print "."
    start = rtl.count() 
-   while rtl.count() < start + 5 do
+   while rtl.count() < start + 50 do
    end
    udpstr = rtl.udprecv()
    if udpstr.length != 0 then
