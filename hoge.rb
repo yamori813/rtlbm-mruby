@@ -6,12 +6,6 @@
 #
 
 rtl = RTL8196C.new("")
-while 1 do
-   rtl.print "."
-   start = rtl.count() 
-   while rtl.count() < start + 50 do
-   end
-end
 hsc = HomeSpotCube.new()
 i = 0
 while 1 do
