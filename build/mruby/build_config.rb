@@ -164,7 +164,6 @@ MRuby::CrossBuild.new('realtek') do |conf|
   conf.cc.flags << "-mips16"
   conf.cc.include_paths = ["#{root}/include", "../newlib-2.5.0.20171222/newlib/libc/include"]
 
+  conf.gem :github => 'yamori813/mruby-rtlbm-rtl8196c'
   conf.gem :github => 'yamori813/mruby-rtlbm-hsc'
-
-
 end
