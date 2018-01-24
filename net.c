@@ -30,6 +30,49 @@ err_t ethernet_input(struct pbuf *p, struct netif *netif);
 
 char eth0_mac[6]={0x56, 0xaa, 0xa5, 0x5a, 0x7d, 0xe8};
 
+void gethwmac(unsigned char *mac)
+{
+	unsigned char tmpbuf[6];
+	unsigned short len;
+	unsigned char *buf;
+	unsigned char sum=0;
+	int i;
+	
+	if (flashread(tmpbuf, HW_SETTING_OFFSET,6)==0 ) {
+		return;
+	}
+	if(tmpbuf[0] == 'h')
+	{
+		memcpy(&len, &tmpbuf[4], 2);
+		if(len > 0x2000)
+			return;
+		if(NULL==(buf=(unsigned char *)malloc(len)))
+			return;
+		flashread(buf,HW_SETTING_OFFSET+6,len);
+		if(len != 0 && len <= 0x2000) {					
+			for (i=0;i<len;i++) 
+				sum += buf[i];
+		}
+		else
+			sum=1;
+		if(0 == sum)
+		{			
+			memcpy(mac,buf+HW_NIC0_MAC_OFFSET,6);
+			if(memcmp(mac,"\x0\x0\x0\x0\x0\x0", 6) && !(mac[0] & 0x1))
+			{
+				/*normal mac*/
+			}
+			else
+			{
+				memset(mac,0x0,6);
+			}
+		}
+		if(buf)
+			free(buf);
+	}
+	return;
+}
+
 void Ether_isr(void)
 {
 long *lptr;
@@ -100,6 +143,8 @@ void net_poll()
 void net_init()
 {
 long *lptr;
+
+	gethwmac(eth0_mac);
 
 	swCore_init();
 

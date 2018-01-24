@@ -1,3 +1,7 @@
+#ifndef __ASSEMBLY__
+typedef unsigned short Int16;
+typedef unsigned char Int8;
+#endif
 
 #define	INITIAL_SP		0x80800000
 #define	CP0_STATUS		$12 
@@ -43,3 +47,27 @@
 
 #define LPS_PREC		8
 #define HZ			100
+
+/*mips_io_port_base + FLASH_BASE =0xbfc0 0000   */
+#ifdef RTL8196B
+/*Replace the 0xbfc0 0000 with 0xbd00 0000      */
+#define FLASH_BASE              0x05000000 //JSW : 8672/8196 OCP
+#else
+/*Replace the 0xbfc0 0000 with 0xbe00 0000      */
+#define FLASH_BASE              0x06000000
+#endif
+
+#define rtl_inb(offset)         (*(volatile unsigned char *)(mips_io_port_base + offset))
+#define rtl_inw(offset) (*(volatile unsigned short *)(mips_io_port_base + offset))
+#define rtl_inl(offset)         (*(volatile unsigned long *)(mips_io_port_base + offset))
+
+#define rtl_outb(offset,val)    (*(volatile unsigned char *)(mips_io_port_base + offset) = val)
+#define rtl_outw(offset,val)    (*(volatile unsigned short *)(mips_io_port_base + offset) = val)
+#define rtl_outl(offset,val)    (*(volatile unsigned long *)(mips_io_port_base + offset) = val)
+
+
+
+#define mips_io_port_base (0xB8000000)
+
+#define HW_SETTING_OFFSET            0x6000
+#define HW_NIC0_MAC_OFFSET          1

@@ -13,6 +13,7 @@ CROSS_CFLAGS += -pipe -mlong-calls
 CROSS_CFLAGS += -DCONFIG_RTL8196C -DCONFIG_RTL8196C_REVISION_B
 CROSS_CFLAGS += -DRTL8196C=1 -DCONFIG_RTL865XC=1
 CROSS_CFLAGS += -DRTL8196=1 -DRTL8196B=1
+CROSS_CFLAGS += -DCONFIG_SPI_STD_MODE
 CROSS_CFLAGS += -DRTLBM_MRUBY_DEBUG
 
 CROSS_LDFLAGS = -static -L./mruby-1.4.0/build/realtek/lib -Lnewlib-2.5.0.20171222/mips/newlib/ -Lrsdk/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/4181/ -Llwip-2.0.3/rtl/
@@ -20,9 +21,9 @@ CROSS_LDLIB = -lmruby -lc -lgcc -llwip
 CROSS_LDSCRIPT = main.ld
 
 CROSS_ASFLAGS = -G 0 -mno-abicalls -fno-pic -I./mruby-1.4.0/include/ -fomit-frame-pointer
-CROSS_ASFLAGS += -DCONFIG_RTL865XC
+CROSS_ASFLAGS += -DCONFIG_RTL865XC -D__ASSEMBLY__
 
-OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o
+OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o spi_common.o spi_flash.o
 
 all: main.bin 
 
@@ -56,6 +57,12 @@ rtl_switch.o: rtl_switch.c
 
 swCore.o: swCore.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c swCore.c
+
+spi_common.o: spi_common.c
+	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c spi_common.c
+
+spi_flash.o: spi_flash.c
+	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c spi_flash.c
 
 traps.o: traps.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c traps.c

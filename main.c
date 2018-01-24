@@ -25,6 +25,8 @@ long *lptr;
 
 	timer_init();
 
+	spi_probe();
+
 	net_init();
 
 	mrb_state *mrb;
