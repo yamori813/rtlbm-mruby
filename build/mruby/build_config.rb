@@ -154,6 +154,7 @@ MRuby::CrossBuild.new('realtek') do |conf|
   toolchain :gcc
   conf.cc.command = 'mips-cc'
   conf.archiver.command = 'mips-ar'
+  big_endian
 
   cc.defines << %w(MRB_DISABLE_STDIO)
   cc.defines << %w(MRB_WITHOUT_FLOAT)
