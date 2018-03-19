@@ -67,7 +67,7 @@
  *    4 byte alignment -> #define MEM_ALIGNMENT 4
  *    2 byte alignment -> #define MEM_ALIGNMENT 2
  */
-#define MEM_ALIGNMENT                   1
+#define MEM_ALIGNMENT                   4
 
 /**
  * MEM_SIZE: the size of the heap memory. If the application will send
@@ -437,7 +437,16 @@
 extern unsigned char debug_flags;
 #define LWIP_DBG_TYPES_ON debug_flags
 
+#if 0
 #define LWIP_PLATFORM_DIAG {}
 #define	LWIP_PLATFORM_ASSERT {}
+#else
+void xprintf (const char* fmt, ...);
+void print(char *);
+#define LWIP_PLATFORM_DIAG(x)    xprintf("d%s %d\n", __func__, __LINE__)
+#define	LWIP_PLATFORM_ASSERT(x)    print(x)
+#endif
+
+//#define LWIP_DEBUG
 
 #endif /* LWIP_LWIPOPTS_H */

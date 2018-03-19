@@ -55,3 +55,8 @@ strncmp(const char *s1, const char *s2, size_t n)
 
 dprintf()
 {}
+
+time_t
+time(time_t *tloc)
+{
+}

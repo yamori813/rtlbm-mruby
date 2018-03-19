@@ -21,6 +21,8 @@
 #include "rtlregs.h"
 #include "system.h"
 
+unsigned char debug_flags;
+
 struct netif netif;
 
 static ip4_addr_t ipaddr, netmask, gw;
@@ -113,6 +115,7 @@ udpecho_raw_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
   }
 }
 
+
 void
 udpecho_raw_init(void)
 {
@@ -128,6 +131,58 @@ udpecho_raw_init(void)
     }
   } else {
     /* abort? output diagnostic? */
+  }
+}
+
+static struct tcp_pcb *tcphttp_raw_pcb;
+
+static err_t
+http_recv(void *arg, struct tcp_pcb *pcb,
+                  struct pbuf *pbuf, err_t err)
+{
+  print("r");
+  return ERR_OK;
+}
+
+static err_t
+http_sent (void *arg, struct tcp_pcb *pcb, u16_t len)
+{
+  return ERR_OK;
+}
+
+static err_t
+http_poll(void *arg, struct tcp_pcb *pcb)
+{
+  return ERR_OK;
+}
+
+static void
+http_err(void *arg, err_t err)
+{
+}
+
+static err_t
+http_connected(void *arg, struct tcp_pcb *pcb, err_t err)
+{
+  return ERR_OK;
+}
+
+void
+tcphttp_raw_init(void)
+{
+static ip4_addr_t addr;
+
+  IP4_ADDR(&addr, 10,10,10,3);
+
+  tcphttp_raw_pcb = tcp_new();
+  if (tcphttp_raw_pcb != NULL) {
+    err_t err;
+    tcp_arg(tcphttp_raw_pcb, NULL);
+    tcp_recv(tcphttp_raw_pcb, http_recv);
+    tcp_sent(tcphttp_raw_pcb, http_sent);
+    tcp_err(tcphttp_raw_pcb, http_err);
+    tcp_poll(tcphttp_raw_pcb, http_poll, 4);
+    err = tcp_connect(tcphttp_raw_pcb, &addr, 8080, http_connected);
   }
 }
 
@@ -167,6 +222,7 @@ long *lptr;
 
 	udpbuff[0] = '\0';
 	udpecho_raw_init();
+//	tcphttp_raw_init();
 
 	netstat = 1;
 

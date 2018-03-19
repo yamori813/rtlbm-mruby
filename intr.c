@@ -57,6 +57,7 @@ extern void put(char *);
 asmlinkage void dummy_handler(struct pt_regs *regs)
 {
 	print("unknown exception");
+	for(;;);
 }
 
 void set_except_vector(int n, void *addr)
