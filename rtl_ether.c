@@ -354,7 +354,33 @@ dumpmem(0xbb801800+i*0x80, 16);
  *         NULL on memory error
  */
 
-struct pbuf *que;
+#define INQEULEN 16
+struct pbuf *inque[INQEULEN];
+int inquestart;
+int inqueend;
+
+extern struct netif netif;
+
+eninque(struct pbuf *p)
+{
+	inque[inqueend] = p;
+	++inqueend;
+	if (inqueend == INQEULEN)
+		inqueend = 0;
+}
+
+doque()
+{
+	if(inquestart != inqueend) {
+		while (inquestart != inqueend) {
+			netif.input(inque[inquestart], &netif);
+//			pbuf_free(inque[inquestart]);
+			++inquestart;
+			if (inquestart == INQEULEN)
+				inquestart = 0;
+		}
+	}
+}
 
 void
 low_level_input(struct netif *netif)
@@ -386,8 +412,9 @@ sprintf(str, "inlen = %d vid= %d.", len, pPkthdr->ph_vlanId);print(str);
 #endif
 			if (p != NULL) {
 				pbuf_take(p, data, len);
-//				que = p;
 #if 1
+				eninque(p);
+#else
 				if (netif->input(p, netif) != ERR_OK) {
 					pbuf_free(p);
 					p = NULL;
@@ -458,7 +485,8 @@ struct ethernetif *ethernetif;
 		return ERR_MEM;
 	}
 
-	que = NULL;
+	inquestart = 0;
+	inqueend = 0;
 
 	netif->state = ethernetif;
 	netif->name[0] = IFNAME0;

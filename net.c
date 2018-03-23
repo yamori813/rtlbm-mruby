@@ -99,6 +99,9 @@ struct irqaction irq_Ether = {Ether_isr, (void *)NULL};
 static struct udp_pcb *udpecho_raw_pcb;
 
 char udpbuff[1024];
+char tcpbuff[1024*8];
+int tcplen;
+int tcpoff;
 
 static void
 udpecho_raw_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
@@ -140,7 +143,12 @@ static err_t
 http_recv(void *arg, struct tcp_pcb *pcb,
                   struct pbuf *pbuf, err_t err)
 {
-  print("r");
+  if (pbuf != NULL) {
+    pbuf_copy_partial(pbuf, tcpbuff+tcpoff+tcplen, pbuf->tot_len, 0);
+    tcplen += pbuf->tot_len;
+    tcp_recved(pcb, pbuf->tot_len);
+    pbuf_free(pbuf);
+  }
   return ERR_OK;
 }
 
@@ -164,7 +172,24 @@ http_err(void *arg, err_t err)
 static err_t
 http_connected(void *arg, struct tcp_pcb *pcb, err_t err)
 {
+  tcplen = 0;
+  tcpoff = 0;
   return ERR_OK;
+}
+
+void
+my_tcp_write(char *buf, int len)
+{
+  err_t err = ERR_OK;
+  len = (u16_t)LWIP_MIN(len, tcp_sndbuf(tcphttp_raw_pcb));
+  err = tcp_write(tcphttp_raw_pcb, buf, len, TCP_WRITE_FLAG_COPY);
+  tcp_output(tcphttp_raw_pcb);
+}
+
+void
+my_tcp_close()
+{
+  tcp_close(tcphttp_raw_pcb);
 }
 
 void
@@ -177,11 +202,11 @@ static ip4_addr_t addr;
   tcphttp_raw_pcb = tcp_new();
   if (tcphttp_raw_pcb != NULL) {
     err_t err;
-    tcp_arg(tcphttp_raw_pcb, NULL);
+//    tcp_arg(tcphttp_raw_pcb, NULL);
     tcp_recv(tcphttp_raw_pcb, http_recv);
     tcp_sent(tcphttp_raw_pcb, http_sent);
-    tcp_err(tcphttp_raw_pcb, http_err);
-    tcp_poll(tcphttp_raw_pcb, http_poll, 4);
+//    tcp_err(tcphttp_raw_pcb, http_err);
+//    tcp_poll(tcphttp_raw_pcb, http_poll, 4);
     err = tcp_connect(tcphttp_raw_pcb, &addr, 8080, http_connected);
   }
 }
@@ -192,7 +217,8 @@ void net_poll()
 {
 
 	if (netstat == 1)
-		sys_check_timeouts();
+//		sys_check_timeouts();
+		doque();
 }
 
 void net_init()
@@ -220,10 +246,11 @@ long *lptr;
 	netif_set_default(&netif);
 	netif_set_up(&netif);   /* send broadcast arp packet */
 
+	netstat = 1;
+
 	udpbuff[0] = '\0';
 	udpecho_raw_init();
-//	tcphttp_raw_init();
-
-	netstat = 1;
+	tcphttp_raw_init();
+	bear();
 
 }

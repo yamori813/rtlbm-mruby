@@ -1,4 +1,5 @@
 #include <sys/cdefs.h>
+#include <time.h>
 
 #include "asicregs.h"
 #include "rtlregs.h"
@@ -17,7 +18,7 @@ unsigned long reg;
 	reg = *lptr;
 	*lptr = reg | 1 << 29;
 
-//	net_poll();
+	net_poll();
 
 	++jiffies;
 }

@@ -29,7 +29,7 @@ CROSS_LDSCRIPT = main.ld
 CROSS_ASFLAGS = -G 0 -mno-abicalls -fno-pic -fomit-frame-pointer
 CROSS_ASFLAGS += -DCONFIG_RTL865XC -D__ASSEMBLY__
 
-OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o spi_common.o spi_flash.o xprintf.o
+OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o spi_common.o spi_flash.o xprintf.o bear.o
 
 all: main.bin 
 
