@@ -276,8 +276,13 @@ int i;
 	if (err != ERR_OK) {
 		print("dhcp error\n");
 	}
-	while((netif.ip_addr.addr & 0xff) == 0)
+	while(netif.ip_addr.addr == 0)
 		sys_check_timeouts();
+	xprintf("IP address : %d.%d.%d.%d\n",
+		(netif.ip_addr.addr >> 24) & 0xff,
+		(netif.ip_addr.addr >> 16) & 0xff,
+		(netif.ip_addr.addr >> 8) & 0xff,
+		netif.ip_addr.addr & 0xff);
 #else
 	dns_setserver(0, &dnsserver);
 #endif
