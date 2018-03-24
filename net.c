@@ -16,6 +16,9 @@
 #include "lwip/udp.h"
 #include "lwip/tcp.h"
 
+#include "lwip/dns.h"
+#include "lwip/dhcp.h"
+
 #include "asicregs.h"
 #include "intr.h"
 #include "rtlregs.h"
@@ -25,7 +28,7 @@ unsigned char debug_flags;
 
 struct netif netif;
 
-static ip4_addr_t ipaddr, netmask, gw;
+static ip4_addr_t ipaddr, netmask, gw, dnsserver, dnsres;
 
 err_t ethernetif_init(struct netif *netif);
 err_t ethernet_input(struct pbuf *p, struct netif *netif);
@@ -197,7 +200,7 @@ tcphttp_raw_init(void)
 {
 static ip4_addr_t addr;
 
-  IP4_ADDR(&addr, 10,10,10,3);
+  IP4_ADDR(&addr, 10,0,1,37);
 
   tcphttp_raw_pcb = tcp_new();
   if (tcphttp_raw_pcb != NULL) {
@@ -221,20 +224,41 @@ void net_poll()
 		doque();
 }
 
+static void
+dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
+{
+  LWIP_UNUSED_ARG(hostname);
+  LWIP_UNUSED_ARG(arg);
+xprintf("find %s\n", hostname);
+}
+
 void net_init()
 {
 long *lptr;
+err_t err;
+int i;
 
 	gethwmac(eth0_mac);
 
 	swCore_init();
 
-	IP4_ADDR(&ipaddr, 10,10,10,2);
+#if USE_DHCP
+	IP4_ADDR(&ipaddr, 0,0,0,0);
+	IP4_ADDR(&netmask, 0,0,0,0);
+	IP4_ADDR(&gw, 0,0,0,0);
+#else
+	IP4_ADDR(&ipaddr, 10,0,1,222);
 	IP4_ADDR(&netmask, 255,255,255,0);
-	IP4_ADDR(&gw, 10,10,10,3);
+	IP4_ADDR(&gw, 10,0,1,1);
+	IP4_ADDR(&dnsserver, 10,0,1,1);
+#endif
 
 	lwip_init();
+#if USE_DHCP
+	netif_add(&netif, ip_2_ip4(&ipaddr), ip_2_ip4(&netmask), ip_2_ip4(&gw), NULL, ethernetif_init,
+#else
 	netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,
+#endif
 	    ethernet_input);
 
 	vlan_init();
@@ -247,6 +271,20 @@ long *lptr;
 	netif_set_up(&netif);   /* send broadcast arp packet */
 
 	netstat = 1;
+#if USE_DHCP
+	err = dhcp_start(&netif);
+	if (err != ERR_OK) {
+		print("dhcp error\n");
+	}
+	while((netif.ip_addr.addr & 0xff) == 0)
+		sys_check_timeouts();
+#else
+	dns_setserver(0, &dnsserver);
+#endif
+
+	err = dns_gethostbyname("www.yahoo.co.jp", &dnsres, dns_found, NULL);
+	if (err == ERR_OK) {
+	}
 
 	udpbuff[0] = '\0';
 	udpecho_raw_init();

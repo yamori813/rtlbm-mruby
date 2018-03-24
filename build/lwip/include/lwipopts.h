@@ -271,7 +271,7 @@
 /**
  * LWIP_DHCP==1: Enable DHCP module.
  */
-#define LWIP_DHCP                       0
+#define LWIP_DHCP                       1
 
 /*
    ------------------------------------
@@ -315,7 +315,7 @@
  * LWIP_DNS==1: Turn on DNS module. UDP must be available for DNS
  * transport.
  */
-#define LWIP_DNS                        0
+#define LWIP_DNS                        1
 
 /*
    ---------------------------------
@@ -448,5 +448,8 @@ void print(char *);
 #endif
 
 //#define LWIP_DEBUG
+
+unsigned long genrand_int32(void);
+#define LWIP_RAND	genrand_int32
 
 #endif /* LWIP_LWIPOPTS_H */

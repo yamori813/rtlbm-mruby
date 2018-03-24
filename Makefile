@@ -21,6 +21,7 @@ CROSS_CFLAGS += -DRTL8196C=1 -DCONFIG_RTL865XC=1
 CROSS_CFLAGS += -DRTL8196=1 -DRTL8196B=1
 CROSS_CFLAGS += -DCONFIG_SPI_STD_MODE
 CROSS_CFLAGS += -DRTLBM_MRUBY_DEBUG
+CROSS_CFLAGS += -DUSE_DHCP=1
 
 CROSS_LDFLAGS = -static -L./$(MRUBYDIR)/build/realtek/lib -L./$(NEWLIBDIR)/mips/newlib/ -Lrsdk/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/4181/ -L./$(LWIPDIR)/rtl/ -L./BearSSL/build/
 CROSS_LDLIB = -lmruby -lc -lgcc -llwip -lbearssl
@@ -29,7 +30,7 @@ CROSS_LDSCRIPT = main.ld
 CROSS_ASFLAGS = -G 0 -mno-abicalls -fno-pic -fomit-frame-pointer
 CROSS_ASFLAGS += -DCONFIG_RTL865XC -D__ASSEMBLY__
 
-OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o spi_common.o spi_flash.o xprintf.o bear.o
+OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o spi_common.o spi_flash.o xprintf.o bear.o mt19937ar.o
 
 all: main.bin 
 
@@ -78,6 +79,9 @@ syscalls.o: syscalls.c
 
 xprintf.o: xprintf.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c xprintf.c
+
+mt19937ar.o: mt19937ar.c
+	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c mt19937ar.c
 
 bear.o: bear.c
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c bear.c
