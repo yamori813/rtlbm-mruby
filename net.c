@@ -141,6 +141,7 @@ udpecho_raw_init(void)
 }
 
 static struct tcp_pcb *tcphttp_raw_pcb;
+static tcpstat;
 
 static err_t
 http_recv(void *arg, struct tcp_pcb *pcb,
@@ -170,6 +171,7 @@ http_poll(void *arg, struct tcp_pcb *pcb)
 static void
 http_err(void *arg, err_t err)
 {
+  tcpstat = 2;
 }
 
 static err_t
@@ -177,6 +179,7 @@ http_connected(void *arg, struct tcp_pcb *pcb, err_t err)
 {
   tcplen = 0;
   tcpoff = 0;
+  tcpstat = 1;
   return ERR_OK;
 }
 
@@ -195,23 +198,25 @@ my_tcp_close()
   tcp_close(tcphttp_raw_pcb);
 }
 
-void
+static err_t
 tcphttp_raw_init(void)
 {
 static ip4_addr_t addr;
+err_t err;
 
   IP4_ADDR(&addr, 10,0,1,37);
 
   tcphttp_raw_pcb = tcp_new();
   if (tcphttp_raw_pcb != NULL) {
-    err_t err;
 //    tcp_arg(tcphttp_raw_pcb, NULL);
     tcp_recv(tcphttp_raw_pcb, http_recv);
     tcp_sent(tcphttp_raw_pcb, http_sent);
-//    tcp_err(tcphttp_raw_pcb, http_err);
+    tcp_err(tcphttp_raw_pcb, http_err);
 //    tcp_poll(tcphttp_raw_pcb, http_poll, 4);
     err = tcp_connect(tcphttp_raw_pcb, &addr, 8080, http_connected);
+    tcpstat = 0;
   }
+  return err;
 }
 
 int netstat = 0;
@@ -224,12 +229,24 @@ void net_poll()
 		doque();
 }
 
+int dnsstat;
+
 static void
 dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
 {
-  LWIP_UNUSED_ARG(hostname);
   LWIP_UNUSED_ARG(arg);
-xprintf("find %s\n", hostname);
+
+  if (ipaddr != 0) {
+    xprintf("find %s %d.%d.%d.%d\n", hostname, 
+		(*(int *)ipaddr >> 24) & 0xff,
+		(*(int *)ipaddr >> 16) & 0xff,
+		(*(int *)ipaddr >> 8) & 0xff,
+		*(int *)ipaddr & 0xff);
+    dnsstat = 1;
+  } else {
+    xprintf("not find %s\n", hostname);
+    dnsstat = 2;
+  }
 }
 
 void net_init()
@@ -287,13 +304,20 @@ int i;
 	dns_setserver(0, &dnsserver);
 #endif
 
+	dnsstat = 0;
 	err = dns_gethostbyname("www.yahoo.co.jp", &dnsres, dns_found, NULL);
 	if (err == ERR_OK) {
+		while(dnsstat == 0)
+			delay_ms(10);
 	}
 
 	udpbuff[0] = '\0';
 	udpecho_raw_init();
-	tcphttp_raw_init();
-	bear();
+	if (tcphttp_raw_init() == ERR_OK) {
+		while(tcpstat == 0)
+			delay_ms(10);
+		if (tcpstat == 1)
+			bear();
+	}
 
 }
