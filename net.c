@@ -225,7 +225,7 @@ void net_poll()
 {
 
 	if (netstat == 1)
-//		sys_check_timeouts();
+		sys_check_timeouts();
 		doque();
 }
 
@@ -292,32 +292,46 @@ int i;
 	err = dhcp_start(&netif);
 	if (err != ERR_OK) {
 		print("dhcp error\n");
+		netstat = 0;
+	} else {
+		for (i = 0; i < 1000; ++i) {
+			delay_ms(100);
+			if (netif.ip_addr.addr != 0)
+				break;
+		}
+		if (netif.ip_addr.addr != 0) {
+			xprintf("IP address : %d.%d.%d.%d\n",
+			    (netif.ip_addr.addr >> 24) & 0xff,
+			    (netif.ip_addr.addr >> 16) & 0xff,
+			    (netif.ip_addr.addr >> 8) & 0xff,
+			    netif.ip_addr.addr & 0xff);
+		} else {
+			print("dhcp can't get address\n");
+			netstat = 0;
+		}
 	}
-	while(netif.ip_addr.addr == 0)
-		sys_check_timeouts();
-	xprintf("IP address : %d.%d.%d.%d\n",
-		(netif.ip_addr.addr >> 24) & 0xff,
-		(netif.ip_addr.addr >> 16) & 0xff,
-		(netif.ip_addr.addr >> 8) & 0xff,
-		netif.ip_addr.addr & 0xff);
 #else
 	dns_setserver(0, &dnsserver);
 #endif
 
-	dnsstat = 0;
-	err = dns_gethostbyname("www.yahoo.co.jp", &dnsres, dns_found, NULL);
-	if (err == ERR_OK) {
-		while(dnsstat == 0)
-			delay_ms(10);
-	}
+	if (netstat) {
+		dnsstat = 0;
+		err = dns_gethostbyname("www.yahoo.co.jp",
+		    &dnsres, dns_found, NULL);
+		if (err == ERR_OK) {
+			while(dnsstat == 0)
+				delay_ms(10);
+		}
 
-	udpbuff[0] = '\0';
-	udpecho_raw_init();
-	if (tcphttp_raw_init() == ERR_OK) {
-		while(tcpstat == 0)
-			delay_ms(10);
-		if (tcpstat == 1)
-			bear();
+		udpbuff[0] = '\0';
+		udpecho_raw_init();
+
+		if (tcphttp_raw_init() == ERR_OK) {
+			while(tcpstat == 0)
+				delay_ms(10);
+			if (tcpstat == 1)
+				bear();
+		}
 	}
 
 }
