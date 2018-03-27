@@ -149,6 +149,9 @@ static const br_x509_trust_anchor TAs[2] = {
 
 #define TAs_NUM   2
 
+br_ssl_client_context sc;
+br_sslio_context ioc;
+
 /*
  * Main program: this is a simple program that expects 2 or 3 arguments.
  * The first two arguments are a hostname and a port; the program will
@@ -159,16 +162,10 @@ static const br_x509_trust_anchor TAs[2] = {
  * on stdout.
  */
 int
-bear()
+bear(char *host, char * header)
 {
-	const char *host, *port, *path;
-	br_ssl_client_context sc;
 	br_x509_minimal_context xc;
 	unsigned char iobuf[BR_SSL_BUFSIZE_BIDI];
-	br_sslio_context ioc;
-
-	host = "localhost";
-	path = "/";
 
 	/*
 	 * Initialise the client context:
@@ -212,40 +209,38 @@ bear()
 	 * (e.g. bad server certificate), then it will remain in failed
 	 * state and all subsequent calls will return -1 as well.
 	 */
+/*
 	br_sslio_write_all(&ioc, "GET ", 4);
 	br_sslio_write_all(&ioc, path, strlen(path));
 	br_sslio_write_all(&ioc, " HTTP/1.0\r\nHost: ", 17);
 	br_sslio_write_all(&ioc, host, strlen(host));
 	br_sslio_write_all(&ioc, "\r\n\r\n", 4);
+*/
+	br_sslio_write_all(&ioc, header, strlen(header));
 
 	/*
 	 * SSL is a buffered protocol: we make sure that all our request
 	 * bytes are sent onto the wire.
 	 */
 	br_sslio_flush(&ioc);
+}
 
+int
+https_read(char *buf, int len)
+{
 	/*
 	 * Read the server's response. We use here a small 512-byte buffer,
 	 * but most of the buffering occurs in the client context: the
 	 * server will send full records (up to 16384 bytes worth of data
 	 * each), and the client context buffers one full record at a time.
 	 */
-	for (;;) {
-		int rlen;
-		unsigned char tmp[512];
 
-//		rlen = br_sslio_read(&ioc, tmp, sizeof tmp);
-		rlen = br_sslio_read(&ioc, tmp, 1);
-		if (rlen < 0) {
-			break;
-		}
-//		fwrite(tmp, 1, rlen, stdout);
-		int i;
-		for (i = 0; i < rlen; ++i) {
-			put(tmp[i]);
-		}
-	}
+	return br_sslio_read(&ioc, buf, len);
+}
 
+void
+https_close()
+{
 	my_tcp_close();
 
 	/*
@@ -265,15 +260,29 @@ bear()
 
 		err = br_ssl_engine_last_error(&sc.eng);
 		if (err == 0) {
-			xprintf("closed.\n");
+//			xprintf("closed.\n");
 			return 0;
 		} else {
-			xprintf("SSL error %d\n", err);
+//			xprintf("SSL error %d\n", err);
 			return 0;
 		}
 	} else {
-//		fprintf(stderr,
-//			"socket closed without proper SSL termination\n");
+//		xprintf("socket closed without proper SSL termination\n");
 		return 0;
 	}
+}
+
+extern int tcpstat;
+
+int
+https_connect(char *host, int addr, int port, char *header)
+{
+	tcphttp_raw_init(addr, port);
+	while(tcpstat == 0)
+		delay_ms(10);
+	if (tcpstat == 1) {
+		bear(host,header);
+		return 1;
+	}
+	return 0;
 }

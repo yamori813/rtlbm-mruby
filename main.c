@@ -1,5 +1,7 @@
 #include <mruby.h>
 #include <mruby/irep.h>
+#include <mruby/string.h>
+#include <mruby/error.h>
 
 #include "intr.h"
 
@@ -35,6 +37,11 @@ long *lptr;
 	mrb_state *mrb;
 	mrb = mrb_open();
 	mrb_load_irep( mrb, bytecode);
+	if (mrb->exc) {
+		mrb_value exc = mrb_obj_value(mrb->exc);
+		mrb_value inspect = mrb_inspect(mrb, exc);
+		print(mrb_str_to_cstr(mrb, inspect));
+	}
 	mrb_close(mrb);
 
 	return 1;

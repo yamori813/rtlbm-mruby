@@ -412,7 +412,7 @@ sprintf(str, "inlen = %d vid= %d.", len, pPkthdr->ph_vlanId);print(str);
 #endif
 			if (p != NULL) {
 				pbuf_take(p, data, len);
-#if 1
+#if 0
 				eninque(p);
 #else
 				if (netif->input(p, netif) != ERR_OK) {

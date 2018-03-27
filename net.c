@@ -141,7 +141,7 @@ udpecho_raw_init(void)
 }
 
 static struct tcp_pcb *tcphttp_raw_pcb;
-static tcpstat;
+int tcpstat;
 
 static err_t
 http_recv(void *arg, struct tcp_pcb *pcb,
@@ -152,6 +152,8 @@ http_recv(void *arg, struct tcp_pcb *pcb,
     tcplen += pbuf->tot_len;
     tcp_recved(pcb, pbuf->tot_len);
     pbuf_free(pbuf);
+  } else {
+    tcpstat = 2;
   }
   return ERR_OK;
 }
@@ -198,13 +200,12 @@ my_tcp_close()
   tcp_close(tcphttp_raw_pcb);
 }
 
-static err_t
-tcphttp_raw_init(void)
+void
+tcphttp_raw_init(int disaddr, int disport)
 {
 static ip4_addr_t addr;
-err_t err;
 
-  IP4_ADDR(&addr, 10,0,1,37);
+  ip4_addr_set_u32(&addr, disaddr);
 
   tcphttp_raw_pcb = tcp_new();
   if (tcphttp_raw_pcb != NULL) {
@@ -213,10 +214,9 @@ err_t err;
     tcp_sent(tcphttp_raw_pcb, http_sent);
     tcp_err(tcphttp_raw_pcb, http_err);
 //    tcp_poll(tcphttp_raw_pcb, http_poll, 4);
-    err = tcp_connect(tcphttp_raw_pcb, &addr, 8080, http_connected);
+    tcp_connect(tcphttp_raw_pcb, &addr, disport, http_connected);
     tcpstat = 0;
   }
-  return err;
 }
 
 int netstat = 0;
@@ -230,6 +230,7 @@ void net_poll()
 }
 
 int dnsstat;
+int resolvip;
 
 static void
 dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
@@ -237,14 +238,17 @@ dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
   LWIP_UNUSED_ARG(arg);
 
   if (ipaddr != 0) {
+    resolvip = ip_addr_get_ip4_u32(ipaddr);
+/*
     xprintf("find %s %d.%d.%d.%d\n", hostname, 
 		(*(int *)ipaddr >> 24) & 0xff,
 		(*(int *)ipaddr >> 16) & 0xff,
 		(*(int *)ipaddr >> 8) & 0xff,
 		*(int *)ipaddr & 0xff);
+*/
     dnsstat = 1;
   } else {
-    xprintf("not find %s\n", hostname);
+//    xprintf("not find %s\n", hostname);
     dnsstat = 2;
   }
 }
@@ -315,23 +319,71 @@ int i;
 #endif
 
 	if (netstat) {
-		dnsstat = 0;
-		err = dns_gethostbyname("www.yahoo.co.jp",
-		    &dnsres, dns_found, NULL);
-		if (err == ERR_OK) {
-			while(dnsstat == 0)
-				delay_ms(10);
-		}
 
 		udpbuff[0] = '\0';
 		udpecho_raw_init();
 
-		if (tcphttp_raw_init() == ERR_OK) {
-			while(tcpstat == 0)
-				delay_ms(10);
-			if (tcpstat == 1)
-				bear();
+	}
+}
+
+int
+lookup(char *host, int *addr)
+{
+err_t err;
+
+	dnsstat = 0;
+	err = dns_gethostbyname(host,
+	    &dnsres, dns_found, NULL);
+	if (err == ERR_OK) {
+		*addr = ip_addr_get_ip4_u32(&dnsres);
+		return 1;
+	} else {
+		while(dnsstat == 0)
+			delay_ms(10);
+		if (dnsstat == 1) {
+			*addr = resolvip;
+			return 1;
 		}
 	}
+	*addr = 0;
+	return 0;
+}
 
+int
+http_connect(int addr, int port, char *header)
+{
+        tcphttp_raw_init(addr, port);
+        while(tcpstat == 0)
+                delay_ms(10);
+        if (tcpstat == 1) {
+		my_tcp_write(header, strlen(header));
+                return 1;
+        }
+        return 0;
+}
+
+int
+http_read(char *buf, int len)
+{
+int rlen = 0;
+int i;
+
+	if (tcplen != 0) {
+		rlen = tcplen > len ? len : tcplen;
+		memcpy(buf, tcpbuff + tcpoff, rlen);
+		tcplen -= rlen;
+		if(tcplen == 0)
+			tcpoff = 0;
+		else
+			tcpoff += rlen;
+	} else if (tcpstat == 2) {
+		rlen = -1;
+	}
+	return rlen;
+}
+
+void
+http_close()
+{
+	tcp_close(tcphttp_raw_pcb);
 }

@@ -3,6 +3,11 @@
 TERGET=main
 IMG=${TERGET}.rtl
 
+cd mruby
+make clean
+make
+cd ..
+
 make clean
 make
 ENTRY=`readelf -h ${TERGET}.elf | awk '/Entry point address/{print $4}'`
