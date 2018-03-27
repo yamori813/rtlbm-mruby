@@ -56,25 +56,6 @@ rtl_switch.o: rtl_switch.c
 swCore.o: swCore.c
 spi_common.o: spi_common.c
 spi_flash.o: spi_flash.c
-start.o: start.S
-	$(CROSS_CC) -O2 $(CROSS_ASFLAGS) -c start.S
-
-inthandler.o: inthandler.S
-	$(CROSS_CC) -O2 $(CROSS_ASFLAGS) -c inthandler.S
-
-main.o: main.c hoge.rb
-	./$(MRUBYDIR)/build/host/bin/mrbc -E -Bbytecode hoge.rb
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c main.c
-
-uart.o: uart.c
-rtl_timer.o: rtl_timer.c
-net.o: net.c
-intr.o: intr.c
-rtl_ether.o: rtl_ether.c
-rtl_switch.o: rtl_switch.c
-swCore.o: swCore.c
-spi_common.o: spi_common.c
-spi_flash.o: spi_flash.c
 traps.o: traps.c
 syscalls.o: syscalls.c
 xprintf.o: xprintf.c
