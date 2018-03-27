@@ -32,6 +32,8 @@ CROSS_ASFLAGS += -DCONFIG_RTL865XC -D__ASSEMBLY__
 
 OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o spi_common.o spi_flash.o xprintf.o bear.o mt19937ar.o time.o
 
+MY_SCRIPT ?= hoge.rb
+
 all: main.bin 
 
 .c.o:
@@ -40,8 +42,8 @@ all: main.bin
 .S.o:
 	$(CROSS_CC) -O2 $(CROSS_ASFLAGS) -c $<
 
-main.o: main.c hoge.rb
-	./$(MRUBYDIR)/build/host/bin/mrbc -E -Bbytecode hoge.rb
+main.o: main.c $(MY_SCRIPT)
+	./$(MRUBYDIR)/build/host/bin/mrbc -E -obytecode.h -Bbytecode $(MY_SCRIPT)
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c main.c
 
 start.o: start.S
@@ -70,4 +72,4 @@ main.bin: main.elf
 	$(CROSS_OBJCOPY) -O binary main.elf main.bin
 
 clean:
-	rm -rf *.o *.elf *.bin hoge.c main.map main.rtl
+	rm -rf *.o *.elf *.bin hoge.c main.map main.rtl bytecode.h

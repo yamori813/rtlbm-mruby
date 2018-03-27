@@ -5,7 +5,7 @@
 
 #include "intr.h"
 
-#include "hoge.c"
+#include "bytecode.h"
 
 extern char _end[];
 extern char _fbss[];
