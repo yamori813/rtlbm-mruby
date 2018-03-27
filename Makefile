@@ -34,6 +34,28 @@ OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthand
 
 all: main.bin 
 
+.c.o:
+	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c $<
+
+.S.o:
+	$(CROSS_CC) -O2 $(CROSS_ASFLAGS) -c $<
+
+main.o: main.c hoge.rb
+	./$(MRUBYDIR)/build/host/bin/mrbc -E -Bbytecode hoge.rb
+	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c main.c
+
+start.o: start.S
+inthandler.o: inthandler.S
+
+uart.o: uart.c
+rtl_timer.o: rtl_timer.c
+net.o: net.c
+intr.o: intr.c
+rtl_ether.o: rtl_ether.c
+rtl_switch.o: rtl_switch.c
+swCore.o: swCore.c
+spi_common.o: spi_common.c
+spi_flash.o: spi_flash.c
 start.o: start.S
 	$(CROSS_CC) -O2 $(CROSS_ASFLAGS) -c start.S
 
@@ -45,49 +67,20 @@ main.o: main.c hoge.rb
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c main.c
 
 uart.o: uart.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c uart.c
-
 rtl_timer.o: rtl_timer.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c rtl_timer.c
-
 net.o: net.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c net.c
-
 intr.o: intr.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c intr.c
-
 rtl_ether.o: rtl_ether.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c rtl_ether.c
-
 rtl_switch.o: rtl_switch.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c rtl_switch.c
-
 swCore.o: swCore.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c swCore.c
-
 spi_common.o: spi_common.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c spi_common.c
-
 spi_flash.o: spi_flash.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c spi_flash.c
-
 traps.o: traps.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c traps.c
-
 syscalls.o: syscalls.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c syscalls.c
-
 xprintf.o: xprintf.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c xprintf.c
-
 mt19937ar.o: mt19937ar.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c mt19937ar.c
-
 time.o: time.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c time.c
-
 bear.o: bear.c
-	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c bear.c
 
 main.elf: $(OBJS) main.ld
 	$(CROSS_LD) $(CROSS_LDFLAGS) -T $(CROSS_LDSCRIPT) -Map main.map $(OBJS) $(MRBOBJ) $(CROSS_LDLIB) -o main.elf
