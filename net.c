@@ -148,6 +148,8 @@ http_recv(void *arg, struct tcp_pcb *pcb,
                   struct pbuf *pbuf, err_t err)
 {
   if (pbuf != NULL) {
+    if (tcplen == 0)
+      tcpoff = 0;
     pbuf_copy_partial(pbuf, tcpbuff+tcpoff+tcplen, pbuf->tot_len, 0);
     tcplen += pbuf->tot_len;
     tcp_recved(pcb, pbuf->tot_len);
@@ -330,23 +332,25 @@ int
 lookup(char *host, int *addr)
 {
 err_t err;
+int res;
 
+	res = 0;
+	*addr = 0;
 	dnsstat = 0;
 	err = dns_gethostbyname(host,
 	    &dnsres, dns_found, NULL);
 	if (err == ERR_OK) {
 		*addr = ip_addr_get_ip4_u32(&dnsres);
-		return 1;
+		res = 1;
 	} else {
 		while(dnsstat == 0)
 			delay_ms(10);
 		if (dnsstat == 1) {
 			*addr = resolvip;
-			return 1;
+			res = 1;
 		}
 	}
-	*addr = 0;
-	return 0;
+	return res;
 }
 
 int
@@ -369,13 +373,12 @@ int rlen = 0;
 int i;
 
 	if (tcplen != 0) {
+		cli();
 		rlen = tcplen > len ? len : tcplen;
 		memcpy(buf, tcpbuff + tcpoff, rlen);
 		tcplen -= rlen;
-		if(tcplen == 0)
-			tcpoff = 0;
-		else
-			tcpoff += rlen;
+		tcpoff += rlen;
+		sti();
 	} else if (tcpstat == 2) {
 		rlen = -1;
 	}

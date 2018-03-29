@@ -23,6 +23,7 @@
  */
 
 #include "bearssl.h"
+#include "system.h"
 
 /*
  * Low-level data read callback for the simplified SSL I/O API.
@@ -31,6 +32,7 @@
 extern char tcpbuff[];
 extern int tcplen;
 extern int tcpoff;
+extern int tcpstat;
 
 static int
 sock_read(void *ctx, unsigned char *buf, size_t len)
@@ -39,13 +41,14 @@ int rlen = 0;
 int i;
 
 	if (tcplen != 0) {
+		cli();
 		rlen = tcplen > len ? len : tcplen;
 		memcpy(buf, tcpbuff + tcpoff, rlen);
 		tcplen -= rlen;
-		if(tcplen == 0)
-			tcpoff = 0;
-		else
-			tcpoff += rlen;
+		tcpoff += rlen;
+		sti();
+	} else if(tcpstat == 2) {
+		-1;
 	}
 	return rlen;
 }
@@ -263,11 +266,11 @@ https_close()
 //			xprintf("closed.\n");
 			return 0;
 		} else {
-//			xprintf("SSL error %d\n", err);
+			xprintf("SSL error %d\n", err);
 			return 0;
 		}
 	} else {
-//		xprintf("socket closed without proper SSL termination\n");
+		xprintf("socket closed without proper SSL termination\n");
 		return 0;
 	}
 }

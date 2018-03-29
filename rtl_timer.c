@@ -18,7 +18,7 @@ unsigned long reg;
 	reg = *lptr;
 	*lptr = reg | 1 << 29;
 
-	net_poll();
+//	net_poll();
 
 	++jiffies;
 }

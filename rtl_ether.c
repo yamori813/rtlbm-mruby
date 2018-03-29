@@ -201,8 +201,6 @@ struct ethernetif *ethernetif = netif->state;
 	txPkthdrRing[TX_RING0 - 1] |= DESC_WRAP;
 	txPkthdrRing[TX_RING - 1] |= DESC_WRAP;
 
-	flush_cache();
-
 	ptr = (unsigned int *)CPUTPDCR0;
 	*ptr = &txPkthdrRing[0];
 	ptr = (unsigned int *)CPUTPDCR1;
@@ -396,7 +394,7 @@ int i;
 	len = 0;
 
 
-	for (i = 0; i < 4; ++i) {
+	for (i = 0; i < RX_RING; ++i) {
 		if ((rxPkthdrRing[i] & DESC_OWNED_BIT) ==
 		    DESC_RISC_OWNED ) {
 			pPkthdr = (struct pktHdr *) (rxPkthdrRing[i] & 
@@ -427,7 +425,6 @@ sprintf(str, "inlen = %d vid= %d.", len, pPkthdr->ph_vlanId);print(str);
 			/* Reset OWN bit */
 			rxPkthdrRing[i] |= DESC_SWCORE_OWNED;
 			rxMbufRing[i] |= DESC_SWCORE_OWNED;
-			flush_cache();
 		}
 	}
 
