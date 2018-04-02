@@ -3,6 +3,7 @@ This projct use these libraries.
 newlib-2.5.0.20171222  
 lwip-2.0.3  
 mruby-1.4.0  
+BearSSL
 
 Source code 
 
@@ -20,6 +21,7 @@ net.c -- netwrok code
 rtl_ether.c -- rt8196 ethernet nic support code  
 rtl_switch.c -- rtl8196 switch vlan setup code  
 swCore.c -- realtek switch control code  
+bear.c -- https code
 
 hoge.rb -- mruby code
 
@@ -28,6 +30,8 @@ Build tools is this.
 rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714  
 
 I build on FreeBSD/amd64 10.4 used by linux emuration.  
+
+sudo kldload linux
 
 ```
 +-- rsdk (synblic link to rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714)
@@ -41,6 +45,9 @@ I build on FreeBSD/amd64 10.4 used by linux emuration.
 |       +-- build/realtek/lib  
 |  
 +-- lwip-2.0.3  
-        |  
-        +-- rtk  
+|       |  
+|       +-- rtk  
++-- BearSSL
+        |
+        +-- build
 ```
