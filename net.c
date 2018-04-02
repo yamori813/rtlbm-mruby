@@ -123,13 +123,13 @@ udpecho_raw_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 
 
 void
-udpecho_raw_init(void)
+udpecho_raw_init(int port)
 {
   udpecho_raw_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
   if (udpecho_raw_pcb != NULL) {
     err_t err;
 
-    err = udp_bind(udpecho_raw_pcb, IP_ANY_TYPE, 7000);
+    err = udp_bind(udpecho_raw_pcb, IP_ANY_TYPE, port);
     if (err == ERR_OK) {
       udp_recv(udpecho_raw_pcb, udpecho_raw_recv, NULL);
     } else {
@@ -169,6 +169,9 @@ http_sent (void *arg, struct tcp_pcb *pcb, u16_t len)
 static err_t
 http_poll(void *arg, struct tcp_pcb *pcb)
 {
+  tcp_abort(pcb);
+  tcpstat = 2;
+  print("tcp_abort");
   return ERR_OK;
 }
 
@@ -215,7 +218,7 @@ static ip4_addr_t addr;
     tcp_recv(tcphttp_raw_pcb, http_recv);
     tcp_sent(tcphttp_raw_pcb, http_sent);
     tcp_err(tcphttp_raw_pcb, http_err);
-//    tcp_poll(tcphttp_raw_pcb, http_poll, 4);
+    tcp_poll(tcphttp_raw_pcb, http_poll, 10);
     tcp_connect(tcphttp_raw_pcb, &addr, disport, http_connected);
     tcpstat = 0;
   }
@@ -226,9 +229,10 @@ int netstat = 0;
 void net_poll()
 {
 
-	if (netstat == 1)
+	if (netstat == 1) {
 		sys_check_timeouts();
 		doque();
+	}
 }
 
 int dnsstat;
@@ -241,16 +245,8 @@ dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
 
   if (ipaddr != 0) {
     resolvip = ip_addr_get_ip4_u32(ipaddr);
-/*
-    xprintf("find %s %d.%d.%d.%d\n", hostname, 
-		(*(int *)ipaddr >> 24) & 0xff,
-		(*(int *)ipaddr >> 16) & 0xff,
-		(*(int *)ipaddr >> 8) & 0xff,
-		*(int *)ipaddr & 0xff);
-*/
     dnsstat = 1;
   } else {
-//    xprintf("not find %s\n", hostname);
     dnsstat = 2;
   }
 }
@@ -320,12 +316,29 @@ int i;
 	dns_setserver(0, &dnsserver);
 #endif
 
-	if (netstat) {
+}
 
-		udpbuff[0] = '\0';
-		udpecho_raw_init();
+void
+rtl_udp_bind(int port)
+{
+	udpbuff[0] = '\0';
+	udpecho_raw_init(port);
+}
 
+int
+rtl_udp_recv(char *buf, int len)
+{
+int rlen, udplen;
+
+	rlen = 0;
+
+	if (udpbuff[0] != 0) {
+		cli();
+		rlen = udplen > len ? len : udplen;
+		memcpy(buf, udpbuff, rlen);
+		sti();
 	}
+	return rlen;
 }
 
 int

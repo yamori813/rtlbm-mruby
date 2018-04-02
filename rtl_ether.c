@@ -353,6 +353,7 @@ dumpmem(0xbb801800+i*0x80, 16);
  */
 
 #define INQEULEN 16
+
 struct pbuf *inque[INQEULEN];
 int inquestart;
 int inqueend;
@@ -369,10 +370,14 @@ eninque(struct pbuf *p)
 
 doque()
 {
+err_t err;
+
 	if(inquestart != inqueend) {
 		while (inquestart != inqueend) {
-			netif.input(inque[inquestart], &netif);
-//			pbuf_free(inque[inquestart]);
+			err = netif.input(inque[inquestart], &netif);
+			if (err != ERR_OK) {
+				pbuf_free(inque[inquestart]);
+			}
 			++inquestart;
 			if (inquestart == INQEULEN)
 				inquestart = 0;
@@ -410,7 +415,7 @@ sprintf(str, "inlen = %d vid= %d.", len, pPkthdr->ph_vlanId);print(str);
 #endif
 			if (p != NULL) {
 				pbuf_take(p, data, len);
-#if 0
+#if USE_INQUEUE
 				eninque(p);
 #else
 				if (netif->input(p, netif) != ERR_OK) {
