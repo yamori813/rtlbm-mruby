@@ -266,10 +266,17 @@ int i;
 	IP4_ADDR(&netmask, 0,0,0,0);
 	IP4_ADDR(&gw, 0,0,0,0);
 #else
+#if USE_DEVNET
+	IP4_ADDR(&ipaddr, 10, 10, 10, 2);
+	IP4_ADDR(&netmask, 255,255,255,0);
+	IP4_ADDR(&gw, 10,10,10,1);
+	IP4_ADDR(&dnsserver, 10,10,10,1);
+#else
 	IP4_ADDR(&ipaddr, 10,0,1,222);
 	IP4_ADDR(&netmask, 255,255,255,0);
 	IP4_ADDR(&gw, 10,0,1,1);
 	IP4_ADDR(&dnsserver, 10,0,1,1);
+#endif
 #endif
 
 	lwip_init();
@@ -334,8 +341,10 @@ int rlen, udplen;
 
 	if (udpbuff[0] != 0) {
 		cli();
+		udplen = strlen(udpbuff);
 		rlen = udplen > len ? len : udplen;
 		memcpy(buf, udpbuff, rlen);
+		udpbuff[0] = '\0';
 		sti();
 	}
 	return rlen;

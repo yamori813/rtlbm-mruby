@@ -23,6 +23,7 @@ CROSS_CFLAGS += -DCONFIG_SPI_STD_MODE
 CROSS_CFLAGS += -DRTLBM_MRUBY_DEBUG
 #CROSS_CFLAGS += -DUSE_DHCP=1
 CROSS_CFLAGS += -DUSE_INQUEUE=1
+CROSS_CFLAGS += -DUSE_DEVNET=1
 
 CROSS_LDFLAGS = -static -L./$(MRUBYDIR)/build/realtek/lib -L./$(NEWLIBDIR)/mips/newlib/ -Lrsdk/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/4181/ -L./$(LWIPDIR)/rtl/ -L./BearSSL/build/
 CROSS_LDLIB = -lmruby -lc -lgcc -llwip -lbearssl
