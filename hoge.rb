@@ -7,8 +7,7 @@
 
 begin
 
-rtl = RTL8196C.new(RTL8196C::RTL8196C_HOMESPOTCUBE)
-rtl.print "."
+rtl = RTL8196C.new(RTL8196C::MODULE_HOMESPOTCUBE)
 hsc = HomeSpotCube.new()
 
 rtl.udpbind(7000)
