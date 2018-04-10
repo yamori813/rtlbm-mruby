@@ -10,6 +10,13 @@ begin
 rtl = RTL8196C.new(RTL8196C::MODULE_HOMESPOTCUBE)
 hsc = HomeSpotCube.new()
 
+addr = 10 << 24 | 10 << 16 | 10 << 8 | 2
+mask = 255 << 24 | 255 << 16 | 255 << 8 | 0
+gw = 10 << 24 | 0 << 16 | 1 << 8 | 1
+dns = 10 << 24 | 0 << 16 | 1 << 8 | 1
+
+rtl.netstart(addr, mask, gw, dns)
+
 rtl.udpbind(7000)
 
 i = 0

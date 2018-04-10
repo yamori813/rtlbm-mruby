@@ -251,7 +251,26 @@ dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
   }
 }
 
-void net_init()
+void net_start(int myaddr, int mymask, int mygw, int mydns)
+{
+	ip4_addr_set_u32(&ipaddr, myaddr);
+	ip4_addr_set_u32(&netmask, mymask);
+	ip4_addr_set_u32(&gw, mygw);
+	ip4_addr_set_u32(&dnsserver, mydns);
+
+	net_init(0);
+}
+
+void net_startdhcp()
+{
+	IP4_ADDR(&ipaddr, 0,0,0,0);
+	IP4_ADDR(&netmask, 0,0,0,0);
+	IP4_ADDR(&gw, 0,0,0,0);
+
+	net_init(1);
+}
+
+void net_init(int use_dhcp)
 {
 long *lptr;
 err_t err;
@@ -261,31 +280,14 @@ int i;
 
 	swCore_init();
 
-#if USE_DHCP
-	IP4_ADDR(&ipaddr, 0,0,0,0);
-	IP4_ADDR(&netmask, 0,0,0,0);
-	IP4_ADDR(&gw, 0,0,0,0);
-#else
-#if USE_DEVNET
-	IP4_ADDR(&ipaddr, 10, 10, 10, 2);
-	IP4_ADDR(&netmask, 255,255,255,0);
-	IP4_ADDR(&gw, 10,10,10,1);
-	IP4_ADDR(&dnsserver, 10,10,10,1);
-#else
-	IP4_ADDR(&ipaddr, 10,0,1,222);
-	IP4_ADDR(&netmask, 255,255,255,0);
-	IP4_ADDR(&gw, 10,0,1,1);
-	IP4_ADDR(&dnsserver, 10,0,1,1);
-#endif
-#endif
-
 	lwip_init();
-#if USE_DHCP
-	netif_add(&netif, ip_2_ip4(&ipaddr), ip_2_ip4(&netmask), ip_2_ip4(&gw), NULL, ethernetif_init,
-#else
-	netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,
-#endif
-	    ethernet_input);
+
+	if (use_dhcp)
+		netif_add(&netif, ip_2_ip4(&ipaddr), ip_2_ip4(&netmask),
+		   ip_2_ip4(&gw), NULL, ethernetif_init, ethernet_input);
+	else
+		netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,
+ 		    ethernet_input);
 
 	vlan_init();
 
@@ -297,31 +299,32 @@ int i;
 	netif_set_up(&netif);   /* send broadcast arp packet */
 
 	netstat = 1;
-#if USE_DHCP
-	err = dhcp_start(&netif);
-	if (err != ERR_OK) {
-		print("dhcp error\n");
-		netstat = 0;
-	} else {
-		for (i = 0; i < 1000; ++i) {
-			delay_ms(100);
-			if (netif.ip_addr.addr != 0)
-				break;
-		}
-		if (netif.ip_addr.addr != 0) {
-			xprintf("IP address : %d.%d.%d.%d\n",
-			    (netif.ip_addr.addr >> 24) & 0xff,
-			    (netif.ip_addr.addr >> 16) & 0xff,
-			    (netif.ip_addr.addr >> 8) & 0xff,
-			    netif.ip_addr.addr & 0xff);
-		} else {
-			print("dhcp can't get address\n");
+
+	if (use_dhcp) {
+		err = dhcp_start(&netif);
+		if (err != ERR_OK) {
+			print("dhcp error\n");
 			netstat = 0;
+		} else {
+			for (i = 0; i < 1000; ++i) {
+				delay_ms(100);
+				if (netif.ip_addr.addr != 0)
+					break;
+			}
+			if (netif.ip_addr.addr != 0) {
+				xprintf("IP address : %d.%d.%d.%d\n",
+				    (netif.ip_addr.addr >> 24) & 0xff,
+				    (netif.ip_addr.addr >> 16) & 0xff,
+				    (netif.ip_addr.addr >> 8) & 0xff,
+				    netif.ip_addr.addr & 0xff);
+			} else {
+				print("dhcp can't get address\n");
+				netstat = 0;
+			}
 		}
+	} else {
+		dns_setserver(0, &dnsserver);
 	}
-#else
-	dns_setserver(0, &dnsserver);
-#endif
 
 }
 

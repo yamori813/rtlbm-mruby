@@ -32,8 +32,6 @@ long *lptr;
 
 	spi_probe();
 
-	net_init();
-
 	mrb_state *mrb;
 	mrb = mrb_open();
 	mrb_load_irep( mrb, bytecode);
