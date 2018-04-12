@@ -5,8 +5,64 @@
 #include "asicregs.h"
 
 #include "intr.h"
+#include "system.h"
 
 #include "xprintf.h"
+
+char rxbuff[1024];
+int bufstart;
+int bufend;
+
+int getrxdata(char *buff, int len)
+{
+int datlen, datlen2;
+
+	datlen = 0;
+	if (bufstart != bufend) {
+		cli();
+		if (bufend > bufstart) {
+			datlen = bufend - bufstart;
+			datlen = datlen > len ? len : datlen;
+			memcpy(buff, rxbuff + bufstart, datlen);
+			bufstart = bufstart + datlen;
+		} else {
+			datlen = sizeof(rxbuff) - bufstart;
+			if (len > datlen) {
+				memcpy(buff, rxbuff + bufstart, datlen);
+				datlen2 = bufend > len - datlen ? len - datlen :
+				    bufend;
+				memcpy(buff + datlen, rxbuff, datlen2);
+				datlen += datlen2;
+				bufstart = datlen2;
+			} else {
+				memcpy(buff, rxbuff + bufstart, len);
+				datlen = len;
+				bufstart += len;
+			}
+		}
+		sti();
+	}
+	return datlen;
+}
+
+void uart_poll()
+{
+unsigned char *lsr;
+unsigned char *prt;
+unsigned char dat;
+
+	lsr = (unsigned char *)UART_LSR_REG;
+	while (*lsr & 0x01) {
+		prt = (unsigned char *)UART_THR_REG;
+		dat = *prt;
+		rxbuff[bufend] = dat;
+		++bufend;
+		if (bufend == sizeof(rxbuff))
+			bufend = 0;
+		if (bufend == bufstart)
+			print("rx buffer overflow\n");
+	}
+}
 
 void put(char ch)
 {
@@ -42,6 +98,9 @@ void uart_init()
 	REG32(UART_IER_REG) = 0x00000000;
 
 	xfunc_out=put;
+
+	bufstart = 0;
+	bufend = 0;
 #if 0
 	/* GPIO register dump */
 	dumpmem(0xB8000030, 32);
