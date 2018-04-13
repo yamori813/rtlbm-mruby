@@ -125,3 +125,24 @@ __delay(unsigned long loops)
 		:"=r" (loops)
 		:"0" (loops));
 }
+
+void udelay(int usec)
+{
+unsigned long max, val, val2, now, start;
+
+	max = REG32(TC0DATA_REG) >> 4;
+	val = max * usec / 10000;
+	start = REG32(TC0CNT_REG) >> 4;
+	while (1) {
+		now = REG32(TC0CNT_REG) >> 4;
+		if (now > start)
+			val2 = start + max - now;
+		else
+			val2 = start - now;
+
+		val2 = max - val2;
+
+		if (val2 > val)
+			break;
+	}
+}

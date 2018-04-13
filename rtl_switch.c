@@ -188,7 +188,7 @@ vlan_init()
 {
 int i;
 
-	REG32(PIN_MUX_SEL)=REG32(PIN_MUX_SEL)&(0xFFFFFFFF-0x00300000);
+//	REG32(PIN_MUX_SEL)=REG32(PIN_MUX_SEL)&(0xFFFFFFFF-0x00300000);
 
 	for (i = 0;i < 5; ++i)
 		enable_10M_power_saving(i, 0x18, 0x0310);
