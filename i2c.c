@@ -11,7 +11,7 @@
 
 void udelay(int usec);
 
-#define	DELAY	udelay(5)
+#define	DELAY	udelay(1)
 
 int sclpin;
 int sdapin;

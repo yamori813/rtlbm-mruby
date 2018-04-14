@@ -13,7 +13,7 @@ extern char _fbss[];
 int
 main(int argc, char *argv[])
 {
-int i;
+int i, j;
 long *lptr;
 
 	/* bss clear */
@@ -31,6 +31,8 @@ long *lptr;
 	timer_init();
 
 	spi_probe();
+
+	gpio_init(0x300000, 0);
 
 	mrb_state *mrb;
 	mrb = mrb_open();
