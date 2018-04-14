@@ -30,7 +30,7 @@ CROSS_LDSCRIPT = main.ld
 CROSS_ASFLAGS = -G 0 -mno-abicalls -fno-pic -fomit-frame-pointer
 CROSS_ASFLAGS += -DCONFIG_RTL865XC -D__ASSEMBLY__
 
-OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o swCore.o spi_common.o spi_flash.o xprintf.o bear.o mt19937ar.o time.o
+OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o rtl_gpio.o swCore.o spi_common.o spi_flash.o xprintf.o bear.o mt19937ar.o time.o i2c.o
 
 MY_SCRIPT ?= hoge.rb
 
@@ -55,6 +55,7 @@ net.o: net.c
 intr.o: intr.c
 rtl_ether.o: rtl_ether.c
 rtl_switch.o: rtl_switch.c
+rtl_gpio.o: rtl_gpio.c
 swCore.o: swCore.c
 spi_common.o: spi_common.c
 spi_flash.o: spi_flash.c
@@ -64,6 +65,7 @@ xprintf.o: xprintf.c
 mt19937ar.o: mt19937ar.c
 time.o: time.c
 bear.o: bear.c
+i2c.o: i2c.c
 
 main.elf: $(OBJS) main.ld
 	$(CROSS_LD) $(CROSS_LDFLAGS) -T $(CROSS_LDSCRIPT) -Map main.map $(OBJS) $(MRBOBJ) $(CROSS_LDLIB) -o main.elf
