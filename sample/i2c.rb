@@ -1,6 +1,9 @@
 #
 # rtlbm-mruby mruby script
 #
+# i2c lcd display and eeprom write and read 
+# eeprom is 1024 bit chip
+#
 # echo -n "MORIMORI" | nc -w 0 -u 10.10.10.2 7000
 #
 
@@ -12,15 +15,19 @@ end
 
 begin
 
+# i2c lcd and eeprom address
+
 LCDADDR = 0x3e
 ROMADDR = 0x50
 
-rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
+# ip address setting
 
 addr = 10 << 24 | 10 << 16 | 10 << 8 | 2
 mask = 255 << 24 | 255 << 16 | 255 << 8 | 0
 gw = 10 << 24 | 10 << 16 | 10 << 8 | 1
 dns = 10 << 24 | 10 << 16 | 10 << 8 | 1
+
+rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
 
 rtl.netstart(addr, mask, gw, dns)
 
