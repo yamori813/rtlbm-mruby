@@ -6,7 +6,7 @@ begin
 
 rtl = RTL8196C.new(RTL8196C::MODULE_HOMESPOTCUBE)
 
-rtl.print "Hello Bear Metal mruby!!"
+rtl.print "Hello Bear Metal mruby on RTL8196C"
 
 while 1 do
    rtl.print "."
