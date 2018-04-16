@@ -33,7 +33,11 @@ static ip4_addr_t ipaddr, netmask, gw, dnsserver, dnsres;
 err_t ethernetif_init(struct netif *netif);
 err_t ethernet_input(struct pbuf *p, struct netif *netif);
 
-char eth0_mac[6]={0x56, 0xaa, 0xa5, 0x5a, 0x7d, 0xe8};
+#ifndef RTLMACADDR
+#define	RTLMACADDR	0x56,0xaa,0xa5,0x5a,0x7d,0xe8
+#endif
+
+char eth0_mac[6]={RTLMACADDR};
 
 void gethwmac(unsigned char *mac)
 {
@@ -46,6 +50,7 @@ void gethwmac(unsigned char *mac)
 	if (flashread(tmpbuf, HW_SETTING_OFFSET,6)==0 ) {
 		return;
 	}
+xprintf("%02x\n", tmpbuf[0]);
 	if(tmpbuf[0] == 'h')
 	{
 		memcpy(&len, &tmpbuf[4], 2);
