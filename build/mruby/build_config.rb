@@ -165,10 +165,10 @@ MRuby::CrossBuild.new('realtek') do |conf|
   conf.cc.include_paths = ["#{root}/include", "../newlib-2.5.0.20171222/newlib/libc/include"]
 
   conf.gem :github => 'yamori813/mruby-rtlbm-rtl8196c'
-#  conf.gem '/storage/home/hiroki/myproj/mruby-rtlbm-rtl8196c'
   conf.gem :github => 'yamori813/mruby-simplehttp'
-#  conf.gem '/storage/home/hiroki/myproj/mruby-simplehttp'
-  conf.gem :github => 'yamori813/mruby-rtlbm-hsc'
 # use in mruby-simplehttp'
   conf.gem :core => "mruby-string-ext"
+
+# Home Spot Cube mrbgem
+#  conf.gem :github => 'yamori813/mruby-rtlbm-hsc'
 end
