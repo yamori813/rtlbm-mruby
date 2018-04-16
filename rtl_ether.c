@@ -103,6 +103,8 @@ char buf[8];
  *        for this ethernetif
  */
 
+extern char eth0_mac[6];
+
 static void
 low_level_init(struct netif *netif)
 {
@@ -114,7 +116,6 @@ struct pktHdr * pPkthdr;
 struct mBuf * pMbuf;
 uint32_t  size_of_cluster;
 uint8_t * pClusterList;
-char eth0_mac[6]={0x56, 0xaa, 0xa5, 0x5a, 0x7d, 0xe8};
 struct ethernetif *ethernetif = netif->state;
 
 	/* set MAC hardware address length */
