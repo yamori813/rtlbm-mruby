@@ -50,7 +50,6 @@ void gethwmac(unsigned char *mac)
 	if (flashread(tmpbuf, HW_SETTING_OFFSET,6)==0 ) {
 		return;
 	}
-xprintf("%02x\n", tmpbuf[0]);
 	if(tmpbuf[0] == 'h')
 	{
 		memcpy(&len, &tmpbuf[4], 2);
