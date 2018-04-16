@@ -1,10 +1,12 @@
 #
 # rtlbm-mruby mruby script
 #
+# thingspeak channel update 
+#
 
 begin
 
-rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
+# ip address setting
 
 addr = 10 << 24 | 0 << 16 | 1 << 8 | 222
 mask = 255 << 24 | 255 << 16 | 255 << 8 | 0
@@ -12,6 +14,8 @@ gw = 10 << 24 | 0 << 16 | 1 << 8 | 1
 dns = 10 << 24 | 0 << 16 | 1 << 8 | 1
 
 apikey = "naisyo"
+
+rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
 
 rtl.netstart(addr, mask, gw, dns)
 
