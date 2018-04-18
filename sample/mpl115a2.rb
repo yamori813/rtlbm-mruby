@@ -111,10 +111,6 @@ rtl.netstart(addr, mask, gw, dns)
 
 rtl.i2cinit(SCL, SDA)
 
-rtl.i2cwrite(MPLADDR, 0x12, 0x00)
-
-delay(rtl, 10)
-
 a0 = rtl.i2cread(MPLADDR, 0x04) << 8 | rtl.i2cread(MPLADDR, 0x05)
 b1 = rtl.i2cread(MPLADDR, 0x06) << 8 | rtl.i2cread(MPLADDR, 0x07)
 b2 = rtl.i2cread(MPLADDR, 0x08) << 8 | rtl.i2cread(MPLADDR, 0x09)
@@ -137,6 +133,9 @@ while 1 do
   count = count + 1
 
   if count % interval == 0 then
+
+    rtl.i2cwrite(MPLADDR, 0x12, 0x00)
+    delay(rtl, 10)
 
     padc = rtl.i2cread(MPLADDR, 0x00) << 8 | rtl.i2cread(MPLADDR, 0x01)
     tadc = rtl.i2cread(MPLADDR, 0x02) << 8 | rtl.i2cread(MPLADDR, 0x03)
