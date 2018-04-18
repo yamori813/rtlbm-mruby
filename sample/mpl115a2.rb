@@ -144,7 +144,12 @@ while 1 do
 #    pcomp = calculatePCompLong(padc, tadc, a0, b1, b2, c12)
     pressure = ((pcomp * 1041) >> 14) + 800
 
-    kpa =  (pressure >> 4).to_s + "." + (((pressure & 0xf) * 1000) / 16).to_s
+    frec = (((pressure & 0xf) * 1000) / 16).to_s
+    if frec.length == 3 then
+      kpa =  (pressure >> 4).to_s + "." + frec
+    else
+      kpa =  (pressure >> 4).to_s + ".0" + frec
+    end
     rtl.print kpa + "\n"
 
     res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + apikey + "&field1=" + kpa, {'User-Agent' => "test-agent"})
