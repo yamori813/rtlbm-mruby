@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 Hiroki Mori. All rights reserved.
+ */
+
 #include <mruby.h>
 #include <mruby/irep.h>
 #include <mruby/string.h>

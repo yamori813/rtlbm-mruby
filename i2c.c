@@ -1,6 +1,7 @@
-/* 
+/*
+ * Copyright (c) 2018 Hiroki Mori. All rights reserved.
+ *
  * I2C Bitbang on gpio
- * 2018 Hiroki Mori
  */
 
 #define	HIGH	1

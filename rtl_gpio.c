@@ -1,5 +1,6 @@
-
-
+/*
+ * Copyright (c) 2018 Hiroki Mori. All rights reserved.
+ */
 
 #define	PIN_MUX_SEL	0xb8000040
 #define PIN_MUX_SEL2	0xb800003c

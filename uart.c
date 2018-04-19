@@ -1,6 +1,6 @@
-#include <mruby.h>
-#include <mruby/string.h>
-#include <mruby/irep.h>
+/*
+ * Copyright (c) 2018 Hiroki Mori. All rights reserved.
+ */
 
 #include "asicregs.h"
 

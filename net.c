@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 Hiroki Mori. All rights reserved.
+ */
+
 #include <sys/cdefs.h>
 
 #include "lwip/init.h"
