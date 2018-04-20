@@ -66,6 +66,9 @@ sock_write(void *ctx, const unsigned char *buf, size_t len)
 	return len;
 }
 
+#if 1
+#include "cacert.h"
+#else
 /*
  * The hardcoded trust anchors. These are the two DN + public key that
  * correspond to the self-signed certificates cert-root-rsa.pem and
@@ -151,6 +154,7 @@ static const br_x509_trust_anchor TAs[2] = {
 };
 
 #define TAs_NUM   2
+#endif
 
 br_ssl_client_context sc;
 br_sslio_context ioc;
