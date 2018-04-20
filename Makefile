@@ -33,7 +33,7 @@ CROSS_ASFLAGS += -DCONFIG_RTL865XC -D__ASSEMBLY__
 
 OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o rtl_gpio.o swCore.o spi_common.o spi_flash.o xprintf.o bear.o mt19937ar.o time.o i2c.o
 
-all: main.bin 
+all: main.rtl
 
 .c.o:
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c $<
@@ -66,8 +66,9 @@ i2c.o: i2c.c
 main.elf: $(OBJS) main.ld
 	$(CROSS_LD) $(CROSS_LDFLAGS) -T $(CROSS_LDSCRIPT) -Map main.map $(OBJS) $(MRBOBJ) $(CROSS_LDLIB) -o main.elf
 
-main.bin: main.elf
+main.rtl: main.elf
 	$(CROSS_OBJCOPY) -O binary main.elf main.bin
+	./mkimg.sh
 
 clean:
 	rm -rf *.o *.elf *.bin hoge.c main.map main.rtl
