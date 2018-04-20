@@ -70,4 +70,4 @@ main.bin: main.elf
 	$(CROSS_OBJCOPY) -O binary main.elf main.bin
 
 clean:
-	rm -rf *.o *.elf *.bin hoge.c main.map main.rtl bytecode.h
+	rm -rf *.o *.elf *.bin hoge.c main.map main.rtl
