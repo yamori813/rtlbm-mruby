@@ -306,12 +306,14 @@ int main(int argc, char** argv)
 		pHeader->startAddr = DWORD_SWAP(startAddr);
 		pHeader->burnAddr = DWORD_SWAP(burnAddr);
 
+#ifdef ORIGINAL_CODE
 		if( !friendly_strcmp("root", argv[1])) {
 			#define SIZE_OF_SQFS_SUPER_BLOCK 640		
 			unsigned int fs_len;
 			fs_len = DWORD_SWAP((size-sizeof(IMG_HEADER_T) - sizeof(checksum)- SIZE_OF_SQFS_SUPER_BLOCK));
 			memcpy(buf + 8, &fs_len, 4);	
 		}		
+#endif
 		
 		checksum = WORD_SWAP(calculateChecksum(buf, status.st_size));
 		*((unsigned short *)&buf[size-sizeof(IMG_HEADER_T)-sizeof(checksum)]) = checksum;
