@@ -4,9 +4,16 @@
 
 begin
 
-rtl = RTL8196C.new(RTL8196C::MODULE_HOMESPOTCUBE)
+addr = 10 << 24 | 10 << 16 | 10 << 8 | 2
+mask = 255 << 24 | 255 << 16 | 255 << 8 | 0
+gw = 10 << 24 | 10 << 16 | 10 << 8 | 1
+dns = 10 << 24 | 10 << 16 | 10 << 8 | 1
 
-ports = Array[0, 4]
+rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
+
+rtl.netstart(addr, mask, gw, dns)                                              
+
+ports = Array[0,1,2,3,4]
 
 i = 0
 

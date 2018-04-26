@@ -129,25 +129,6 @@ udpecho_raw_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
   }
 }
 
-
-void
-udpecho_raw_init(int port)
-{
-  udpecho_raw_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
-  if (udpecho_raw_pcb != NULL) {
-    err_t err;
-
-    err = udp_bind(udpecho_raw_pcb, IP_ANY_TYPE, port);
-    if (err == ERR_OK) {
-      udp_recv(udpecho_raw_pcb, udpecho_raw_recv, NULL);
-    } else {
-      /* abort? output diagnostic? */
-    }
-  } else {
-    /* abort? output diagnostic? */
-  }
-}
-
 static struct tcp_pcb *tcphttp_raw_pcb;
 int tcpstat;
 
@@ -337,10 +318,27 @@ int i;
 }
 
 void
+rtl_udp_init()
+{
+  udpecho_raw_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
+}
+
+void
 rtl_udp_bind(int port)
 {
-	udpbuff[0] = '\0';
-	udpecho_raw_init(port);
+  udpbuff[0] = '\0';
+  if (udpecho_raw_pcb != NULL) {
+    err_t err;
+
+    err = udp_bind(udpecho_raw_pcb, IP_ANY_TYPE, port);
+    if (err == ERR_OK) {
+      udp_recv(udpecho_raw_pcb, udpecho_raw_recv, NULL);
+    } else {
+      /* abort? output diagnostic? */
+    }
+  } else {
+    /* abort? output diagnostic? */
+  }
 }
 
 int
@@ -359,6 +357,24 @@ int rlen, udplen;
 		sti();
 	}
 	return rlen;
+}
+
+void
+rtl_udp_send(int addr, int port, char *buf, int len)
+{
+static ip4_addr_t distaddr;
+xprintf("MORI MORI %d", addr);
+
+	if (udpecho_raw_pcb != NULL) {
+	ip4_addr_set_u32(&distaddr, addr);
+	struct pbuf* b = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_POOL);
+	memcpy(b->payload, buf, len);
+//	udp_sendto(udpecho_raw_pcb, b, &distaddr, port);
+	udp_connect(udpecho_raw_pcb, &distaddr, port);
+	udp_send(udpecho_raw_pcb, b);
+	udp_disconnect(udpecho_raw_pcb);
+	pbuf_free(b);
+	}
 }
 
 int

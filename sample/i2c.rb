@@ -31,6 +31,7 @@ rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
 
 rtl.netstart(addr, mask, gw, dns)
 
+rtl.udpinit
 rtl.udpbind(7000)
 
 # use gpio pin
