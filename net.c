@@ -363,17 +363,19 @@ void
 rtl_udp_send(int addr, int port, char *buf, int len)
 {
 static ip4_addr_t distaddr;
-xprintf("MORI MORI %d", addr);
 
 	if (udpecho_raw_pcb != NULL) {
-	ip4_addr_set_u32(&distaddr, addr);
-	struct pbuf* b = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_POOL);
-	memcpy(b->payload, buf, len);
-//	udp_sendto(udpecho_raw_pcb, b, &distaddr, port);
-	udp_connect(udpecho_raw_pcb, &distaddr, port);
-	udp_send(udpecho_raw_pcb, b);
-	udp_disconnect(udpecho_raw_pcb);
-	pbuf_free(b);
+		ip4_addr_set_u32(&distaddr, addr);
+		struct pbuf* b = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_POOL);
+		memcpy(b->payload, buf, len);
+// UDP send must be live gateway. Because of gateware arp resolve at UDP send
+// on lwip 2.0.3.
+		udp_connect(udpecho_raw_pcb, &distaddr, port);
+		udp_send(udpecho_raw_pcb, b);
+		udp_disconnect(udpecho_raw_pcb);
+// this is may be work. but not tested.
+//		udp_sendto(udpecho_raw_pcb, b, &distaddr, port);
+		pbuf_free(b);
 	}
 }
 
