@@ -168,7 +168,4 @@ MRuby::CrossBuild.new('realtek') do |conf|
   conf.gem :github => 'yamori813/mruby-simplehttp'
 # use in mruby-simplehttp'
   conf.gem :core => "mruby-string-ext"
-
-# Home Spot Cube mrbgem
-#  conf.gem :github => 'yamori813/mruby-rtlbm-hsc'
 end

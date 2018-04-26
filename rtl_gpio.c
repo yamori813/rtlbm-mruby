@@ -11,15 +11,16 @@
 #define	PAB_IMR		0xb8003514
 #define	PCD_IMR		0xb8003518
 
-void gpio_init(unsigned long sel, unsigned long sel2)
+void gpio_setsel(unsigned long sel, unsigned long selmask,
+unsigned long sel2, unsigned long selmask2)
 {
 unsigned long *lptr;
 
 	lptr = (unsigned long *)PIN_MUX_SEL;
-	*lptr = *lptr | sel;
+	*lptr = (*lptr & ~selmask ) | sel;
 
 	lptr = (unsigned long *)PIN_MUX_SEL2;
-	*lptr = *lptr | sel2;
+	*lptr = (*lptr & selmask2) | sel2;
 }
 
 unsigned long gpio_getctl()

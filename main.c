@@ -39,8 +39,6 @@ unsigned char *mrbbuf;
 
 	spi_probe();
 
-	gpio_init(0x300000, 0);
-
 	flashread(hdrbuf, MRBOFFSET, sizeof(hdrbuf));
 	if (hdrbuf[0x0] == 0x52 && hdrbuf[0x1] == 0x49 &&
 	    hdrbuf[0x2] == 0x54 && hdrbuf[0x3] == 0x45) {
