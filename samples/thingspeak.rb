@@ -4,6 +4,8 @@
 # thingspeak channel update 
 #
 
+APIKEY = "naisyo"
+
 begin
 
 # ip address setting
@@ -13,7 +15,6 @@ mask = 255 << 24 | 255 << 16 | 255 << 8 | 0
 gw = 10 << 24 | 0 << 16 | 1 << 8 | 1
 dns = 10 << 24 | 0 << 16 | 1 << 8 | 1
 
-apikey = "naisyo"
 
 rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
 
@@ -32,7 +33,7 @@ while 1 do
   if count % interval == 0 then
     hcount = hcount + 1
     rtl.print " " + hcount.to_s + "\r\n"
-    res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + apikey + "&field1=1", {'User-Agent' => "test-agent"})
+    res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=1", {'User-Agent' => "test-agent"})
   end
 end
 

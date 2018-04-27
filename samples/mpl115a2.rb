@@ -4,6 +4,8 @@
 # get from i2c mpl115a2 pressure data to update thingspeak channel
 #
 
+APIKEY = "naisyo"
+
 def delay(rtl, val) 
   start = rtl.count() 
   while rtl.count() < start + val do
@@ -121,8 +123,6 @@ rtl.print "b1 = " + b1.to_s + "\n"
 rtl.print "b2 = " + b2.to_s + "\n"
 rtl.print "c12 = " + c12.to_s + "\n"
 
-apikey = "naisyo"
-
 interval = 15
 count = 0
 
@@ -152,7 +152,7 @@ while 1 do
     end
     rtl.print kpa + "\n"
 
-    res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + apikey + "&field1=" + kpa, {'User-Agent' => "test-agent"})
+    res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + kpa, {'User-Agent' => "test-agent"})
   end
 
 end
