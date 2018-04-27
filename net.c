@@ -28,6 +28,8 @@
 #include "rtlregs.h"
 #include "system.h"
 
+//#define	NETDEBUG
+
 unsigned char debug_flags;
 
 struct netif netif;
@@ -120,8 +122,6 @@ udpecho_raw_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 {
   LWIP_UNUSED_ARG(arg);
   if (p != NULL) {
-    /* send received packet back to sender */
-//    udp_sendto(upcb, p, addr, port);
       pbuf_copy_partial(p, udpbuff, p->tot_len, 0);
       udpbuff[p->tot_len] = '\0';
     /* free the pbuf */
@@ -259,6 +259,11 @@ void net_startdhcp()
 	net_init(1);
 }
 
+int getmyaddress()
+{
+	return netif.ip_addr.addr;
+}
+
 void net_init(int use_dhcp)
 {
 long *lptr;
@@ -280,6 +285,8 @@ int i;
 
 	vlan_init();
 
+	netif_set_link_up(&netif);
+
 	lptr = (unsigned long *)IRR1;
 	*lptr |= (3 << 0);
 	request_IRQ(8, &irq_Ether, NULL);
@@ -297,15 +304,17 @@ int i;
 		} else {
 			for (i = 0; i < 1000; ++i) {
 				delay_ms(100);
-				if (netif.ip_addr.addr != 0)
+				if (dhcp_supplied_address(&netif))
 					break;
 			}
 			if (netif.ip_addr.addr != 0) {
+#ifdef NETDEBUG
 				xprintf("IP address : %d.%d.%d.%d\n",
 				    (netif.ip_addr.addr >> 24) & 0xff,
 				    (netif.ip_addr.addr >> 16) & 0xff,
 				    (netif.ip_addr.addr >> 8) & 0xff,
 				    netif.ip_addr.addr & 0xff);
+#endif
 			} else {
 				print("dhcp can't get address\n");
 				netstat = 0;
@@ -370,11 +379,11 @@ static ip4_addr_t distaddr;
 		memcpy(b->payload, buf, len);
 // UDP send must be live gateway. Because of gateware arp resolve at UDP send
 // on lwip 2.0.3.
-		udp_connect(udpecho_raw_pcb, &distaddr, port);
-		udp_send(udpecho_raw_pcb, b);
-		udp_disconnect(udpecho_raw_pcb);
-// this is may be work. but not tested.
-//		udp_sendto(udpecho_raw_pcb, b, &distaddr, port);
+		udp_sendto(udpecho_raw_pcb, b, &distaddr, port);
+// same as above
+//		udp_connect(udpecho_raw_pcb, &distaddr, port);
+//		udp_send(udpecho_raw_pcb, b);
+//		udp_disconnect(udpecho_raw_pcb);
 		pbuf_free(b);
 	}
 }
