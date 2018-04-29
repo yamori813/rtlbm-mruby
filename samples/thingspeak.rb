@@ -27,7 +27,7 @@ interval = 20
 while 1 do
   rtl.print "."
   start = rtl.count() 
-  while rtl.count() < start + 100 do
+  while rtl.count() < start + 1000 do
   end
   count = count + 1
   if count % interval == 0 then

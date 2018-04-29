@@ -27,7 +27,7 @@ rtl.udpbind(7000)
 i = 0
 while 1 do
   rtl.print "."
-  delay(rtl, 50)
+  delay(rtl, 500)
   udpstr = rtl.udprecv()
   if udpstr.length != 0 then
     rtl.print udpstr

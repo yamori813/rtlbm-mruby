@@ -30,7 +30,7 @@ struct irqaction irq_Timer = {Timer_isr, (void *)NULL};
 
 int sys_now()
 {
-        return jiffies;
+        return jiffies * 10;
 }
 
 int check_cpu_speed()

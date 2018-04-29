@@ -12,7 +12,7 @@ i = 0
 while 1 do
   rtl.print "."
   start = rtl.count() 
-  while rtl.count() < start + 50 do
+  while rtl.count() < start + 500 do
   end
   uartstr = rtl.readuart()
   if uartstr.length != 0 then

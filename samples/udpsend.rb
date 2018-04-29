@@ -22,7 +22,7 @@ rtl.udpinit
 while 1 do
    rtl.print "."
    start = rtl.count() 
-   while rtl.count() < start + 100 do
+   while rtl.count() < start + 1000 do
    end
    rtl.udpsend(dist, 514, "Hello", 5)
 end

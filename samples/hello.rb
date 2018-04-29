@@ -11,7 +11,7 @@ rtl.print "Hello Bear Metal mruby on RTL8196C"
 while 1 do
    rtl.print "."
    start = rtl.count() 
-   while rtl.count() < start + 50 do
+   while rtl.count() < start + 500 do
    end
 end
 
