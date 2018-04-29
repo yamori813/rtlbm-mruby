@@ -17,7 +17,7 @@ if git diff-index --name-only HEAD | read dummy; then
 git="${git}-dirty"
 fi
 
-verinfo="rtlbm-mruby ${git} ${t} ${u}\\n"
+verinfo="rtlbm-mruby ${git} ${t} ${h} ${u}\\n"
 
 cat << EOF > ver.c
 
