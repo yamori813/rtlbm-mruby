@@ -14,6 +14,8 @@ extern char _fbss[];
 
 #define	MRBOFFSET	0x100000
 
+extern char version[];
+
 int
 main(int argc, char *argv[])
 {
@@ -32,6 +34,8 @@ unsigned char *mrbbuf;
 	init_by_array(init, length);
 
 	uart_init();
+
+	print(version);
 
 	intr_init();
 
