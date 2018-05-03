@@ -48,7 +48,7 @@ int i;
 		tcpoff += rlen;
 		sti();
 	} else if(tcpstat == 2) {
-		-1;
+		rlen = -1;
 	}
 	return rlen;
 }

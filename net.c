@@ -207,7 +207,7 @@ static ip4_addr_t addr;
     tcp_recv(tcphttp_raw_pcb, http_recv);
     tcp_sent(tcphttp_raw_pcb, http_sent);
     tcp_err(tcphttp_raw_pcb, http_err);
-    tcp_poll(tcphttp_raw_pcb, http_poll, 10);
+    tcp_poll(tcphttp_raw_pcb, http_poll, 60);
     tcp_connect(tcphttp_raw_pcb, &addr, disport, http_connected);
     tcpstat = 0;
   }
