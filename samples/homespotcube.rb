@@ -12,6 +12,11 @@
 # 8	40	GPIOA[1]	TOP LED
 # 9	GND
 # 10	GND
+# SW12
+# 	100	GPIOA[2]
+#	102	GPIOB[3]
+# Reset
+#	99	GPIOA[5]
 #
 # echo -n "GREEN" | nc -w 0 -u 10.10.10.2 7000
 #
