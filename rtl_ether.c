@@ -59,7 +59,7 @@ int txPos;
 #define TX_RING0	4
 #define TX_RING1	2
 #define TX_RING		(TX_RING0 + TX_RING1)
-#define RX_RING		4
+#define RX_RING		8
 
 /* Define those to better describe your network interface. */
 #define IFNAME0 'e'
@@ -238,13 +238,15 @@ struct ethernetif *ethernetif = netif->state;
 		rxMbufRing[i] = (int32_t) pMbuf | DESC_SWCORE_OWNED;
 	}
 
+	rxPkthdrRing[RX_RING / 2 -1] |= DESC_WRAP;
+	rxMbufRing[RX_RING / 2 - 1] |= DESC_WRAP;
 	rxPkthdrRing[RX_RING -1] |= DESC_WRAP;
 	rxMbufRing[RX_RING - 1] |= DESC_WRAP;
 
 	ptr = (unsigned int *)CPURPDCR0;
-	*ptr = rxPkthdrRing;
+	*ptr = &rxPkthdrRing[0];
 	ptr = (unsigned int *)CPURPDCR1;
-	*ptr = 0;
+	*ptr = &rxPkthdrRing[RX_RING / 2];
 	ptr = (unsigned int *)CPURPDCR2;
 	*ptr = 0;
 	ptr = (unsigned int *)CPURPDCR3;
