@@ -59,6 +59,7 @@ dns = 10 << 24 | 10 << 16 | 10 << 8 | 1
 
 rtl.netstart(addr, mask, gw, dns)
 
+rtl.udpinit
 rtl.udpbind(7000)
 
 rtl.gpiosetsel(0x003c3000, 0x003c3000, 0x00001800, 0x00001800)
