@@ -20,6 +20,10 @@ rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
 
 rtl.netstart(addr, mask, gw, dns)
 
+# sync date by ntp use https X.509
+ntpaddr = rtl.lookup("ntp.nict.jp")
+rtl.sntp(ntpaddr)
+
 hcount = 0
 count = 0
 interval = 20

@@ -111,6 +111,10 @@ rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
 
 rtl.netstart(addr, mask, gw, dns)
 
+# sync date by ntp use https X.509
+ntpaddr = rtl.lookup("ntp.nict.jp")
+rtl.sntp(ntpaddr)
+
 rtl.i2cinit(SCL, SDA)
 
 a0 = rtl.i2cread(MPLADDR, 0x04) << 8 | rtl.i2cread(MPLADDR, 0x05)
