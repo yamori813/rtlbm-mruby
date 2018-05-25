@@ -33,6 +33,11 @@ int sys_now()
         return jiffies * 10;
 }
 
+void reset_counter()
+{
+	jiffies = 0;
+}
+
 int check_cpu_speed()
 {
 unsigned long ticks, loopbit;

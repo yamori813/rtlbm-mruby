@@ -110,6 +110,7 @@ long reg;
 struct irqaction irq_Ether = {Ether_isr, (void *)NULL};
 
 static struct udp_pcb *udpecho_raw_pcb;
+static struct udp_pcb *udpsntp_raw_pcb;
 
 char udpbuff[1024];
 char tcpbuff[1024*8];
@@ -324,6 +325,7 @@ int i;
 		dns_setserver(0, &dnsserver);
 	}
 
+	udpsntp_raw_pcb = NULL;
 }
 
 void
@@ -386,6 +388,59 @@ static ip4_addr_t distaddr;
 //		udp_disconnect(udpecho_raw_pcb);
 		pbuf_free(b);
 	}
+}
+
+
+extern unsigned long starttime;
+
+static void
+udpsntp_raw_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p,
+                 const ip_addr_t *addr, u16_t port)
+{
+unsigned int timestamp;
+unsigned char buf[48];
+
+	LWIP_UNUSED_ARG(arg);
+	if (p != NULL) {
+		if (p->tot_len == sizeof(buf)) {
+			pbuf_copy_partial(p, buf, p->tot_len, 0);
+			timestamp = buf[40] << 24 | buf[41] << 16 |
+			    buf[42] << 8 | buf[43];
+			timestamp -= 2208988800UL;
+			reset_counter();
+			starttime = timestamp;
+		}
+ 		/* free the pbuf */
+		pbuf_free(p);
+
+		udp_remove(udpsntp_raw_pcb);
+		udpsntp_raw_pcb == NULL;
+	}
+}
+
+void sntp(int addr)
+{
+int port;
+static ip4_addr_t distaddr;
+
+	if (udpsntp_raw_pcb != NULL) {
+		udp_remove(udpsntp_raw_pcb);
+	}
+
+	port = 123;
+	udpsntp_raw_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
+	udp_bind(udpsntp_raw_pcb, IP_ANY_TYPE, port);
+	udp_recv(udpsntp_raw_pcb, udpsntp_raw_recv, NULL);
+
+	unsigned char msg[48]={0,0,0,0,0,0,0,0,0};
+
+	msg[0] = 4 << 3 | 3;
+
+	ip4_addr_set_u32(&distaddr, addr);
+	struct pbuf* b = pbuf_alloc(PBUF_TRANSPORT, sizeof(msg), PBUF_POOL);
+	memcpy(b->payload, msg, sizeof(msg));
+	udp_sendto(udpsntp_raw_pcb, b, &distaddr, port);
+	pbuf_free(b);
 }
 
 int
