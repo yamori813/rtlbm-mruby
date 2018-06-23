@@ -56,7 +56,8 @@ void gethwmac(unsigned char *mac)
 	if (flashread(tmpbuf, HW_SETTING_OFFSET,6)==0 ) {
 		return;
 	}
-	if(tmpbuf[0] == 'h')
+	if(tmpbuf[0] == 'H' && tmpbuf[1] == '6' && tmpbuf[2] == '0' &&
+	    tmpbuf[3] == '1')
 	{
 		memcpy(&len, &tmpbuf[4], 2);
 		if(len > 0x2000)
