@@ -1,7 +1,8 @@
 #
 # rtlbm-mruby mruby script
 #
-# echo -n "GREEN" | nc -w 0 -u 10.10.10.2 7000
+# uart echo back sample script
+# baudrate is 38400
 #
 
 begin
@@ -10,7 +11,6 @@ rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
 
 i = 0
 while 1 do
-  rtl.print "."
   start = rtl.count() 
   while rtl.count() < start + 500 do
   end
