@@ -13,11 +13,18 @@ if [ -n "$git_b" ] ; then
 git="${git}(${git_b})"
 fi
 
+mgit=`cd mruby;git rev-parse --verify --short HEAD 2>/dev/null`
+
+mgit_b=`git rev-parse --abbrev-ref HEAD`
+if [ -n "$mgit_b" ] ; then
+mgit="${mgit}(${git_b})"
+fi
+
 if git diff-index --name-only HEAD | read dummy; then
 git="${git}-dirty"
 fi
 
-verinfo="rtlbm-mruby ${git} ${t} ${h} ${u}\\n"
+verinfo="rtlbm-mruby ${git} ${t}\\nmruby ${mgit}\\n"
 
 cat << EOF > ver.c
 
