@@ -40,7 +40,7 @@ sudo kldload linux
 |       |  
 |       +--- mips  
 |  
-+-- mruby-1.4.0  
++-- mruby  
 |       |  
 |       +-- build/realtek/lib  
 |  
