@@ -2,8 +2,8 @@ This projct use these libraries.
 
 newlib-2.5.0.20171222  
 lwip-2.0.3  
-mruby 
-BearSSL 
+mruby  
+BearSSL  
 
 Source code 
 
