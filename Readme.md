@@ -2,7 +2,7 @@ This projct use these libraries.
 
 newlib-2.5.0.20171222  
 lwip-2.0.3  
-mruby-1.4.0  
+mruby
 BearSSL
 
 Source code 
@@ -22,8 +22,6 @@ rtl_ether.c -- rt8196 ethernet nic support code
 rtl_switch.c -- rtl8196 switch vlan setup code  
 swCore.c -- realtek switch control code  
 bear.c -- https code
-
-hoge.rb -- mruby code
 
 Build tools is this.  
 
