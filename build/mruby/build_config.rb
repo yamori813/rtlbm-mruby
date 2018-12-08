@@ -158,6 +158,7 @@ MRuby::CrossBuild.new('realtek') do |conf|
 
   cc.defines << %w(MRB_DISABLE_STDIO)
   cc.defines << %w(MRB_WITHOUT_FLOAT)
+  cc.defines << %w(YABM_REALTEK)
   conf.cc.flags << "-march=4181"
   conf.cc.flags << "-Os -g -fno-pic -mno-abicalls"
   conf.cc.flags << "-pipe -mlong-calls"
