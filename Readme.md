@@ -17,10 +17,10 @@ traps.c -- cache control code
 
 uart.c -- rtl8196 uart code
 rtl_timer.c -- rtl8196 timer code  
-net.c -- netwrok code  
 rtl_ether.c -- rt8196 ethernet nic support code  
 rtl_switch.c -- rtl8196 switch vlan setup code  
 swCore.c -- realtek switch control code  
+net.c -- netwrok code  
 bear.c -- https code
 
 Build tools is this.  
@@ -44,7 +44,7 @@ sudo kldload linux
 |  
 +-- lwip-2.0.3  
 |       |  
-|       +-- rtk  
+|       +-- realtek  
 +-- BearSSL
         |
         +-- build

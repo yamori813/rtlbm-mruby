@@ -24,7 +24,7 @@ CROSS_CFLAGS += -DRTLBM_MRUBY_DEBUG
 CROSS_CFLAGS += -DUSE_INQUEUE=1
 CROSS_CFLAGS += $(MY_CFLAGS)
 
-CROSS_LDFLAGS = -static -L./$(MRUBYDIR)/build/realtek/lib -L./$(NEWLIBDIR)/mips/newlib/ -Lrsdk/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/4181/ -L./$(LWIPDIR)/rtl/ -L./BearSSL/build/
+CROSS_LDFLAGS = -static -L./$(MRUBYDIR)/build/realtek/lib -L./$(NEWLIBDIR)/mips/newlib/ -Lrsdk/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/4181/ -L./$(LWIPDIR)/realtek/ -L./BearSSL/build/
 CROSS_LDLIB = -lmruby -lc -lgcc -llwip -lbearssl
 CROSS_LDSCRIPT = main.ld
 
