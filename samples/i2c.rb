@@ -27,7 +27,7 @@ mask = 255 << 24 | 255 << 16 | 255 << 8 | 0
 gw = 10 << 24 | 10 << 16 | 10 << 8 | 1
 dns = 10 << 24 | 10 << 16 | 10 << 8 | 1
 
-rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
+rtl = YABM.new(YABM::MODULE_BBR4HGV2)
 
 rtl.netstart(addr, mask, gw, dns)
 

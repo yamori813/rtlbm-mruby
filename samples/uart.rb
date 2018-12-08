@@ -7,7 +7,7 @@
 
 begin
 
-rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
+rtl = YABM.new(YABM::MODULE_BBR4HGV2)
 
 i = 0
 while 1 do

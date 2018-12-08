@@ -107,7 +107,7 @@ dns = 10 << 24 | 0 << 16 | 1 << 8 | 1
 
 # start processing
 
-rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
+rtl = YABM.new(YABM::MODULE_BBR4HGV2)
 
 rtl.netstart(addr, mask, gw, dns)
 

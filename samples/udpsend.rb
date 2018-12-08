@@ -13,7 +13,7 @@ dns = 10 << 24 | 10 << 16 | 10 << 8 | 1
 
 dist = 10 << 24 | 10 << 16 | 10 << 8 | 3
 
-rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
+rtl = YABM.new(YABM::MODULE_BBR4HGV2)
 
 rtl.netstart(addr, mask, gw, dns)
 

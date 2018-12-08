@@ -10,7 +10,7 @@ end
 
 begin
 
-rtl = RTL8196C.new(RTL8196C::MODULE_LANW300NR)
+rtl = YABM.new(YABM::MODULE_LANW300NR)
 
 rtl.gpiosetsel(0x3003ff, 0x3003ff, 0, 0)
 

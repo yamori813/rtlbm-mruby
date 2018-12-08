@@ -4,9 +4,9 @@
 
 begin
 
-rtl = RTL8196C.new(RTL8196C::MODULE_HOMESPOTCUBE)
+rtl = YABM.new(YABM::MODULE_HOMESPOTCUBE)
 
-rtl.print "Hello Bear Metal mruby on RTL8196C"
+rtl.print "Hello Bear Metal mruby on YABM"
 
 while 1 do
    rtl.print "."

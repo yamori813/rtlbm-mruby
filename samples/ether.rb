@@ -9,7 +9,7 @@ mask = 255 << 24 | 255 << 16 | 255 << 8 | 0
 gw = 10 << 24 | 10 << 16 | 10 << 8 | 1
 dns = 10 << 24 | 10 << 16 | 10 << 8 | 1
 
-rtl = RTL8196C.new(RTL8196C::MODULE_BBR4HGV2)
+rtl = YABM.new(YABM::MODULE_BBR4HGV2)
 
 rtl.netstart(addr, mask, gw, dns)                                              
 
@@ -25,9 +25,9 @@ while 1 do
   end
 
   ports.each{|port|
-    m = rtl.getmib(port, RTL8196C::MIB_IN, RTL8196C::MIB_IFINOCTETS)
+    m = rtl.getmib(port, YABM::MIB_IN, YABM::MIB_IFINOCTETS)
     rtl.print m.to_s + " "
-    m = rtl.getmib(port, RTL8196C::MIB_OUT, RTL8196C::MIB_IFOUTOCTETS)
+    m = rtl.getmib(port, YABM::MIB_OUT, YABM::MIB_IFOUTOCTETS)
     rtl.print m.to_s + " "
   }
   rtl.print "\r\n"
