@@ -52,10 +52,10 @@ begin
 
 rtl = YABM.new(YABM::MODULE_HOMESPOTCUBE)
 
-addr = 10 << 24 | 10 << 16 | 10 << 8 | 2
-mask = 255 << 24 | 255 << 16 | 255 << 8 | 0
-gw = 10 << 24 | 10 << 16 | 10 << 8 | 1
-dns = 10 << 24 | 10 << 16 | 10 << 8 | 1
+addr = "10.10.10.2"
+mask = "255.255.255.0"
+gw = "10.10.10.1"
+dns = "10.10.10.1"
 
 rtl.netstart(addr, mask, gw, dns)
 
