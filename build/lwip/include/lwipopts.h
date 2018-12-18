@@ -452,4 +452,6 @@ void print(char *);
 unsigned long genrand_int32(void);
 #define LWIP_RAND	genrand_int32
 
+#define LWIP_NO_CTYPE_H 1
+
 #endif /* LWIP_LWIPOPTS_H */
