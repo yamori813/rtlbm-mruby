@@ -3,13 +3,11 @@
 #
 
 CROSS_CC = mips-cc
-CROSS_OBJCOPY = mips-objcopy
 CROSS_LD = mips-ld
+CROSS_OBJCOPY = mips-objcopy
 
-NEWLIBDIR = newlib-2.5.0.20171222
-#MRUBYDIR = mruby-1.4.0
 MRUBYDIR = mruby
-#LWIPDIR = lwip-2.0.3
+NEWLIBDIR = newlib-2.5.0.20171222
 LWIPDIR = lwip-2.1.2
 BARESSLDIR=BearSSL
 
@@ -37,45 +35,20 @@ TARGET = RTL8196C
 
 include $(TARGET).mk
 
-all: main.rtl
-
 .c.o:
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c -o $@ $<
 
 .S.o:
 	$(CROSS_CC) -O2 $(CROSS_ASFLAGS) -c $<
 
-start.o: start.S
-inthandler.o: inthandler.S
-
-main.o: main.c
-uart.o: uart.c
-rtl_timer.o: rtl_timer.c
-net.o: net.c
-intr.o: intr.c
-rtl_ether.o: rtl_ether.c
-rtl_switch.o: rtl_switch.c
-rtl_gpio.o: rtl_gpio.c
-swCore.o: swCore.c
-spi_common.o: spi_common.c
-spi_flash.o: spi_flash.c
-traps.o: traps.c
-syscalls.o: syscalls.c
-xprintf.o: xprintf.c
-mt19937ar.o: mt19937ar.c
-time.o: time.c
-bear.o: bear.c
-i2c.o: i2c.c
-swCore.o: rtl8196d/swCore.c
+main.rtl: main.elf
+	$(CROSS_OBJCOPY) -O binary main.elf main.bin
+	./mkimg.sh
 
 main.elf: $(OBJS) main.ld
 	./ver.sh
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c ver.c
 	$(CROSS_LD) $(CROSS_LDFLAGS) -T $(CROSS_LDSCRIPT) -Map main.map $(OBJS) ver.o $(MRBOBJ) $(CROSS_LDLIB) -o main.elf
-
-main.rtl: main.elf
-	$(CROSS_OBJCOPY) -O binary main.elf main.bin
-	./mkimg.sh
 
 clean:
 	rm -rf *.o rtl8196d/*.o *.elf *.bin ver.c main.map main.rtl
