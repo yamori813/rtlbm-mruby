@@ -1,5 +1,5 @@
 #
-# mruby-1.4.0 on RTL8196 Bare Metal 
+# mruby on RTL8196 Bare Metal 
 #
 
 CROSS_CC = mips-cc
@@ -32,18 +32,10 @@ CROSS_ASFLAGS += -DCONFIG_RTL865XC -D__ASSEMBLY__
 
 OBJS = main.o uart.o rtl_timer.o net.o intr.o traps.o syscalls.o start.o inthandler.o rtl_ether.o rtl_switch.o rtl_gpio.o spi_common.o spi_flash.o xprintf.o bear.o mt19937ar.o time.o i2c.o
 
-TARGET="RTL8196C"
+# Default configuration is 'RTL8196C'
+TARGET = RTL8196C
 
-.if ${TARGET} == "RTL8196E"
-CROSS_CFLAGS += -DCONFIG_RTL8196E -DCONFIG_RTL865XC=1
-CROSS_CFLAGS += -DRTL8196E=1
-OBJS += rtl8196d/swCore.o
-.else
-CROSS_CFLAGS += -DCONFIG_RTL8196C -DCONFIG_RTL8196C_REVISION_B
-CROSS_CFLAGS += -DRTL8196C=1 -DCONFIG_RTL865XC=1
-CROSS_CFLAGS += -DRTL8196=1 -DRTL8196B=1
-OBJS += swCore.o
-.endif
+include $(TARGET).mk
 
 all: main.rtl
 
