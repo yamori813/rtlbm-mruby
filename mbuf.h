@@ -112,4 +112,12 @@ e before remarking, TX: undefined */
    uint16_t     ph_txPriority: 3;
    uint16_t     ph_vlanId: 12;
    uint16_t     ph_flags2;
+#if defined(CONFIG_RTL8196D) || defined(CONFIG_RTL8196E)
+   uint8_t      ph_ptpResv:1;
+   uint8_t      ph_ptpMsgType:4;  /* message type */
+   uint8_t      ph_ptpVer:2;      /* PTP version, 0: 1588v1; 1: 1588v2 or 802.1as; others: reserved */
+   uint8_t      ph_ptpPkt:1;      /* 1: PTP */
+   int8_t       ph_reserved[3];            /* padding */
+#endif
+
 };

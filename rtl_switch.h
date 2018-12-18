@@ -26,7 +26,11 @@ typedef struct ether_addr_s {
 
 typedef struct {
          /* word 0 */
+#if defined(CONFIG_RTL8196D) || defined(CONFIG_RTL8196E)
+	uint32  vid:12;
+#else
         uint32  reserved1:12;
+#endif
         uint32  fid:2;
         uint32     extEgressUntag  : 3;
         uint32     egressUntag : 6;

@@ -289,9 +289,15 @@ int i;
 
 	netif_set_link_up(&netif);
 
+#if RTL8196E
+	lptr = (unsigned long *)IRR1;
+	*lptr |= (3 << 28);
+	request_IRQ(15, &irq_Ether, NULL);
+#else
 	lptr = (unsigned long *)IRR1;
 	*lptr |= (3 << 0);
 	request_IRQ(8, &irq_Ether, NULL);
+#endif
 
 	netif_set_default(&netif);
 	netif_set_up(&netif);   /* send broadcast arp packet */

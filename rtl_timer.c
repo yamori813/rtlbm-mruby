@@ -77,7 +77,11 @@ int lps_precision = LPS_PREC;
 
 void timer_init()
 {
+#if RTL8196E
+	request_IRQ(8, &irq_Timer, NULL);
+#else
 	request_IRQ(14, &irq_Timer, NULL);
+#endif
 
 	/* Set timer mode and Enable timer */
 	REG32(TCCNR_REG) = (0<<31) | (0<<30);       //using time0

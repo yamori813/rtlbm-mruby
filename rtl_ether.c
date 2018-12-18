@@ -58,7 +58,13 @@ int txPos;
 
 #define TX_RING0	4
 #define TX_RING1	2
+#if defined(CONFIG_RTL8196D) || defined(CONFIG_RTL8196E)
+#define TX_RING2	2
+#define TX_RING3	2
+#define TX_RING		(TX_RING0 + TX_RING1 + TX_RING2 + TX_RING3)
+#else
 #define TX_RING		(TX_RING0 + TX_RING1)
+#endif
 #define RX_RING		8
 
 /* Define those to better describe your network interface. */
@@ -206,6 +212,14 @@ struct ethernetif *ethernetif = netif->state;
 	*ptr = &txPkthdrRing[0];
 	ptr = (unsigned int *)CPUTPDCR1;
 	*ptr = &txPkthdrRing[TX_RING0];
+#if defined(CONFIG_RTL8196D) || defined(CONFIG_RTL8196E)
+	txPkthdrRing[TX_RING0 + TX_RING1 - 1] |= DESC_WRAP;
+	txPkthdrRing[TX_RING0 + TX_RING1 + TX_RING2 - 1] |= DESC_WRAP;
+	ptr = (unsigned int *)CPUTPDCR2;
+	*ptr = &txPkthdrRing[TX_RING0 + TX_RING1];
+	ptr = (unsigned int *)CPUTPDCR3;
+	*ptr = &txPkthdrRing[TX_RING0 + TX_RING1 + TX_RING2];
+#endif
 
 	/* setup rx ring */
 	for (i = 0; i < RX_RING; i++)

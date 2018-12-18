@@ -150,6 +150,9 @@ vlan_table_t    entryContent;
 	entryContent.memberPort = 0x1f;   /* only phy port */
 	entryContent.egressUntag = 0x1f;
 	entryContent.fid = 0;
+#if defined(CONFIG_RTL8196D) || defined(CONFIG_RTL8196E)
+	entryContent.vid = vid;
+#endif
 	if (swTable_addEntry(TYPE_VLAN_TABLE, vid, &entryContent) != 0)
 		print("vlan swTable_addEntry error");
 }

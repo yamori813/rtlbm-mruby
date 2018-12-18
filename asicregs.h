@@ -94,7 +94,11 @@
 #define RTL865XC_NETINTERFACE_NUMBER		8
 #define RTL865XC_MAC_NETINTERFACE_NUMBER	4
 #define RTL865XC_PORT_NUMBER				9
+#if defined(CONFIG_RTL8196D) || defined(CONFIG_RTL8196E)
+#define RTL865XC_VLAN_NUMBER				16
+#else
 #define RTL865XC_VLAN_NUMBER				4096
+#endif
 
 #define HW_STRAP        0xB8000008
 /*
@@ -360,6 +364,11 @@ link partner ability registers field definitions
 #define CPUTPDCR0				(0x020 + CPU_IFACE_BASE)    /* Tx pkthdr descriptor control Low */
 #define CPUTPDCR1				(0x024 + CPU_IFACE_BASE)    /* Tx pkthdr descriptor control High */
 #define CPUTPDCR(idx)			(CPUTPDCR0 + (idx << 2))		/* Tx pkthdr descriptor control with index */
+
+#if defined(CONFIG_RTL8196D) || defined(CONFIG_RTL8196E)
+#define CPUTPDCR2				(0x060 + CPU_IFACE_BASE)    /* Tx pkthdr descriptor control High */
+#define CPUTPDCR3				(0x064 + CPU_IFACE_BASE)    /* Tx pkthdr descriptor control High */
+#endif
 
 #define CPUIIMR					(0x028 + CPU_IFACE_BASE)    /* Interrupt mask control */
 #define CPUIISR					(0x02c + CPU_IFACE_BASE)    /* Interrupt status control */
@@ -1691,4 +1700,15 @@ to forward packet to the unauthorized node. Otherwise, it is not allowed.
 #endif   /* _ASICREGS_H */
 
 
-
+#if defined(CONFIG_RTL8196D) || defined(CONFIG_RTL8196E)
+#define CF_RXIPG_MASK                       (0xf << 0)                /* Min. IPG limitation for RX receiving packetMinimum value is 6. Maximum value is 12. */
+#define SELIPG_MASK                       	(0x3 << 18)                /* Define min. IPG between backpressure data */
+#define 	BOND_OPTION	(SYSTEM_BASE+0x000C)
+#define 	BOND_ID_MASK	(0xF)
+#define 	BOND_8196ES	(0xD)
+#define AutoNegoSts_MASK                       (0x1f<<18) 
+#define Conf_done							(1<<6)		/*Port5 configuration is done to enable the frame reception and transmission.	*/
+#define SELIPG_11                    		(2<<18)     			/* 11, unit: byte-time */
+#define MEMCR                              (0x34+SWMISC_BASE)     /* MEM CTRL Register */
+#define MacSwReset					(1<<3)		/* 0: reset state, 1: normal state */
+#endif
