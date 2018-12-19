@@ -50,6 +50,7 @@
 #include "asicregs.h"
 #include "rtlregs.h"
 #include "system.h"
+#include "intr.h"
 
 static unsigned int*  txPkthdrRing;
 static unsigned int*  rxPkthdrRing;
@@ -70,6 +71,8 @@ int txPos;
 /* Define those to better describe your network interface. */
 #define IFNAME0 'e'
 #define IFNAME1 'n'
+
+struct netif netif;
 
 /**
  * Helper struct to hold private data used to operate your ethernet interface.
@@ -101,6 +104,76 @@ char buf[8];
 }
 #endif
 
+#ifndef RTLMACADDR
+#define	RTLMACADDR	0x56,0xaa,0xa5,0x5a,0x7d,0xe8
+#endif
+
+char eth0_mac[6]={RTLMACADDR};
+
+void gethwmac(unsigned char *mac)
+{
+	unsigned char tmpbuf[6];
+	unsigned short len;
+	unsigned char *buf;
+	unsigned char sum=0;
+	int i;
+	
+	if (flashread(tmpbuf, HW_SETTING_OFFSET,6)==0 ) {
+		return;
+	}
+	if(tmpbuf[0] == 'H' && tmpbuf[1] == '6' && tmpbuf[2] == '0' &&
+	    tmpbuf[3] == '1')
+	{
+		memcpy(&len, &tmpbuf[4], 2);
+		if(len > 0x2000)
+			return;
+		if(NULL==(buf=(unsigned char *)malloc(len)))
+			return;
+		flashread(buf,HW_SETTING_OFFSET+6,len);
+		if(len != 0 && len <= 0x2000) {					
+			for (i=0;i<len;i++) 
+				sum += buf[i];
+		}
+		else
+			sum=1;
+		if(0 == sum)
+		{			
+			memcpy(mac,buf+HW_NIC0_MAC_OFFSET,6);
+			if(memcmp(mac,"\x0\x0\x0\x0\x0\x0", 6) && !(mac[0] & 0x1))
+			{
+				/*normal mac*/
+			}
+			else
+			{
+				memset(mac,0x0,6);
+			}
+		}
+		if(buf)
+			free(buf);
+	}
+	return;
+}
+
+void Ether_isr(void)
+{
+long *lptr;
+long reg;
+
+	lptr = (unsigned long *)CPUIISR;
+	if( *lptr & TX_DONE_IE0 ) {
+		reg = *lptr | TX_DONE_IE0;
+	}
+	if( *lptr & TX_DONE_IE1 ) {
+		reg = *lptr | TX_DONE_IE1;
+	}
+	if( *lptr & RX_DONE_IE0 ) {
+		ethernetif_input(&netif);
+		reg = *lptr | RX_DONE_IE0;
+	}
+	*lptr = reg;
+}
+
+struct irqaction irq_Ether = {Ether_isr, (void *)NULL};
 /**
  * In this function, the hardware should be initialized.
  * Called from ethernetif_init().
@@ -123,6 +196,23 @@ struct mBuf * pMbuf;
 uint32_t  size_of_cluster;
 uint8_t * pClusterList;
 struct ethernetif *ethernetif = netif->state;
+long *lptr;
+
+	gethwmac(eth0_mac);
+
+	swCore_init();
+
+	vlan_init();
+
+#if RTL8196E
+	lptr = (unsigned long *)IRR1;
+	*lptr |= (3 << 28);
+	request_IRQ(15, &irq_Ether, NULL);
+#else
+	lptr = (unsigned long *)IRR1;
+	*lptr |= (3 << 0);
+	request_IRQ(8, &irq_Ether, NULL);
+#endif
 
 	/* set MAC hardware address length */
 	netif->hwaddr_len = ETHARP_HWADDR_LEN;

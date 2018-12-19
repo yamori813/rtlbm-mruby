@@ -32,83 +32,12 @@
 
 unsigned char debug_flags;
 
-struct netif netif;
+extern struct netif netif;
 
 static ip4_addr_t ipaddr, netmask, gw, dnsserver, dnsres;
 
 err_t ethernetif_init(struct netif *netif);
 err_t ethernet_input(struct pbuf *p, struct netif *netif);
-
-#ifndef RTLMACADDR
-#define	RTLMACADDR	0x56,0xaa,0xa5,0x5a,0x7d,0xe8
-#endif
-
-char eth0_mac[6]={RTLMACADDR};
-
-void gethwmac(unsigned char *mac)
-{
-	unsigned char tmpbuf[6];
-	unsigned short len;
-	unsigned char *buf;
-	unsigned char sum=0;
-	int i;
-	
-	if (flashread(tmpbuf, HW_SETTING_OFFSET,6)==0 ) {
-		return;
-	}
-	if(tmpbuf[0] == 'H' && tmpbuf[1] == '6' && tmpbuf[2] == '0' &&
-	    tmpbuf[3] == '1')
-	{
-		memcpy(&len, &tmpbuf[4], 2);
-		if(len > 0x2000)
-			return;
-		if(NULL==(buf=(unsigned char *)malloc(len)))
-			return;
-		flashread(buf,HW_SETTING_OFFSET+6,len);
-		if(len != 0 && len <= 0x2000) {					
-			for (i=0;i<len;i++) 
-				sum += buf[i];
-		}
-		else
-			sum=1;
-		if(0 == sum)
-		{			
-			memcpy(mac,buf+HW_NIC0_MAC_OFFSET,6);
-			if(memcmp(mac,"\x0\x0\x0\x0\x0\x0", 6) && !(mac[0] & 0x1))
-			{
-				/*normal mac*/
-			}
-			else
-			{
-				memset(mac,0x0,6);
-			}
-		}
-		if(buf)
-			free(buf);
-	}
-	return;
-}
-
-void Ether_isr(void)
-{
-long *lptr;
-long reg;
-
-	lptr = (unsigned long *)CPUIISR;
-	if( *lptr & TX_DONE_IE0 ) {
-		reg = *lptr | TX_DONE_IE0;
-	}
-	if( *lptr & TX_DONE_IE1 ) {
-		reg = *lptr | TX_DONE_IE1;
-	}
-	if( *lptr & RX_DONE_IE0 ) {
-		ethernetif_input(&netif);
-		reg = *lptr | RX_DONE_IE0;
-	}
-	*lptr = reg;
-}
-
-struct irqaction irq_Ether = {Ether_isr, (void *)NULL};
 
 static struct udp_pcb *udpecho_raw_pcb;
 static struct udp_pcb *udpsntp_raw_pcb;
@@ -268,13 +197,8 @@ int getmyaddress()
 
 void net_init(int use_dhcp)
 {
-long *lptr;
 err_t err;
 int i;
-
-	gethwmac(eth0_mac);
-
-	swCore_init();
 
 	lwip_init();
 
@@ -285,19 +209,7 @@ int i;
 		netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,
  		    ethernet_input);
 
-	vlan_init();
-
 	netif_set_link_up(&netif);
-
-#if RTL8196E
-	lptr = (unsigned long *)IRR1;
-	*lptr |= (3 << 28);
-	request_IRQ(15, &irq_Ether, NULL);
-#else
-	lptr = (unsigned long *)IRR1;
-	*lptr |= (3 << 0);
-	request_IRQ(8, &irq_Ether, NULL);
-#endif
 
 	netif_set_default(&netif);
 	netif_set_up(&netif);   /* send broadcast arp packet */
