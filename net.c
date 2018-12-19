@@ -23,9 +23,6 @@
 #include "lwip/dns.h"
 #include "lwip/dhcp.h"
 
-#include "asicregs.h"
-#include "intr.h"
-#include "rtlregs.h"
 #include "system.h"
 
 //#define	NETDEBUG
