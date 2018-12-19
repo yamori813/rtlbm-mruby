@@ -1,7 +1,7 @@
 This projct use these libraries.
 
 newlib-2.5.0.20171222  
-lwip-2.0.3  
+lwip-2.1.2  
 mruby  
 BearSSL  
 
@@ -27,7 +27,7 @@ Build tools is this.
 
 rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714  
 
-I build on FreeBSD/amd64 10.4 used by linux emuration.  
+I build on FreeBSD/amd64 11.2 used by linux emuration.  
 
 sudo kldload linux
 
@@ -42,7 +42,7 @@ sudo kldload linux
 |       |  
 |       +-- build/realtek/lib  
 |  
-+-- lwip-2.0.3  
++-- lwip-2.1.2  
 |       |  
 |       +-- realtek  
 +-- BearSSL
