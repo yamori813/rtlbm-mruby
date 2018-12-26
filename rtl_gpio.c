@@ -2,8 +2,8 @@
  * Copyright (c) 2018 Hiroki Mori. All rights reserved.
  */
 
-#define	PIN_MUX_SEL	0xb8000040
-#define PIN_MUX_SEL2	0xb800003c
+#include "rtlregs.h"
+
 #define	PABCD_CNR	0xb8003500
 #define	PABCD_DIR	0xb8003508
 #define	PABCD_DAT	0xb800350c

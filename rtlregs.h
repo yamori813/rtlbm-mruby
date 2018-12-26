@@ -10,7 +10,11 @@ typedef unsigned char Int8;
 #define	ST0_CU0			0x10000000
 
 #define PIN_MUX_SEL 		0xb8000040
+#if defined(CONFIG_RTL8196D) || defined(CONFIG_RTL8196E)
+#define	PIN_MUX_SEL2		0xb8000044
+#else
 #define	PIN_MUX_SEL2		0xb800003c
+#endif
 
 #define	GIMR			0xb8003000
 #define	GIMR_REG		0xb8003000
