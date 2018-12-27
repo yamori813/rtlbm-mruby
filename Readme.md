@@ -29,7 +29,9 @@ rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714
 
 I build on FreeBSD/amd64 11.2 used by linux emuration.  
 
-sudo kldload linux
+Default build is RTL8196C. If you want build for RTL8196E do this.  
+
+% make TARGET=RTL8196E  
 
 ```
 +-- rsdk (synblic link to rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714)
