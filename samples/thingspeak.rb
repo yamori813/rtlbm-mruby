@@ -16,7 +16,7 @@ gw = "10.10.10.1"
 dns = "10.10.10.1"
 
 
-rtl = YABM.new(YABM::MODULE_BBR4HGV2)
+rtl = YABM.new(YABM::MODULE_RTL8196C)
 
 rtl.netstart(addr, mask, gw, dns)
 

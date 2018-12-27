@@ -7,7 +7,7 @@
 
 begin
 
-rtl = YABM.new(YABM::MODULE_BBR4HGV2)
+rtl = YABM.new(YABM::MODULE_RTL8196C)
 
 i = 0
 while 1 do

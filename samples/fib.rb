@@ -9,7 +9,7 @@ end
 
 begin
 
-rtl = YABM.new(YABM::MODULE_HOMESPOTCUBE)
+rtl = YABM.new(YABM::MODULE_RTL8196C)
 
 while 1 do
    rtl.print "."
