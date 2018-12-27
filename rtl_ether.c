@@ -431,6 +431,9 @@ dumpmem(0xbb801800+i*0x80, 16);
 	sprintf(str, "len %d.", p->len);
 	print(str);
 */
+#if defined(CONFIG_RTL8196D) || defined(CONFIG_RTL8196E)
+	pPkthdr->ph_ptpPkt = 0;
+#endif
 
 	pPkthdr->ph_mbuf->m_len = pPkthdr->ph_len;
 	pPkthdr->ph_mbuf->m_extsize = pPkthdr->ph_len;
