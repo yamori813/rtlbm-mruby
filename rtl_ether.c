@@ -68,6 +68,10 @@ int txPos;
 #endif
 #define RX_RING		8
 
+#define COMP_SIGNATURE_LEN	6
+#define COMP_HS_FLASH_ADDR	0x8000
+#define CURRENT_ELAN_MAC_OFFSET	26
+
 /* Define those to better describe your network interface. */
 #define IFNAME0 'e'
 #define IFNAME1 'n'
@@ -148,6 +152,25 @@ void gethwmac(unsigned char *mac)
 				memset(mac,0x0,6);
 			}
 		}
+		if(buf)
+			free(buf);
+
+		return;
+	}
+
+	/* for HOME SPOT CUBE boot */
+	if (flashread(tmpbuf,COMP_HS_FLASH_ADDR,COMP_SIGNATURE_LEN)==0 ) {
+		return;
+	}
+	if(tmpbuf[0] == 'C' && tmpbuf[1] == 'O' && tmpbuf[2] == 'M' &&
+	    tmpbuf[3] == 'P' && tmpbuf[4] == 'H' && tmpbuf[5] == 'S')
+	{
+		len = 64;
+		if(NULL==(buf=(unsigned char *)malloc(len)))
+			return;
+		flashread(buf,COMP_HS_FLASH_ADDR+COMP_SIGNATURE_LEN,len);
+		/* Todo: add check */
+		memcpy(mac,buf+CURRENT_ELAN_MAC_OFFSET,6);
 		if(buf)
 			free(buf);
 	}
