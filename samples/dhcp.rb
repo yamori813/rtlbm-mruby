@@ -18,8 +18,7 @@ rtl.netstartdhcp
 
 ip = rtl.getaddress
 
-rtl.print (ip >> 24).to_s + "." + ((ip >> 16) & 0xff).to_s + "." +
-  ((ip >> 16) & 0xff).to_s + "." + (ip & 0xff).to_s
+rtl.print ip + "\n"
 
 rtl.udpinit
 rtl.udpbind(7000)
