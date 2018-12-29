@@ -225,18 +225,6 @@ long *lptr;
 
 	swCore_init();
 
-	vlan_init();
-
-#if RTL8196E
-	lptr = (unsigned long *)IRR1;
-	*lptr |= (3 << 28);
-	request_IRQ(15, &irq_Ether, NULL);
-#else
-	lptr = (unsigned long *)IRR1;
-	*lptr |= (3 << 0);
-	request_IRQ(8, &irq_Ether, NULL);
-#endif
-
 	/* set MAC hardware address length */
 	netif->hwaddr_len = ETHARP_HWADDR_LEN;
 
@@ -395,6 +383,18 @@ long *lptr;
 //	REG32(MDCIOCR)=0x96181441;      // enable Giga port 8211B LED
 
 	txPos = 0;
+
+	vlan_init();
+
+#if RTL8196E
+	lptr = (unsigned long *)IRR1;
+	*lptr |= (3 << 28);
+	request_IRQ(15, &irq_Ether, NULL);
+#else
+	lptr = (unsigned long *)IRR1;
+	*lptr |= (3 << 0);
+	request_IRQ(8, &irq_Ether, NULL);
+#endif
 }
 
 /**
