@@ -66,7 +66,7 @@ int txPos;
 #else
 #define TX_RING		(TX_RING0 + TX_RING1)
 #endif
-#define RX_RING		8
+#define RX_RING		4
 
 #define COMP_SIGNATURE_LEN	6
 #define COMP_HS_FLASH_ADDR	0x8000
@@ -353,15 +353,13 @@ long *lptr;
 		rxMbufRing[i] = (int32_t) pMbuf | DESC_SWCORE_OWNED;
 	}
 
-	rxPkthdrRing[RX_RING / 2 -1] |= DESC_WRAP;
-	rxMbufRing[RX_RING / 2 - 1] |= DESC_WRAP;
 	rxPkthdrRing[RX_RING -1] |= DESC_WRAP;
 	rxMbufRing[RX_RING - 1] |= DESC_WRAP;
 
 	ptr = (unsigned int *)CPURPDCR0;
 	*ptr = &rxPkthdrRing[0];
 	ptr = (unsigned int *)CPURPDCR1;
-	*ptr = &rxPkthdrRing[RX_RING / 2];
+	*ptr = 0;
 	ptr = (unsigned int *)CPURPDCR2;
 	*ptr = 0;
 	ptr = (unsigned int *)CPURPDCR3;
