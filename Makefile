@@ -41,14 +41,14 @@ include $(TARGET).mk
 .S.o:
 	$(CROSS_CC) -O2 $(CROSS_ASFLAGS) -c $<
 
-main.rtl: main.elf
-	$(CROSS_OBJCOPY) -O binary main.elf main.bin
-	./mkimg.sh
+$(VMOBJ).rtl: $(VMOBJ).elf
+	$(CROSS_OBJCOPY) -O binary $(VMOBJ).elf $(VMOBJ).bin
+	./mkimg.sh $(VMOBJ)
 
-main.elf: $(OBJS) main.ld
+$(VMOBJ).elf: $(OBJS) $(CROSS_LDSCRIPT)
 	./ver.sh
 	$(CROSS_CC) -O2 $(CROSS_CFLAGS) -c ver.c
-	$(CROSS_LD) $(CROSS_LDFLAGS) -T $(CROSS_LDSCRIPT) -Map main.map $(OBJS) ver.o $(MRBOBJ) $(CROSS_LDLIB) -o main.elf
+	$(CROSS_LD) $(CROSS_LDFLAGS) -T $(CROSS_LDSCRIPT) -Map $(VMOBJ).map $(OBJS) ver.o $(MRBOBJ) $(CROSS_LDLIB) -o $(VMOBJ).elf
 
 clean:
-	rm -rf *.o rtl8196d/*.o *.elf *.bin ver.c main.map main.rtl
+	rm -rf *.o rtl8196d/*.o *.elf *.bin ver.c *.map *.rtl

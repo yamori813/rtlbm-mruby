@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TERGET=main
+TERGET=$1
 IMG=${TERGET}.rtl
 
 ENTRY=`readelf -h ${TERGET}.elf | awk '/Entry point address/{print $4}'`
