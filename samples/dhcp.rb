@@ -12,7 +12,7 @@ end
 
 begin
 
-rtl = YABM.new(YABM::MODULE_RTL8196C)
+rtl = YABM.new
 
 rtl.netstartdhcp
 

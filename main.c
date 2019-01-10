@@ -7,7 +7,7 @@
 #include <mruby/string.h>
 #include <mruby/error.h>
 
-#include "intr.h"
+#include "asicregs.h"
 
 extern char _end[];
 extern char _fbss[];
@@ -67,3 +67,32 @@ unsigned char *mrbbuf;
 	return 1;
 }
 
+#define  REVR  0xB8000000
+#define  RTL8196C_REVISION_A  0x80000001
+#define  RTL8196C_REVISION_B  0x80000002
+#define  RTL8198_REVISION_A  0xC0000000
+#define  RTL8198_REVISION_B  0xC0000001
+
+#define  RTL8196D_REVISION  0x8196d000
+#define  RTL8196E_REVISION  0x8196e000
+
+#define	MODULE_UNKNOWN				0
+#define	MODULE_RTL8196C				1
+#define	MODULE_BCM4712				2
+#define	MODULE_RTL8196E				3
+#define	MODULE_BCM5350				4
+#define	MODULE_BCM5352				5
+#define	MODULE_BCM5354				6
+
+int
+getarch()
+{
+unsigned long rev = REG32(REVR);
+
+	if (rev == RTL8196C_REVISION_A || rev == RTL8196C_REVISION_B)
+		return MODULE_RTL8196C;
+	else if (rev == RTL8196E_REVISION)
+		return MODULE_RTL8196E;
+	else
+		return MODULE_UNKNOWN;
+}

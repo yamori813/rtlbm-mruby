@@ -50,7 +50,7 @@ end
 
 begin
 
-rtl = YABM.new(YABM::MODULE_RTL8196C)
+rtl = YABM.new
 
 addr = "10.10.10.2"
 mask = "255.255.255.0"

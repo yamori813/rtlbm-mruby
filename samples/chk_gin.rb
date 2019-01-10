@@ -10,7 +10,7 @@ end
 
 begin
 
-rtl = YABM.new(YABM::MODULE_RTL8196E)
+rtl = YABM.new
 
 # JTAG and all LED is GPIO
 rtl.gpiosetsel(0x06, 0x1ffffff, 0x36db, 0x3fff)

@@ -10,7 +10,7 @@ end
 
 begin
 
-rtl = YABM.new(YABM::MODULE_RTL8196C)
+rtl = YABM.new
 
 rtl.gpiosetsel(0x3003ff, 0x3003ff, 0, 0)
 
