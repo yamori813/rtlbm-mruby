@@ -87,7 +87,7 @@ static err_t
 http_poll(void *arg, struct tcp_pcb *pcb)
 {
   tcp_abort(pcb);
-  tcpstat = 2;
+  tcpstat = 3;
   print("tcp_abort");
   return ERR_OK;
 }
@@ -95,7 +95,7 @@ http_poll(void *arg, struct tcp_pcb *pcb)
 static void
 http_err(void *arg, err_t err)
 {
-  tcpstat = 2;
+  tcpstat = 3;
 }
 
 static err_t
@@ -410,7 +410,7 @@ int i;
 		tcplen -= rlen;
 		tcpoff += rlen;
 		sti();
-	} else if (tcpstat == 2) {
+	} else if (tcpstat >= 2) {
 		rlen = -1;
 	}
 	return rlen;
