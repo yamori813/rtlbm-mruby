@@ -237,3 +237,7 @@ unsigned int read_gpio_hw_setting()
 #endif
 }
 
+int readmdio(unsigned int addr, unsigned int reg, unsigned int *dat)
+{
+	return rtl8651_getAsicEthernetPHYReg(addr, reg, dat);
+}
