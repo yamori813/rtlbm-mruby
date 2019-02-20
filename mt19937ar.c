@@ -171,7 +171,14 @@ double genrand_res53(void)
 } 
 /* These real versions are due to Isaku Wada, 2002/01/09 added */
 
-#if 0
+#if 1
+void mt19937ar_init()
+{
+
+    unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
+    init_by_array(init, length);
+}
+#else
 int main(void)
 {
     int i;
