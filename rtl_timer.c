@@ -155,3 +155,13 @@ unsigned long max, val, val2, now, start;
 			break;
 	}
 }
+
+unsigned long starttime;
+
+time_t
+time(time_t *t)
+{
+
+        return sys_now()/1000 + starttime;
+}
+
