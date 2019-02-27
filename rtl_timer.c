@@ -77,7 +77,7 @@ int lps_precision = LPS_PREC;
 
 void timer_init()
 {
-#if RTL8196E
+#if RTL8196E || RTL8198
 	request_IRQ(8, &irq_Timer, NULL);
 #else
 	request_IRQ(14, &irq_Timer, NULL);

@@ -384,7 +384,7 @@ long *lptr;
 
 	vlan_init();
 
-#if RTL8196E
+#if RTL8196E || RTL8198
 	lptr = (unsigned long *)IRR1;
 	*lptr |= (3 << 28);
 	request_IRQ(15, &irq_Ether, NULL);
