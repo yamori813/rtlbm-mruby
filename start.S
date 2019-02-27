@@ -17,6 +17,10 @@ start:
 1:	sw	$0,0($8)
 	add	$8,4
 	blt	$8,$9,1b
+	/* get real memory end */
+	addiu	$sp, $sp, -8
+	jal	memend
+	move	$sp, $2
 	/* allocate space for result */
 	addiu	$sp, $sp, -8
 	jal	main

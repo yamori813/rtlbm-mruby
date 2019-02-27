@@ -13,11 +13,11 @@
 
 extern char version[];
 
+unsigned long memend();
+
 int
 main(int argc, char *argv[])
 {
-int i, j;
-long *lptr;
 unsigned char hdrbuf[22];
 int mrbsize;
 unsigned char *mrbbuf;
@@ -31,6 +31,8 @@ unsigned char *mrbbuf;
 	intr_init();
 
 	timer_init();
+
+	xprintf("MEMORY %dM\n", (memend() - 0x80000000) >> 20);
 
 	spi_probe();
 
@@ -89,4 +91,20 @@ unsigned long rev = REG32(REVR);
 		return MODULE_RTL8196E;
 	else
 		return MODULE_UNKNOWN;
+}
+
+unsigned long memend()
+{
+unsigned long *reg;
+unsigned long endaddr;
+
+	endaddr = 0x80800000;
+
+#if defined(RTL8198)
+	reg = 0xb8001004;
+	if (*reg == 0x54480000)
+		endaddr = 0x82000000;
+#endif
+
+	return endaddr;
 }
