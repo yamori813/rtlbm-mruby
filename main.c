@@ -82,6 +82,7 @@ unsigned char *mrbbuf;
 #define	MODULE_BCM5350				4
 #define	MODULE_BCM5352				5
 #define	MODULE_BCM5354				6
+#define	MODULE_RTL8198				10
 
 int
 getarch()
@@ -90,6 +91,8 @@ unsigned long rev = REG32(REVR);
 
 	if (rev == RTL8196C_REVISION_A || rev == RTL8196C_REVISION_B)
 		return MODULE_RTL8196C;
+	else if (rev == RTL8198_REVISION_A || rev == RTL8198_REVISION_B)
+		return MODULE_RTL8198;
 	else if (rev == RTL8196E_REVISION)
 		return MODULE_RTL8196E;
 	else
