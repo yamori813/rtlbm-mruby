@@ -8,6 +8,7 @@ AR=mips-ar
 CROSS_CFLAGS = -Iinclude -I$(SRC)/include -I../../newlib-2.5.0.20171222/include/
 
 CROSS_CFLAGS += -march=4181
+#CROSS_CFLAGS += -march=5281
 #CROSS_CFLAGS += -march=4181 -Os -g -fno-pic -mno-abicalls
 CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
 CROSS_CFLAGS += -pipe -mlong-calls

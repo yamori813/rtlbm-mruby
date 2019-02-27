@@ -12,7 +12,7 @@ LWIPDIR = lwip-2.1.2
 BARESSLDIR=BearSSL
 
 CROSS_CFLAGS = -I./$(NEWLIBDIR)/newlib/libc/include/ -I./$(MRUBYDIR)/include/ -I./$(LWIPDIR)/src/include -I./$(LWIPDIR)/realtek/include -I$(BARESSLDIR)/inc
-CROSS_CFLAGS += -march=4181 -Os -g -fno-pic -mno-abicalls
+CROSS_CFLAGS += -Os -g -fno-pic -mno-abicalls
 CROSS_CFLAGS += -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0
 CROSS_CFLAGS += -pipe -mlong-calls
 
