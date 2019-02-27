@@ -150,7 +150,7 @@ end
 #   conf.test_runner.command = 'env'
 # end
 
-MRuby::CrossBuild.new('realtek') do |conf|
+MRuby::CrossBuild.new('rtl8196') do |conf|
   toolchain :gcc
   conf.cc.command = 'mips-cc'
   conf.archiver.command = 'mips-ar'
@@ -160,10 +160,30 @@ MRuby::CrossBuild.new('realtek') do |conf|
   cc.defines << %w(MRB_WITHOUT_FLOAT)
   cc.defines << %w(YABM_REALTEK)
   conf.cc.flags << "-march=4181"
-#  conf.cc.flags << "-march=5281"
-  conf.cc.flags << "-Os -g -fno-pic -mno-abicalls"
+  conf.cc.flags << "-g -fno-pic -mno-abicalls"
   conf.cc.flags << "-pipe -mlong-calls"
-  conf.cc.flags << "-mips16"
+#  conf.cc.flags << "-mips16"
+  conf.cc.include_paths = ["#{root}/include", "../newlib-2.5.0.20171222/newlib/libc/include"]
+
+  conf.gem :github => 'yamori813/mruby-yabm'
+  conf.gem :github => 'yamori813/mruby-simplehttp'
+# use in mruby-simplehttp'
+  conf.gem :core => "mruby-string-ext"
+end
+
+MRuby::CrossBuild.new('rtl8198') do |conf|
+  toolchain :gcc
+  conf.cc.command = 'mips-cc'
+  conf.archiver.command = 'mips-ar'
+  conf.big_endian
+
+  cc.defines << %w(MRB_DISABLE_STDIO)
+  cc.defines << %w(MRB_WITHOUT_FLOAT)
+  cc.defines << %w(YABM_REALTEK)
+  conf.cc.flags << "-march=5281"
+  conf.cc.flags << "-g -fno-pic -mno-abicalls"
+  conf.cc.flags << "-pipe -mlong-calls"
+#  conf.cc.flags << "-mips16"
   conf.cc.include_paths = ["#{root}/include", "../newlib-2.5.0.20171222/newlib/libc/include"]
 
   conf.gem :github => 'yamori813/mruby-yabm'
