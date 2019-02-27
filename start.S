@@ -11,6 +11,12 @@
 start:
 	li      $sp, INITIAL_SP
 	nop
+# bss clear
+	la	$8,_fbss
+	la	$9,_end
+1:	sw	$0,0($8)
+	add	$8,4
+	blt	$8,$9,1b
 	/* allocate space for result */
 	addiu	$sp, $sp, -8
 	jal	main

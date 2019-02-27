@@ -9,9 +9,6 @@
 
 #include "asicregs.h"
 
-extern char _end[];
-extern char _fbss[];
-
 #define	MRBOFFSET	0x100000
 
 extern char version[];
@@ -24,11 +21,6 @@ long *lptr;
 unsigned char hdrbuf[22];
 int mrbsize;
 unsigned char *mrbbuf;
-
-	/* bss clear */
-	for (lptr = (long *)_fbss; lptr < (long *)_end; ++lptr) {
-		 *lptr = 0;
-	}
 
 	mt19937ar_init();
 
