@@ -93,18 +93,28 @@ unsigned long rev = REG32(REVR);
 		return MODULE_UNKNOWN;
 }
 
+#define DCR_REG 0xb8001004
+
 unsigned long memend()
 {
 unsigned long *reg;
 unsigned long endaddr;
 
-	endaddr = 0x80800000;
-
-#if defined(RTL8198)
-	reg = 0xb8001004;
-	if (*reg == 0x54480000)
-		endaddr = 0x82000000;
-#endif
+	reg = DCR_REG;
+	switch(*reg) {
+		case 0x54480000:    /* 32MB */
+			endaddr = 0x82000000;
+			break;
+		case 0x52480000:    /* 16MB */
+			endaddr = 0x81000000;
+			break;
+		case 0x52080000:    /* 8MB */
+			endaddr = 0x80800000;
+			break;
+		default:    /* 8MB */
+			endaddr = 0x80800000;
+			break;
+	}
 
 	return endaddr;
 }
