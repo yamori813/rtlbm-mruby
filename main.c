@@ -42,7 +42,7 @@ unsigned char *mrbbuf;
 		mrbsize = (hdrbuf[0xa] << 24) | (hdrbuf[0xb] << 16) |
 		    (hdrbuf[0xc] << 8) | hdrbuf[0xd];
 		mrbbuf = malloc(mrbsize);
-		flashread(mrbbuf, 0x100000, mrbsize);
+		flashread(mrbbuf, MRBOFFSET, mrbsize);
 
 		mrb_state *mrb;
 		mrb = mrb_open();
