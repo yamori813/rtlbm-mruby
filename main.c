@@ -9,7 +9,7 @@
 
 #include "asicregs.h"
 
-#define	MRBOFFSET	0x100000
+#define	MRBOFFSET	0x180000
 
 extern char version[];
 

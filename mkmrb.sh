@@ -2,8 +2,8 @@
 
 TARGET=`echo $1 | sed 's/\.rb//'`
 
-OFFSET=0x100000
+MRBOFFSET=0x180000
 
 ./mruby/build/host/bin/mrbc -E ${TARGET}.rb
 
-./rtktools/cvimg root ${TARGET}.mrb ${TARGET}.img ${OFFSET} ${OFFSET}
+./rtktools/cvimg root ${TARGET}.mrb ${TARGET}.img ${MRBOFFSET} ${MRBOFFSET}
