@@ -43,7 +43,8 @@ typedef unsigned char Int8;
 #define WDTCNR_REG		(0x11C + GICR_BASE)   /* Watchdog timer control */
 
 
-#define DIVISOR			0xE
+//#define DIVISOR			0xE
+#define DIVISOR			(0xE * 256)
 #define DIVF_OFFSET		16          
 
 #define TICK_10MS_FREQ		100 /* 100 Hz */

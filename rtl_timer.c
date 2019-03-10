@@ -24,6 +24,45 @@ unsigned long reg;
 	++jiffies;
 }
 
+int ovsel;
+
+void watchdog_start(int sec)
+{
+unsigned long *lptr;
+int i;
+
+	lptr = (unsigned long *)WDTCNR_REG;
+
+	/* 1, 2, 4, 8, 16, 32, 64, 128, 256 */
+
+	for (i = 1; i <= 9; ++i) {
+		if((sec >> i) == 0)
+			break;
+	}
+
+	ovsel =  ((i >> 2) << 17) | ((i & 0x2) << 21);
+
+	*lptr = (1 << 23) | ovsel;
+}
+
+void watchdog_reset()
+{
+unsigned long *lptr;
+
+	lptr = (unsigned long *)WDTCNR_REG;
+
+	*lptr = 1 << 23 | ovsel;
+}
+
+void watchdog_stop()
+{
+unsigned long *lptr;
+
+	lptr = (unsigned long *)WDTCNR_REG;
+
+	*lptr = 0xa5 << 24;
+}
+
 struct irqaction irq_Timer = {Timer_isr, (void *)NULL};
 
 /* for lwip */
