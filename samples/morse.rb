@@ -24,8 +24,9 @@ end
 
 def morus yabm, str
   i = 0
-  ledon yabm
   while i < str.length do
+    yabm.print str[i]
+    ledon yabm
     if str[i] == '0'
       delay yabm, 100
     else
