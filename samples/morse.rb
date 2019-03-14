@@ -33,6 +33,7 @@ def morus yabm, str
     end
     ledoff yabm
     i = i + 1
+    delay yabm, 100
   end
   delay yabm, 1000
 end
