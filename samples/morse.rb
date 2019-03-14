@@ -57,13 +57,14 @@ PSW = 0x0020
 
 yabm.gpiosetctl(~(GLED | RLED | SSW | PSW))
 yabm.gpiosetdir(GLED | RLED)
-reg = rtl.gpiogetdat()
+reg = yabm.gpiogetdat()
 yabm.gpiosetdat(reg & ~(RLED | GLED))
 
 str = "mruby on yet another bare metal"
 
 i = 0
 
+while 1 do
 while i < str.length do
   if str[i] == ' '
     p "word"
@@ -73,5 +74,6 @@ while i < str.length do
     morus yabm, MORSE_NUM[str[i].ord - '0'.ord]
   end
   i = i + 1
+end
 end
 
