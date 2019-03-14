@@ -67,7 +67,6 @@ while 1 do
 i = 0
 while i < str.length do
   if str[i] == ' '
-    p "word"
   elsif str[i] >= 'a' && str[i] <= 'z'
     morus yabm, MORSE_ALPH[str[i].ord - 'a'.ord]
   else
