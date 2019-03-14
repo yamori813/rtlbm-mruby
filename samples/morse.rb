@@ -64,15 +64,17 @@ str = "mruby on yet another bare metal"
 
 
 while 1 do
-i = 0
-while i < str.length do
-  if str[i] == ' '
-  elsif str[i] >= 'a' && str[i] <= 'z'
-    morus yabm, MORSE_ALPH[str[i].ord - 'a'.ord]
-  else
-    morus yabm, MORSE_NUM[str[i].ord - '0'.ord]
+  i = 0
+  while i < str.length do
+    if str[i] == ' '
+      delay yabm, 1000
+    elsif str[i] >= 'a' && str[i] <= 'z'
+      morus yabm, MORSE_ALPH[str[i].ord - 'a'.ord]
+    else
+      morus yabm, MORSE_NUM[str[i].ord - '0'.ord]
+    end
+    i = i + 1
   end
-  i = i + 1
-end
+  delay yabm, 2000
 end
 
