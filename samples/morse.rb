@@ -1,5 +1,5 @@
 #
-# morus code generator
+# morus code generator on WR8165N
 #
 
 MORSE_NUM = ["01111","00111","00011","00001","00000","10000","11000","11100","11110","11111"]
