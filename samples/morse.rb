@@ -27,9 +27,9 @@ def morus yabm, str
   ledon yabm
   while i < str.length do
     if str[i] == '0'
-      delay yabm, 100
+      delay yabm, 1000
     else
-      delay yabm, 100
+      delay yabm, 2000
     end
     ledoff yabm
     i = i + 1
