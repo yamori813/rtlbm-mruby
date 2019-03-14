@@ -6,6 +6,8 @@ MORSE_NUM = ["01111","00111","00011","00001","00000","10000","11000","11100","11
 
 MORSE_ALPH =["01","1000","1010","100","0","0010","110","0000","00","0111","101","0100","11","10","111","0110","1101","010","000","1","001","0001","011","1001","1011","1100"]
 
+LEN = 70
+
 def delay yabm, val
   start = yabm.count() 
   while yabm.count() < start + val do
@@ -25,18 +27,16 @@ end
 def morus yabm, str
   i = 0
   while i < str.length do
-    yabm.print str[i]
     ledon yabm
     if str[i] == '0'
-      delay yabm, 100
+      delay yabm, LEN
     else
-      delay yabm, 300
+      delay yabm, LEN * 3
     end
     ledoff yabm
     i = i + 1
-    delay yabm, 100
+    delay yabm, LEN
   end
-  delay yabm, 1000
 end
 
 
@@ -69,7 +69,7 @@ while 1 do
   i = 0
   while i < str.length do
     if str[i] == ' '
-      delay yabm, 1000
+      delay yabm, LEN * 7
     elsif str[i] >= 'a' && str[i] <= 'z'
       morus yabm, MORSE_ALPH[str[i].ord - 'a'.ord]
     else
@@ -77,6 +77,6 @@ while 1 do
     end
     i = i + 1
   end
-  delay yabm, 2000
+  delay yabm, 3000
 end
 
