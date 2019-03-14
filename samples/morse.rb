@@ -14,12 +14,12 @@ end
 
 def ledon yabm
   reg = yabm.gpiogetdat()
-  yabm.gpiosetdat(reg & ~RLED)
+  yabm.gpiosetdat(reg | RLED)
 end
 
 def ledoff yabm
   reg = yabm.gpiogetdat()
-  yabm.gpiosetdat(reg | RLED)
+  yabm.gpiosetdat(reg & ~RLED)
 end
 
 def morus yabm, str
