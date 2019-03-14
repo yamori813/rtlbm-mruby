@@ -62,9 +62,9 @@ yabm.gpiosetdat(reg & ~(RLED | GLED))
 
 str = "mruby on yet another bare metal"
 
-i = 0
 
 while 1 do
+i = 0
 while i < str.length do
   if str[i] == ' '
     p "word"
