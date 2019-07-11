@@ -24,7 +24,7 @@ yabm.netstartdhcp
 yabm.print yabm.getaddress + "\n"
 
 # BearSSL need correct clock
-ntpaddr = rtl.lookup("ntp.nict.jp")
+ntpaddr = yabm.lookup("ntp.nict.jp")
 yabm.sntp(ntpaddr)
 
 # JTAG(GPIOA2,4,5,6) and LED_PORT3(GPIOB5) is GPIO
@@ -68,10 +68,10 @@ while 1 do
   header.store('Content-Type', "application/json")
   header.store('Body', body)
   res = SimpleHttp.new("https", "gw.machinist.iij.jp", 443).post("/endpoint", header)
-  reg = yabm.gpiogetdat()
   if res 
     yabm.print " " + res.status.to_s
   end
+  reg = yabm.gpiogetdat()
   yabm.gpiosetdat(reg & ~RLED)
   yabm.watchdogreset
   yabm.print "\n"
