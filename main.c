@@ -68,6 +68,7 @@ unsigned char *mrbbuf;
 
 #define  RTL8196D_REVISION  0x8196d000
 #define  RTL8196E_REVISION  0x8196e000
+#define  RTL8197D_REVISION  0x8197c003
 
 #define	MODULE_UNKNOWN				0
 #define	MODULE_RTL8196C				1
@@ -77,6 +78,7 @@ unsigned char *mrbbuf;
 #define	MODULE_BCM5352				5
 #define	MODULE_BCM5354				6
 #define	MODULE_RTL8198				10
+#define	MODULE_RTL8197D				11
 
 int
 getarch()
@@ -89,8 +91,12 @@ unsigned long rev = REG32(REVR);
 		return MODULE_RTL8198;
 	else if (rev == RTL8196E_REVISION)
 		return MODULE_RTL8196E;
-	else
+	else if (rev == RTL8197D_REVISION)
+		return MODULE_RTL8197D;
+	else {
+		xprintf("REVR %x\n", rev);
 		return MODULE_UNKNOWN;
+	}
 }
 
 #define DCR_REG 0xb8001004

@@ -6,7 +6,7 @@ begin
 
 rtl = YABM.new
 
-rtl.print "Hello Bear Metal mruby on YABM"
+rtl.print "Hello Bear Metal mruby on YABM " + rtl.getarch.to_s
 
 while 1 do
    rtl.print "."
