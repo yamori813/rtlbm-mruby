@@ -8,8 +8,8 @@ BMPADDR = 0x77
 
 # GPIO I2C Pin
 
-SCL = 3
-SDA = 5
+SCL = 2
+SDA = 11
 
 def readup(yabm, oss) 
   msb = yabm.i2cread(BMPADDR, 0xf6)
@@ -49,6 +49,8 @@ begin
   ntpaddr = yabm.lookup("ntp.nict.jp")
   yabm.sntp(ntpaddr)
 
+  yabm.gpiosetsel(0x003c300c, 0x003c300c, 0x00001800, 0x00001800)
+
   yabm.i2cinit(SCL, SDA)
 
   ac1 = read16(yabm, 0xaa)
@@ -63,12 +65,19 @@ begin
   mc = read16(yabm, 0xbc)
   md = read16(yabm, 0xbe)
 
-  oss = 0
+# 0 ultra low power, 1 standard, 2 high resolution, 3 ultra high resolution
+
+  oss = 1
 
   while 1 do
     yabm.i2cwrite(BMPADDR, 0xf4, 0x2e)
     delay(yabm, 5)
     ut = read16(yabm, 0xf6)
+
+    yabm.i2cwrite(BMPADDR, 0xf4, 0x34 + (oss << 6))
+# depend on oss
+    delay(yabm, 8)
+    up = readup(yabm, oss)
 
 # calculate true temperature
 
@@ -80,10 +89,6 @@ begin
     tstr = (t / 10).to_s + "." + (t % 10).to_s
 
     yabm.print tstr + "\n"
-
-    yabm.i2cwrite(BMPADDR, 0xf4, 0x34 + (oss << 6))
-    delay(yabm, 5)
-    up = readup(yabm, oss)
 
 # calculate true pressure
 
