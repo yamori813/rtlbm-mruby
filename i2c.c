@@ -114,7 +114,7 @@ int i, res;
 	DELAY;
 	setscl(LOW);
 	DELAY;
-	if (stop) {
+	if (stop || res == 0) {
 		setdir(OUT);
 		setsda(LOW);
 		setscl(HIGH);
