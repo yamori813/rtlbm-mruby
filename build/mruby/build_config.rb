@@ -156,6 +156,7 @@ MRuby::CrossBuild.new('rtl8196') do |conf|
   conf.archiver.command = 'mips-ar'
   conf.big_endian
 
+  cc.defines << %w(MRB_METHOD_T_STRUCT)
   cc.defines << %w(MRB_DISABLE_STDIO)
   cc.defines << %w(MRB_WITHOUT_FLOAT)
   cc.defines << %w(YABM_REALTEK)
@@ -177,6 +178,7 @@ MRuby::CrossBuild.new('rtl8198') do |conf|
   conf.archiver.command = 'mips-ar'
   conf.big_endian
 
+  cc.defines << %w(MRB_METHOD_T_STRUCT)
   cc.defines << %w(MRB_DISABLE_STDIO)
   cc.defines << %w(MRB_WITHOUT_FLOAT)
   cc.defines << %w(YABM_REALTEK)
