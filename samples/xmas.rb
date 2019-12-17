@@ -28,6 +28,8 @@ TOP_LED1 = (1 << 16)
 TOP_LED2 = (1 << 4)
 TOP_LED3 = (1 << 1)
 TOP_BUTTON = (1 << 3)
+SW1 = (1 << 2)
+SW2 = (1 << 11)
 
 def button(rtl)
   reg = rtl.gpiogetdat()
@@ -50,7 +52,7 @@ begin
 
 rtl = YABM.new
 
-rtl.gpiosetsel(0x003c3000, 0x003c3000, 0x00001800, 0x00001800)
+rtl.gpiosetsel(0x003c300c, 0x003c300c, 0x00001800, 0x00001800)
 
 reg = rtl.gpiogetctl()
 reg = reg & ~(STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
@@ -91,7 +93,14 @@ while 1 do
     period = rtl.count() + interval
   end
   if button(rtl) == 0 then
-    led(rtl, 0, STATUS_LED1)
+    sw = rtl.gpiogetdat()
+    if (sw & SW1) == 0
+      led(rtl, 0, STATUS_LED1)
+    elsif (sw & SW2) == 0
+      led(rtl, 0, STATUS_LED2)
+    else
+      led(rtl, 0, STATUS_LED3)
+    end
   else
      led(rtl, 0, 0)
   end
