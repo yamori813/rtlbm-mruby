@@ -62,7 +62,7 @@ rtl.netstart(addr, mask, gw, dns)
 rtl.udpinit
 rtl.udpbind(7000)
 
-rtl.gpiosetsel(0x003c3000, 0x003c3000, 0x00001800, 0x00001800)
+rtl.gpiosetsel(0x003c300c, 0x003c300c, 0x00001800, 0x00001800)
 
 reg = rtl.gpiogetctl()
 reg = reg & ~(STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
