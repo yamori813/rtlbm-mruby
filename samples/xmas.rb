@@ -18,8 +18,6 @@
 # Reset
 #	99	GPIOA[5]
 #
-# echo -n "GREEN" | nc -w 0 -u 10.10.10.2 7000
-#
 
 STATUS_LED1 = (1 << 0)
 STATUS_LED2 = (1 << 6)
@@ -30,6 +28,21 @@ TOP_LED3 = (1 << 1)
 TOP_BUTTON = (1 << 3)
 SW1 = (1 << 2)
 SW2 = (1 << 11)
+
+
+def switch(rtl)
+
+  sw = rtl.gpiogetdat()
+  if (sw & SW1) == 0
+    res = 0
+  elsif (sw & SW2) == 0
+    res = 1
+  else
+    res = 2
+  end
+
+  return res
+end
 
 def button(rtl)
   reg = rtl.gpiogetdat()
@@ -48,64 +61,70 @@ def led(rtl, type, val)
   rtl.gpiosetdat(reg)
 end
 
+def initgpio(rtl)
+
+  rtl.gpiosetsel(0x003c300c, 0x003c300c, 0x00001800, 0x00001800)
+
+  reg = rtl.gpiogetctl()
+  reg = reg & ~(STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
+  reg = reg & ~(TOP_LED1 | TOP_LED2 | TOP_LED3)
+  reg = reg & ~(TOP_BUTTON)
+  rtl.gpiosetctl(reg)
+
+  reg = rtl.gpiogetdir()
+  reg = reg | (STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
+  reg = reg | (TOP_LED1 | TOP_LED2 | TOP_LED3)
+  reg = reg & ~(TOP_BUTTON)
+  rtl.gpiosetdir(reg)
+
+  reg = rtl.gpiogetdat()
+  reg = reg | (STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
+  reg = reg | (TOP_LED1 | TOP_LED2 | TOP_LED3)
+  rtl.gpiosetdat(reg)
+
+end
+
 begin
 
-rtl = YABM.new
+  rtl = YABM.new
 
-rtl.gpiosetsel(0x003c300c, 0x003c300c, 0x00001800, 0x00001800)
+  interval = 2000
 
-reg = rtl.gpiogetctl()
-reg = reg & ~(STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
-reg = reg & ~(TOP_LED1 | TOP_LED2 | TOP_LED3)
-reg = reg & ~(TOP_BUTTON)
-rtl.gpiosetctl(reg)
+  initgpio(rtl)
 
-reg = rtl.gpiogetdir()
-reg = reg | (STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
-reg = reg | (TOP_LED1 | TOP_LED2 | TOP_LED3)
-reg = reg & ~(TOP_BUTTON)
-rtl.gpiosetdir(reg)
+  lastbtn = button(rtl)
 
-reg = rtl.gpiogetdat()
-reg = reg | (STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
-reg = reg | (TOP_LED1 | TOP_LED2 | TOP_LED3)
-rtl.gpiosetdat(reg)
+  phase = 0
+  period = rtl.count() + interval
 
-stat = 0
-lastbtn = button(rtl)
-
-i = 0
-interval = 2000
-phase = 0
-period = rtl.count() + interval
-while 1 do
-  if rtl.count() > period then
-    if (phase % 2) == 1
-    led(rtl, 1, 0)
-    elsif phase == 0
-      led(rtl, 1, TOP_LED1)
-    elsif phase == 2
-      led(rtl, 1, TOP_LED2)
-    elsif phase == 4
-      led(rtl, 1, TOP_LED3)
+  while 1 do
+    if rtl.count() > period then
+      if (phase % 2) == 1
+        led(rtl, 1, 0)
+      elsif phase == 0
+        led(rtl, 1, TOP_LED1)
+      elsif phase == 2
+        led(rtl, 1, TOP_LED2)
+      elsif phase == 4
+        led(rtl, 1, TOP_LED3)
+      end
+      phase = (phase + 1) % 6
+      period = rtl.count() + interval
     end
-    phase = (phase + 1) % 6
-    period = rtl.count() + interval
-  end
-  if button(rtl) == 0 then
-    sw = rtl.gpiogetdat()
-    if (sw & SW1) == 0
-      led(rtl, 0, STATUS_LED1)
-    elsif (sw & SW2) == 0
-      led(rtl, 0, STATUS_LED2)
+
+    if button(rtl) == 0 then
+      sw = switch(rtl)
+      if sw == 0
+        led(rtl, 0, STATUS_LED1)
+      elsif sw == 1
+        led(rtl, 0, STATUS_LED2)
+      else
+        led(rtl, 0, STATUS_LED3)
+      end
     else
-      led(rtl, 0, STATUS_LED3)
+       led(rtl, 0, 0)
     end
-  else
-     led(rtl, 0, 0)
   end
-  i = i + 1
-end
 
 rescue => e
   rtl.print e.to_s
