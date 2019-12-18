@@ -88,28 +88,32 @@ begin
 
   rtl = YABM.new
 
-  interval = 2000
+  ontime = 2000
+  offtime = 500
 
   initgpio(rtl)
 
   lastbtn = button(rtl)
 
   phase = 0
-  period = rtl.count() + interval
+  period = rtl.count() + ontime
 
   while 1 do
     if rtl.count() > period then
       if (phase % 2) == 1
         led(rtl, 1, 0)
-      elsif phase == 0
-        led(rtl, 1, TOP_LED1)
-      elsif phase == 2
-        led(rtl, 1, TOP_LED2)
-      elsif phase == 4
-        led(rtl, 1, TOP_LED3)
+        period = rtl.count() + offtime
+      else
+        if phase == 0
+          led(rtl, 1, TOP_LED1)
+        elsif phase == 2
+          led(rtl, 1, TOP_LED2)
+        elsif phase == 4
+          led(rtl, 1, TOP_LED3)
+        end
+        period = rtl.count() + ontime
       end
       phase = (phase + 1) % 6
-      period = rtl.count() + interval
     end
 
     if button(rtl) == 0 then
