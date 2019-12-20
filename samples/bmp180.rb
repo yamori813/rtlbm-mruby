@@ -95,9 +95,15 @@ begin
   mc = read16(yabm, 0xbc)
   md = read16(yabm, 0xbe)
 
+# indecate start by led
+  reg = yabm.gpiogetdat()
+  reg = reg & ~STATUS_LED2
+  yabm.gpiosetdat(reg)
+
 # 0 ultra low power, 1 standard, 2 high resolution, 3 ultra high resolution
 
   oss = 3
+  count = 0
 
   while 1 do
 
@@ -161,7 +167,8 @@ begin
       end
       yabm.print pstr + "\n"
 
-      res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + tstr + "&field2=" + pstr, {'User-Agent' => "test-agent"})
+      res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + tstr + "&field2=" + pstr + "&field3=" + count.to_s, {'User-Agent' => "test-agent"})
+      count = count + 1
       if res 
         yabm.print " " + res.status.to_s
       end
@@ -173,7 +180,14 @@ begin
     reg = reg | TOP_LED3
     yabm.gpiosetdat(reg)
 
-    delay(yabm, 10000)
+    if count == 1000 then
+      reg = yabm.gpiogetdat()
+      reg = reg | STATUS_LED2
+      yabm.gpiosetdat(reg)
+    end
+
+    # ThingSpeak Free account need at intervals 15 sec.
+    delay(yabm, 20000)
 
   end
 
