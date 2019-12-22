@@ -55,13 +55,33 @@ static int readsda()
 	return (reg & (1 << sdapin)) ? HIGH : LOW;
 }
 
+static int readscl()
+{
+	unsigned long reg;
+
+	reg = gpio_getdat();
+
+	return (reg & (1 << sclpin)) ? HIGH : LOW;
+}
+
 static void setdir(int val)
 {
 	unsigned long reg;
 
 	reg = gpio_getdir();
-	
+
 	reg = (reg & ~(1 << sdapin)) | (val << sdapin);
+
+	gpio_setdir(reg);
+}
+
+static void setscldir(int val)
+{
+	unsigned long reg;
+
+	reg = gpio_getdir();
+
+	reg = (reg & ~(1 << sclpin)) | (val << sclpin);
 
 	gpio_setdir(reg);
 }
@@ -103,8 +123,12 @@ int i, res;
 	}
 	setdir(IN);
 	setscl(LOW);
-	DELAY;
+	/* Clock stretching */
+	setscldir(IN);
+	while (readscl() == 0)
+		DELAY;
 	setscl(HIGH);
+	setscldir(OUT);
 	for (i = 0;i < 1000; ++i) {
 		if (readsda() == LOW) {
 			res = 1;
