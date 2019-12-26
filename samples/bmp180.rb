@@ -4,6 +4,8 @@
 
 APIKEY = "naisyo"
 
+NONET = true
+
 # Homespotcube GPIO
 
 STATUS_LED1 = (1 << 0)
@@ -54,12 +56,14 @@ begin
 
   yabm = YABM.new
 
-  yabm.netstartdhcp
+  if !NONET then
+    yabm.netstartdhcp
 
-  yabm.print yabm.getaddress + "\n"
+    yabm.print yabm.getaddress + "\n"
 
-  ntpaddr = yabm.lookup("ntp.nict.jp")
-  yabm.sntp(ntpaddr)
+    ntpaddr = yabm.lookup("ntp.nict.jp")
+    yabm.sntp(ntpaddr)
+  end
 
   yabm.gpiosetsel(0x003c300c, 0x003c300c, 0x00001800, 0x00001800)
 
@@ -113,12 +117,12 @@ begin
     yabm.i2cwrite(BMPADDR, 0xf4, 0x2e)
     delay(yabm, 5)
     ut = read16(yabm, 0xf6)
-    yabm.print ut.to_s + "\n"
+    yabm.print ut.to_s + " "
 
     yabm.i2cwrite(BMPADDR, 0xf4, 0x34 + (oss << 6))
     delay(yabm, PRESSURE_WAIT[oss])
     up = readup(yabm, oss)
-    yabm.print up.to_s + "\n"
+    yabm.print up.to_s + " "
 
     if ut != 0 && up != 0 then
 
@@ -131,7 +135,7 @@ begin
 
       tstr = (t / 10).to_s + "." + (t % 10).to_s
 
-      yabm.print tstr + "\n"
+      yabm.print tstr + " "
 
 # calculate true pressure
 
@@ -161,14 +165,16 @@ begin
       else
         pstr = pstr + syo.to_s
       end
-      yabm.print pstr + "\n"
+      yabm.print pstr + " "
 
-      res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + tstr + "&field2=" + pstr + "&field3=" + count.to_s, {'User-Agent' => "test-agent"})
-      count = count + 1
-      if res 
-        yabm.print " " + res.status.to_s
+      if !NONET then
+        res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + tstr + "&field2=" + pstr + "&field3=" + count.to_s, {'User-Agent' => "test-agent"})
+        count = count + 1
+        if res 
+          yabm.print " " + res.status.to_s
+        end
       end
-      yabm.print "\n"
+      yabm.print "\r\n"
 
     end
 
