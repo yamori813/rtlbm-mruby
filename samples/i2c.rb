@@ -37,7 +37,7 @@ rtl.udpbind(7000)
 # use gpio pin
 rtl.gpiosetsel(0x300000, 0x300000, 0, 0)
 
-rtl.i2cinit(3, 5)
+rtl.i2cinit(3, 5, 1)
 
 tmpstr = ""
 

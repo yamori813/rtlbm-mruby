@@ -19,10 +19,11 @@ void gpio_setdir(unsigned long val);
 unsigned long gpio_getdat();
 void gpio_setdat(unsigned long val);
 
-#define	DELAY	udelay(1)
-
 int sclpin;
 int sdapin;
+int udel;
+
+#define	DELAY	udelay(udel)
 
 static void setscl(int val)
 {
@@ -86,12 +87,13 @@ static void setscldir(int val)
 	gpio_setdir(reg);
 }
 
-void i2c_init(int scl, int sda)
+void i2c_init(int scl, int sda, int u)
 {
 	unsigned long reg;
 
 	sclpin = scl;
 	sdapin = sda;
+	udel = u;
 
 	reg = gpio_getctl();
 	reg &= ~((1 << scl) | (1 << sda));

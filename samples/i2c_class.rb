@@ -114,7 +114,7 @@ yabm.udpbind(7000)
 # use gpio pin
 yabm.gpiosetsel(0x300000, 0x300000, 0, 0)
 
-yabm.i2cinit(I2CSCK, I2CSDA)
+yabm.i2cinit(I2CSCK, I2CSDA, 1)
 
 lcd = I2CLCD.new
 lcd.init yabm

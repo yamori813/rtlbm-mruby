@@ -80,8 +80,7 @@ begin
   reg = reg | (TOP_LED1 | TOP_LED2 | TOP_LED3)
   yabm.gpiosetdat(reg)
 
-
-  yabm.i2cinit(SCL, SDA)
+  yabm.i2cinit(SCL, SDA, 1)
 
   ac1 = read16(yabm, 0xaa)
   ac2 = read16(yabm, 0xac)
@@ -110,9 +109,6 @@ begin
     reg = yabm.gpiogetdat()
     reg = reg & ~TOP_LED3
     yabm.gpiosetdat(reg)
-
-    yabm.gpiosetsel(0x003c300c, 0x003c300c, 0x00001800, 0x00001800)
-    yabm.i2cinit(SCL, SDA)
 
     yabm.i2cwrite(BMPADDR, 0xf4, 0x2e)
     delay(yabm, 5)

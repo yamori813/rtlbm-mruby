@@ -115,7 +115,7 @@ rtl.netstart(addr, mask, gw, dns)
 ntpaddr = rtl.lookup("ntp.nict.jp")
 rtl.sntp(ntpaddr)
 
-rtl.i2cinit(SCL, SDA)
+rtl.i2cinit(SCL, SDA, 1)
 
 a0 = rtl.i2cread(MPLADDR, 0x04) << 8 | rtl.i2cread(MPLADDR, 0x05)
 b1 = rtl.i2cread(MPLADDR, 0x06) << 8 | rtl.i2cread(MPLADDR, 0x07)
