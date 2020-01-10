@@ -36,22 +36,8 @@ def delay(yabm, val)
   end
 end
 
-def dot2str(p) 
-  pstr = (p / 100).to_s + "."
-  syo = p % 100
-  if syo < 10 then
-    pstr = pstr + "0" + syo.to_s
-  else
-    pstr = pstr + syo.to_s
-  end
-  return pstr
-end
-
-def dot1str(p) 
-  pstr = (p / 10).to_s + "."
-  syo = p % 10
-  pstr = pstr + syo.to_s
-  return pstr
+def pointstr(p, c)
+  return p.to_s.insert(-1 - c, ".")
 end
 
 def gpioinit(yabm) 
@@ -338,10 +324,10 @@ begin
     end
     st = si.getCelsiusHundredths
     if count == 0 || (lastst - st).abs < 100 then
-      ststr = dot2str(st)
+      ststr = pointstr(st, 2)
       lastst = st
     else
-      ststr = dot2str(lastst)
+      ststr = pointstr(lastst, 2)
       error = error | (1 << 2)
     end
     yabm.print count.to_s + " SIT: " + ststr + " RH: " + shstr + " "
@@ -351,20 +337,20 @@ begin
     if yabm.i2cchk(BMPADDR) == 1 then
     bt = bmp.readTemperature
     if count == 0 || (lastbt - bt).abs < 10 then
-      btstr = dot1str(bt)
+      btstr = pointstr(bt, 2)
       lastbt = bt
     else
-      btstr = dot1str(lastbt)
+      btstr = pointstr(lastbt, 2)
       error = error | (1 << 0)
     end
     yabm.print " BMPT: " + btstr + " "
 
     bp = bmp.readPressure
     if count == 0 || (lastbp - bp).abs < 100 then
-      bpstr = dot2str(bp)
+      bpstr = pointstr(bp, 2)
       lastbp = bp
     else
-      bpstr = dot2str(lastbp)
+      bpstr = pointstr(lastbp, 2)
       error = error | (1 << 1)
     end
     yabm.print "P: " + bpstr + " " + error.to_s
