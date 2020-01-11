@@ -37,7 +37,15 @@ def delay(yabm, val)
 end
 
 def pointstr(p, c)
-  return p.to_s.insert(-1 - c, ".")
+  if p == 0 then
+    return "0." + "0" * c
+  elsif p.abs < 10 ** c
+    l = c - p.abs.to_s.length + 1
+    s = p.to_s.insert(p < 0 ? 1 : 0, "0" * l)
+    return s.insert(-1 - c, ".")
+  else
+    return p.to_s.insert(-1 - c, ".")
+  end
 end
 
 def gpioinit(yabm) 
