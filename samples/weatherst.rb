@@ -345,10 +345,10 @@ begin
     if yabm.i2cchk(BMPADDR) == 1 then
     bt = bmp.readTemperature
     if count == 0 || (lastbt - bt).abs < 10 then
-      btstr = pointstr(bt, 2)
+      btstr = pointstr(bt, 1)
       lastbt = bt
     else
-      btstr = pointstr(lastbt, 2)
+      btstr = pointstr(lastbt, 1)
       error = error | (1 << 0)
     end
     yabm.print " BMPT: " + btstr + " "
