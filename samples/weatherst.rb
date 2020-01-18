@@ -314,13 +314,42 @@ begin
 
     error = 0
 
+
+# BMP180
+
+    while yabm.i2cchk(BMPADDR) == 0 do
+      delay(yabm, 1)
+    end
+    bt = bmp.readTemperature
+    if count == 0 || (lastbt - bt).abs < 10 then
+      btstr = pointstr(bt, 1)
+      lastbt = bt
+    else
+      btstr = pointstr(lastbt, 1)
+      error = error | (1 << 0)
+    end
+    yabm.print " BMPT: " + btstr + " "
+
+    while yabm.i2cchk(BMPADDR) == 0 do
+      delay(yabm, 1)
+    end
+    bp = bmp.readPressure
+    if count == 0 || (lastbp - bp).abs < 100 then
+      bpstr = pointstr(bp, 2)
+      lastbp = bp
+    else
+      bpstr = pointstr(lastbp, 2)
+      error = error | (1 << 1)
+    end
+    yabm.print "P: " + bpstr + " " + error.to_s
+
 # Si7021
 
     while yabm.i2cchk(SIADDR) == 0 do
       delay(yabm, 1)
     end
     sh = si.getHumidityPercent
-    if count == 0 || (lastsh - sh).abs < 10 then
+    if count == 0 || (lastsh - sh).abs < 20 then
       shstr = sh.to_s
       lastsh = sh
     else
@@ -340,29 +369,6 @@ begin
     end
     yabm.print count.to_s + " SIT: " + ststr + " RH: " + shstr + " "
 
-# BMP180
-
-    if yabm.i2cchk(BMPADDR) == 1 then
-    bt = bmp.readTemperature
-    if count == 0 || (lastbt - bt).abs < 10 then
-      btstr = pointstr(bt, 1)
-      lastbt = bt
-    else
-      btstr = pointstr(lastbt, 1)
-      error = error | (1 << 0)
-    end
-    yabm.print " BMPT: " + btstr + " "
-
-    bp = bmp.readPressure
-    if count == 0 || (lastbp - bp).abs < 100 then
-      bpstr = pointstr(bp, 2)
-      lastbp = bp
-    else
-      bpstr = pointstr(lastbp, 2)
-      error = error | (1 << 1)
-    end
-    yabm.print "P: " + bpstr + " " + error.to_s
-
     para = "api_key=" + APIKEY + "&field1=" + count.to_s + "&field2=" + btstr + "&field3=" + bpstr + "&field4=" + ststr + "&field5=" + shstr + "&field6=" + error.to_s
     if !NONET then
       res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?" + para, {'User-Agent' => "test-agent"})
@@ -377,7 +383,6 @@ begin
       end
     else
 #      yabm.print para
-    end
     end
     yabm.print "\r\n"
     count = count + 1
