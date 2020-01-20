@@ -7,8 +7,8 @@
 APIKEY = "naisyo"
 
 # for debug
-NONET = false
-#NONET = true
+#NONET = false
+NONET = true
 
 MAXFAILE = 10
 
