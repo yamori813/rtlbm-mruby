@@ -27,8 +27,6 @@ TOP_BUTTON = (1 << 3)
 SCL = 2
 SDA = 11
 
-BMPADDR = 0x77
-SIADDR = 0x40
 
 def delay(yabm, val) 
   start = yabm.count() 
@@ -72,6 +70,8 @@ end
 # sensor class
 
 class SI7021
+  SIADDR = 0x40
+
   def init yabm
     @y = yabm
   end
@@ -124,6 +124,9 @@ class SI7021
   end
 
   def getCelsiusHundredths
+    while @y.i2cchk(SIADDR) == 0 do
+      delay(@y, 1)
+    end
     @y.i2cwrites(SIADDR, [0xf3], 1)
     while 1 do
       delay(@y, 1)
@@ -139,6 +142,9 @@ class SI7021
   end
 
   def getCelsiusPostHumidity
+    while @y.i2cchk(SIADDR) == 0 do
+      delay(@y, 1)
+    end
     @y.i2cwrites(SIADDR, [0xe0], 1)
     while 1 do
       delay(@y, 1)
@@ -154,6 +160,9 @@ class SI7021
   end
 
   def getHumidityPercent
+    while @y.i2cchk(SIADDR) == 0 do
+      delay(@y, 1)
+    end
     @y.i2cwrites(SIADDR, [0xf5], 1)
     while 1 do
       siarr = @y.i2creads(SIADDR, 2)
@@ -169,6 +178,7 @@ class SI7021
 end
 
 class BMP180
+  BMPADDR = 0x77
   PRESSURE_WAIT = [5, 8, 14, 26]
 
   def readup
@@ -209,6 +219,9 @@ class BMP180
   end
 
   def readTemperature
+    while @y.i2cchk(BMPADDR) == 0 do
+      delay(@y, 1)
+    end
     @y.i2cwrite(BMPADDR, 0xf4, 0x2e)
     delay(@y, 5)
     ut = read16 0xf6
@@ -317,9 +330,6 @@ begin
 
 # BMP180
 
-    while yabm.i2cchk(BMPADDR) == 0 do
-      delay(yabm, 1)
-    end
     bt = bmp.readTemperature
     if count == 0 || (lastbt - bt).abs < 10 then
       btstr = pointstr(bt, 1)
@@ -330,9 +340,6 @@ begin
     end
     yabm.print " BMPT: " + btstr + " "
 
-    while yabm.i2cchk(BMPADDR) == 0 do
-      delay(yabm, 1)
-    end
     bp = bmp.readPressure
     if count == 0 || (lastbp - bp).abs < 100 then
       bpstr = pointstr(bp, 2)
@@ -345,9 +352,6 @@ begin
 
 # Si7021
 
-    while yabm.i2cchk(SIADDR) == 0 do
-      delay(yabm, 1)
-    end
     sh = si.getHumidityPercent
     if count == 0 || (lastsh - sh).abs < 20 then
       shstr = sh.to_s
@@ -356,9 +360,7 @@ begin
       shstr = lastsh.to_s
       error = error | (1 << 3)
     end
-    while yabm.i2cchk(SIADDR) == 0 do
-      delay(yabm, 1)
-    end
+
     st = si.getCelsiusHundredths
     if count == 0 || (lastst - st).abs < 100 then
       ststr = pointstr(st, 2)
