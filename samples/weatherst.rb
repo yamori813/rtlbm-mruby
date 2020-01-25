@@ -7,8 +7,8 @@
 APIKEY = "naisyo"
 
 # for debug
-#NONET = false
-NONET = true
+NONET = false
+#NONET = true
 
 MAXFAILE = 10
 
@@ -71,6 +71,7 @@ end
 
 class SI7021
   SIADDR = 0x40
+  USECLOCKST = true
 
   def init yabm
     @y = yabm
@@ -127,7 +128,11 @@ class SI7021
     while @y.i2cchk(SIADDR) == 0 do
       delay(@y, 1)
     end
-    @y.i2cwrites(SIADDR, [0xf3], 1)
+    if USECLOCKST then
+      @y.i2cwrites(SIADDR, [0xe3], 1)
+    else
+      @y.i2cwrites(SIADDR, [0xf3], 1)
+    end
     c = 0
     while 1 do
       delay(@y, 1)
@@ -171,7 +176,11 @@ class SI7021
     while @y.i2cchk(SIADDR) == 0 do
       delay(@y, 1)
     end
-    @y.i2cwrites(SIADDR, [0xf5], 1)
+    if USECLOCKST then
+      @y.i2cwrites(SIADDR, [0xe5], 1)
+    else
+      @y.i2cwrites(SIADDR, [0xf5], 1)
+    end
     while 1 do
       siarr = @y.i2creads(SIADDR, 2)
       if siarr != nil then
