@@ -128,13 +128,17 @@ class SI7021
       delay(@y, 1)
     end
     @y.i2cwrites(SIADDR, [0xf3], 1)
+    c = 0
     while 1 do
       delay(@y, 1)
       siarr = @y.i2creads(SIADDR, 2)
       if siarr != nil then
         break
       end
-      delay(@y, 1)
+      c = c + 1
+      if c == 1000 then
+        siarr = [0, 0]
+      end
     end
     tempcode = (siarr[0] << 8) | siarr[1]
     t = (tempcode * 17572) / 65536 - 4685
@@ -146,13 +150,17 @@ class SI7021
       delay(@y, 1)
     end
     @y.i2cwrites(SIADDR, [0xe0], 1)
+    c = 0
     while 1 do
       delay(@y, 1)
       siarr = @y.i2creads(SIADDR, 2)
       if siarr != nil then
         break
       end
-      delay(@y, 1)
+      c = c + 1
+      if c == 1000 then
+        siarr = [0, 0]
+      end
     end
     tempcode = (siarr[0] << 8) | siarr[1]
     t = (tempcode * 17572) / 65536 - 4685
