@@ -143,6 +143,7 @@ class SI7021
       c = c + 1
       if c == 1000 then
         siarr = [0, 0]
+        break
       end
     end
     tempcode = (siarr[0] << 8) | siarr[1]
@@ -165,6 +166,7 @@ class SI7021
       c = c + 1
       if c == 1000 then
         siarr = [0, 0]
+        break
       end
     end
     tempcode = (siarr[0] << 8) | siarr[1]
@@ -181,12 +183,18 @@ class SI7021
     else
       @y.i2cwrites(SIADDR, [0xf5], 1)
     end
+    c = 0
     while 1 do
+      delay(@y, 1)
       siarr = @y.i2creads(SIADDR, 2)
       if siarr != nil then
         break
       end
-      delay(@y, 1)
+      c = c + 1
+      if c == 1000 then
+        siarr = [0, 0]
+        break
+      end
     end
     rhcode = (siarr[0] << 8) | siarr[1]
     rh = (125 * rhcode) / 65536 - 6
