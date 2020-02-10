@@ -80,9 +80,10 @@ begin
 
   whoiam = yabm.i2cread(MPUADDR, 117)
 
-  yabm.print whoiam.to_s + "\r\n"
+  yabm.print "Who Am I: " + whoiam.to_s + "\r\n"
 
-  whoiam = yabm.i2cwrite(MPUADDR, 0x6B, 0)
+# start 
+  yabm.i2cwrite(MPUADDR, 0x6B, 0)
 
   while 1 do
 
