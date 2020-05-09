@@ -57,11 +57,13 @@ while 1 do
   yabm.i2cwrites(BHADDR, [0x10], 0)
   bharr = yabm.i2creads(BHADDR, 2)
   val = (bharr[0] << 8) | bharr[1]
-  lx = val * 50 * 69 * 5 / (6 * mtreg)
-  if lx != 0 then
-    lxstr = lx.round.to_s.insert(-3, ".")
-  else
+  lx = (val * 50 * 69 * 5 / (6 * mtreg)).round
+  if lx == 0 then
     lxstr = "0"
+  elsif lx < 100 then
+    lxstr = "0." + lx.to_s
+  else
+    lxstr = lx.to_s.insert(-3, ".")
   end
   para = "api_key=" + APIKEY + "&field1=" + count.to_s + "&field2=" + lxstr
   res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?" + para, {'User-Agent' => "test-agent"})
