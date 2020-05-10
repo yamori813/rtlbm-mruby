@@ -54,7 +54,6 @@ delay(yabm, 200)
 count = 0
 while 1 do
   yabm.print "."
-  yabm.i2cwrites(BHADDR, [0x10], 0)
   bharr = yabm.i2creads(BHADDR, 2)
   val = (bharr[0] << 8) | bharr[1]
   lx = (val * 50 * 69 * 5 / (6 * mtreg)).round
