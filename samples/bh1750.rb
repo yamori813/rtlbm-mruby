@@ -8,9 +8,9 @@ APIKEY = "naisyo"
 
 # i2c pin
 
-# TRST# (1)
+# TRST# (1) internal pull-up resistor
 I2CSCK = 3
-# TDI (3)
+# TDI (3) internal pull-up resistor
 I2CSDA = 5
 
 # i2c BH1750 address
