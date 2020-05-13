@@ -23,6 +23,18 @@ def delay(yabm, val)
   end
 end
 
+def pointstr(p, c)
+  if p == 0 then
+    return "0." + "0" * c
+  elsif p.abs < 10 ** c
+    l = c - p.abs.to_s.length + 1
+    s = p.to_s.insert(p < 0 ? 1 : 0, "0" * l)
+    return s.insert(-1 - c, ".")
+  else
+    return p.to_s.insert(-1 - c, ".")
+  end
+end
+
 class BH1750
   @mtreg = 69
 
@@ -78,14 +90,7 @@ class BH1750
     else
       lx = (val * 100 * 69 * 5 / (6 * @mtreg)).round
     end
-    if lx == 0 then
-      lxstr = "0"
-    elsif lx < 100 then
-      lxstr = "0." + lx.to_s
-    else
-      lxstr = lx.to_s.insert(-3, ".")
-    end
-    return lxstr
+    return lx
   end
 end
 
@@ -112,8 +117,6 @@ bh = BH1750.new
 
 bh.init(yabm, BHADDR)
 
-mtreg = 254
-mode = BH1750::CONTINUOUS_HIGH_RES_MODE_2
 
 interval = 20
 
@@ -125,11 +128,21 @@ count = 0
 
 while 1 do
   delay(yabm, 1000 * interval)
-  lxstr = bh.getLightLevel
-  para = "api_key=" + APIKEY + "&field1=" + count.to_s + "&field2=" + lxstr
+  mtreg = 69
+  mode = BH1750::ONE_TIME_LOW_RES_MODE
+  lx = bh.getLightLevel
+  # under 1000 lux
+  if lx < 100000 then
+    mtreg = 254
+    mode = BH1750::ONE_TIME_HIGH_RES_MODE_2
+    lx = bh.getLightLevel
+  end
+  para = "api_key=" + APIKEY
+  para = para + "&field1=" + count.to_s + "&field2=" + pointstr(lx, 2)
   res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?" + para, {'User-Agent' => "test-agent"})
   if res != nil && res.status.to_s.length != 0 then
-    yabm.print count.to_s + " " + lxstr + " " + res.status.to_s + "\r\n"
+    yabm.print count.to_s + " "
+    yabm.print pointstr(lx, 2) + " " + res.status.to_s + "\r\n"
   end
   count = count + 1
 end
