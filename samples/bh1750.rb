@@ -86,9 +86,9 @@ class BH1750
     val = (bharr[0] << 8) | bharr[1]
     if @meas == CONTINUOUS_HIGH_RES_MODE_2 ||
       @meas == ONE_TIME_HIGH_RES_MODE_2 then
-      lx = (val * 50 * 69 * 5 / (6 * @mtreg)).round
+      lx = val * 50 * 69 * 5 / (6 * @mtreg)
     else
-      lx = (val * 100 * 69 * 5 / (6 * @mtreg)).round
+      lx = val * 100 * 69 * 5 / (6 * @mtreg)
     end
     return lx
   end
@@ -117,33 +117,24 @@ bh = BH1750.new
 
 bh.init(yabm, BHADDR)
 
-
 interval = 20
-
-bh.setMTreg(mtreg)
-
-bh.setMeasurement(mode)
 
 count = 0
 
+bh.setMTreg(254)
+bh.setMeasurement(BH1750::ONE_TIME_HIGH_RES_MODE_2)
+
 while 1 do
-  delay(yabm, 1000 * interval)
-  mtreg = 69
-  mode = BH1750::ONE_TIME_LOW_RES_MODE
   lx = bh.getLightLevel
-  # under 1000 lux
-  if lx < 100000 then
-    mtreg = 254
-    mode = BH1750::ONE_TIME_HIGH_RES_MODE_2
-    lx = bh.getLightLevel
-  end
   para = "api_key=" + APIKEY
   para = para + "&field1=" + count.to_s + "&field2=" + pointstr(lx, 2)
   res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?" + para, {'User-Agent' => "test-agent"})
   if res != nil && res.status.to_s.length != 0 then
     yabm.print count.to_s + " "
-    yabm.print pointstr(lx, 2) + " " + res.status.to_s + "\r\n"
+    yabm.print pointstr(lx, 2) + " "
+    yabm.print res.status.to_s + "\r\n"
   end
+  delay(yabm, 1000 * interval)
   count = count + 1
 end
 
