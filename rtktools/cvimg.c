@@ -12,10 +12,17 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #define HOME_GATEWAY
+
+#ifdef _MSC_VER
+#define sscanf sscanf_s
+#define DEFFILEMODE (S_IREAD | S_IWRITE)
+#endif
 
 #define CONFIG_RTL_8196C 
 
@@ -266,7 +273,11 @@ int main(int argc, char** argv)
 		buf += 4; // skip padding-length field
 
 	// Read data and generate header
+#ifdef _MSC_VER
+	fh = open(inFile, O_RDONLY | O_BINARY);
+#else
 	fh = open(inFile, O_RDONLY);
+#endif
 	if ( fh == -1 ) {
 		printf("Open input file error!\n");
 		free( pHeader );
@@ -333,7 +344,9 @@ int main(int argc, char** argv)
 	}
 	write(fh, pHeader, size);
 	close(fh);
+#ifndef _MSC_VER
 	chmod(outFile, DEFFILEMODE);
+#endif
 	
 	if (is_vmlinuxhdr)
 	    printf("Generate image successfully, length=%d, checksum=0x%x, padding=%d, start address=0x%08x\n", size-12-padding_len, lchecksum, padding_len, DWORD_SWAP(start_addr));
