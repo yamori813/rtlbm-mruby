@@ -336,7 +336,11 @@ int main(int argc, char** argv)
 	}
 	
 	// Write image to output file
+#ifdef _MSC_VER
+	fh = open(outFile, O_RDWR | O_CREAT | O_TRUNC | O_BINARY, DEFFILEMODE);
+#else
 	fh = open(outFile, O_RDWR | O_CREAT | O_TRUNC, DEFFILEMODE);
+#endif
 	if ( fh == -1 ) {
 		printf("Create output file error! [%s]\n", outFile);
 		free(pHeader);
