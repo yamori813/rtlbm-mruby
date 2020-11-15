@@ -16,24 +16,19 @@ rtl.netstartdhcp
 ntpaddr = rtl.lookup("ntp.nict.jp")
 rtl.sntp(ntpaddr)
 
-hcount = 0
 count = 0
-interval = 20
+interval = 60
 
-yabm.watchdogstart(256)
+rtl.watchdogstart(256)
 
 while 1 do
-  rtl.print "."
-  start = rtl.count() 
-  while rtl.count() < start + 60 * 1000 do
-  end
   count = count + 1
-  if count % interval == 0 then
-    hcount = hcount + 1
-    rtl.print " " + hcount.to_s + "\r\n"
-    res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=1", {'User-Agent' => "test-agent"})
+  rtl.print count.to_s + "\r\n"
+  res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + count.to_s, {'User-Agent' => "test-agent"})
+  start = rtl.count() 
+  while rtl.count() < start + interval * 1000 do
   end
-  yabm.watchdogreset
+  rtl.watchdogreset
 end
 
 rescue => e
