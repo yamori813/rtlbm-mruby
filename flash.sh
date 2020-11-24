@@ -1,10 +1,11 @@
 #!/bin/sh
 
+echo $1
 
-if [ $# -eq 2 -a $1 == "-2" ]; then
+if [ $# -eq 2 -a $1 = "-2" ]; then
 IMG=$2
 IPADDR=192.168.2.1
-elif [ $# -eq 2 -a $1 == "-0" ]; then
+elif [ $# -eq 2 -a $1 = "-0" ]; then
 IMG=$2
 IPADDR=192.168.0.1
 elif [ $# -eq 1 ]; then

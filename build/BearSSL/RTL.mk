@@ -1,5 +1,7 @@
 # Configuration for a native build on a generic Unix-like system.
 
+NEWLIB=../newlib-2.5.0.20171222
+
 # Build directory.
 BUILD = build
 
@@ -38,8 +40,7 @@ MKDIR = mkdir -p
 
 # C compiler and flags.
 CC = mips-cc
-CFLAGS = -DBR_USE_URANDOM=0 -I../newlib-2.5.0.20171222/newlib/libc/include -march=4181 -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0 -pipe -mlong-calls -mips16
-#CFLAGS = -DBR_USE_URANDOM=0 -I../newlib-2.5.0.20171222/newlib/libc/include -march=5281 -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0 -pipe -mlong-calls -mips16
+CFLAGS = -DBR_USE_URANDOM=0 -I$(NEWLIB)/newlib/libc/include -march=4181 -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0 -pipe -mlong-calls -mips16
 CCOUT = -c -o 
 
 # Static library building tool.
@@ -60,6 +61,6 @@ RUNT0COMP = mono T0Comp.exe
 # by default. Building can still be invoked with an explicit target call
 # (e.g. 'make dll' to force build the DLL).
 #STATICLIB = no
-#DLL = no
-#TOOLS = no
-#TESTS = no
+DLL = no
+TOOLS = no
+TESTS = no
