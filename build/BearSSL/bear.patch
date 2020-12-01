@@ -1,33 +1,31 @@
 diff --git a/src/rand/sysrng.c b/src/rand/sysrng.c
-index bec06be..b4ca7c3 100644
+index 5a92114..36ad015 100644
 --- a/src/rand/sysrng.c
 +++ b/src/rand/sysrng.c
-@@ -139,7 +139,15 @@ seeder_win32(const br_prng_class **ctx)
+@@ -189,6 +189,15 @@ seeder_win32(const br_prng_class **ctx)
  }
  #endif
  
--/* see bearssl_rand.h */
 +unsigned long genrand_int32(void);
 +
-+int
++static int
 +seeder_mtrand(const br_prng_class **ctx)
 +{
++
 +	return genrand_int32();
 +}
 +
-+/* see bearssl_rand.h.h */
- br_prng_seeder
- br_prng_seeder_system(const char **name)
- {
-@@ -162,6 +170,11 @@ br_prng_seeder_system(const char **name)
- 	}
+ /*
+  * An aggregate seeder that uses RDRAND, and falls back to an OS-provided
+  * source if RDRAND fails.
+@@ -245,8 +254,8 @@ br_prng_seeder_system(const char **name)
  	return &seeder_win32;
- #endif
-+	if (name != NULL) {
-+		*name = "mt";
-+	}
-+	return &seeder_mtrand;
-+
+ #else
  	if (name != NULL) {
- 		*name = "none";
+-		*name = "none";
++		*name = "mt";
  	}
+-	return 0;
++	return  &seeder_mtrand;
+ #endif
+ }
