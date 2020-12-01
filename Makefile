@@ -6,6 +6,7 @@ CROSS_CC = mips-cc
 CROSS_LD = mips-ld
 CROSS_OBJCOPY = mips-objcopy
 
+RSDK=../rtl819x-toolchain/toolchain/rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714
 MRUBYDIR = mruby
 NEWLIBDIR = newlib-2.5.0.20171222
 LWIPDIR = lwip-2.1.2
@@ -22,7 +23,7 @@ CROSS_CFLAGS += -DUSE_INQUEUE=1
 CROSS_CFLAGS += $(MY_CFLAGS)
 
 CROSS_LDFLAGS = -static -L./$(LWIPDIR)/realtek/ -L./BearSSL/build/
-CROSS_LDFLAGS += -Lrsdk/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/
+CROSS_LDFLAGS += -L$(RSDK)/mips-linux/lib/gcc/mips-linux/4.4.5-1.5.5p4/
 CROSS_LDFLAGS += -L./$(NEWLIBDIR)/mips/newlib/
 CROSS_LDLIB = -lmruby -llwip -lbearssl -lc -lgcc
 CROSS_LDSCRIPT = main.ld
