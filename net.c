@@ -226,7 +226,7 @@ int i;
 					break;
 			}
 			if (ip_addr_get_ip4_u32(&netif.ip_addr) != 0) {
-//#ifdef NETDEBUG
+#ifdef NETDEBUG
 				unsigned int ip4;
 				ip4 = ip_addr_get_ip4_u32(&netif.ip_addr);
 				xprintf("IP address : %d.%d.%d.%d\n",
@@ -234,7 +234,7 @@ int i;
 				    (ip4 >> 16) & 0xff,
 				    (ip4 >> 8) & 0xff,
 				    ip4 & 0xff);
-//#endif
+#endif
 			} else {
 				print("dhcp can't get address\n");
 				netstat = 0;
