@@ -31,7 +31,7 @@ unsigned char debug_flags;
 
 extern struct netif netif;
 
-static ip4_addr_t ipaddr, netmask, gw, dnsserver, dnsres;
+static ip_addr_t ipaddr, netmask, gw, dnsserver, dnsres;
 
 err_t ethernetif_init(struct netif *netif);
 err_t ethernet_input(struct pbuf *p, struct netif *netif);
@@ -170,26 +170,27 @@ dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
 
 void net_start(int myaddr, int mymask, int mygw, int mydns)
 {
-	ip4_addr_set_u32(&ipaddr, myaddr);
-	ip4_addr_set_u32(&netmask, mymask);
-	ip4_addr_set_u32(&gw, mygw);
-	ip4_addr_set_u32(&dnsserver, mydns);
+	ip_addr_set_ip4_u32(&ipaddr, myaddr);
+	ip_addr_set_ip4_u32(&netmask, mymask);
+	ip_addr_set_ip4_u32(&gw, mygw);
+	ip_addr_set_ip4_u32(&dnsserver, mydns);
 
 	net_init(0);
 }
 
 void net_startdhcp()
 {
-	IP4_ADDR(&ipaddr, 0,0,0,0);
-	IP4_ADDR(&netmask, 0,0,0,0);
-	IP4_ADDR(&gw, 0,0,0,0);
+	IP_ADDR4(&ipaddr, 0,0,0,0);
+	IP_ADDR4(&netmask, 0,0,0,0);
+	IP_ADDR4(&gw, 0,0,0,0);
 
 	net_init(1);
 }
 
 int getmyaddress()
 {
-	return netif.ip_addr.addr;
+
+	return ip_addr_get_ip4_u32(&netif.ip_addr);
 }
 
 void net_init(int use_dhcp)
@@ -224,14 +225,16 @@ int i;
 				if (dhcp_supplied_address(&netif))
 					break;
 			}
-			if (netif.ip_addr.addr != 0) {
-#ifdef NETDEBUG
+			if (ip_addr_get_ip4_u32(&netif.ip_addr) != 0) {
+//#ifdef NETDEBUG
+				unsigned int ip4;
+				ip4 = ip_addr_get_ip4_u32(&netif.ip_addr);
 				xprintf("IP address : %d.%d.%d.%d\n",
-				    (netif.ip_addr.addr >> 24) & 0xff,
-				    (netif.ip_addr.addr >> 16) & 0xff,
-				    (netif.ip_addr.addr >> 8) & 0xff,
-				    netif.ip_addr.addr & 0xff);
-#endif
+				    (ip4 >> 24) & 0xff,
+				    (ip4 >> 16) & 0xff,
+				    (ip4 >> 8) & 0xff,
+				    ip4 & 0xff);
+//#endif
 			} else {
 				print("dhcp can't get address\n");
 				netstat = 0;

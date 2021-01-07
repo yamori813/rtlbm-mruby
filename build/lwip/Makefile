@@ -18,13 +18,15 @@ CROSS_CFLAGS += -pipe -mlong-calls
 OBJS_CORE= def.o dns.o inet_chksum.o init.o ip.o mem.o memp.o netif.o pbuf.o raw.o stats.o sys.o tcp.o tcp_in.o tcp_out.o timeouts.o udp.o
 
 OBJS_IPV4=autoip.o dhcp.o etharp.o icmp.o igmp.o ip4.o ip4_addr.o ip4_frag.o
+OBJS_IPV6= dhcp6.o ethip6.o icmp6.o inet6.o ip6_addr.o ip6.o ip6_frag.o mld6.o nd6.o
+
 
 OBJS_DRV=ethernet.o
 
 SRC=../src
 
-all:	$(OBJS_CORE) $(OBJS_IPV4) $(OBJS_DRV)
-	ar rs liblwip.a $(OBJS_CORE) $(OBJS_IPV4) $(OBJS_DRV)
+all:	$(OBJS_CORE) $(OBJS_IPV4) $(OBJS_IPV6) $(OBJS_DRV)
+	ar rs liblwip.a $(OBJS_CORE) $(OBJS_IPV4) $(OBJS_IPV6) $(OBJS_DRV)
 
 def.o:$(SRC)/core/def.c
 	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/def.c
@@ -77,6 +79,26 @@ ip4_addr.o:$(SRC)/core/ipv4/ip4_addr.c
 	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv4/ip4_addr.c
 ip4_frag.o:$(SRC)/core/ipv4/ip4_frag.c
 	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv4/ip4_frag.c
+
+dhcp6.o:$(SRC)/core/ipv6/dhcp6.c
+	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv6/dhcp6.c
+ethip6.o:$(SRC)/core/ipv6/ethip6.c
+	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv6/ethip6.c
+icmp6.o:$(SRC)/core/ipv6/icmp6.c
+	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv6/icmp6.c
+inet6.o:$(SRC)/core/ipv6/inet6.c
+	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv6/inet6.c
+ip6_addr.o:$(SRC)/core/ipv6/ip6_addr.c
+	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv6/ip6_addr.c
+ip6.o:$(SRC)/core/ipv6/ip6.c
+	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv6/ip6.c
+ip6_frag.o:$(SRC)/core/ipv6/ip6_frag.c
+	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv6/ip6_frag.c
+mld6.o:$(SRC)/core/ipv6/mld6.c
+	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv6/mld6.c
+nd6.o:$(SRC)/core/ipv6/nd6.c
+	$(CC) $(CROSS_CFLAGS) -c $(SRC)/core/ipv6/nd6.c
+
 
 ethernet.o:$(SRC)/netif/ethernet.c
 	$(CC) $(CROSS_CFLAGS) -c $(SRC)/netif/ethernet.c
