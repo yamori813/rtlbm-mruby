@@ -632,6 +632,7 @@ struct ethernetif *ethernetif;
 	 * is available...) */
 
 	netif->output = etharp_output;
+	netif->output_ip6 = ethip6_output;
 	netif->linkoutput = low_level_output;
 
 //	ethernetif->ethaddr = (struct eth_addr *)&(netif->hwaddr[0]);

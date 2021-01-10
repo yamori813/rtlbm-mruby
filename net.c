@@ -31,7 +31,7 @@ unsigned char debug_flags;
 
 extern struct netif netif;
 
-static ip_addr_t ipaddr, netmask, gw, dnsserver, dnsres;
+static ip_addr_t ipaddr, netmask, gw, dnsserver;
 
 err_t ethernetif_init(struct netif *netif);
 err_t ethernet_input(struct pbuf *p, struct netif *netif);
@@ -153,7 +153,7 @@ void net_poll()
 }
 
 int dnsstat;
-int resolvip;
+ip_addr_t resolvip;
 
 static void
 dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
@@ -161,7 +161,7 @@ dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
   LWIP_UNUSED_ARG(arg);
 
   if (ipaddr != 0) {
-    resolvip = ip_addr_get_ip4_u32(ipaddr);
+    resolvip = *ipaddr;
     dnsstat = 1;
   } else {
     dnsstat = 2;
@@ -190,7 +190,7 @@ void net_startdhcp()
 int getmyaddress()
 {
 
-	return ip_addr_get_ip4_u32(&netif.ip_addr);
+	return netif_ip4_addr(&netif);
 }
 
 void net_init(int use_dhcp)
@@ -206,6 +206,9 @@ int i;
 	else
 		netif_add(&netif, &ipaddr, &netmask, &gw, NULL, ethernetif_init,
  		    ethernet_input);
+
+	netif_create_ip6_linklocal_address(&netif, 1);
+	netif.ip6_autoconfig_enabled = 1;
 
 	netif_set_link_up(&netif);
 
@@ -225,10 +228,10 @@ int i;
 				if (dhcp_supplied_address(&netif))
 					break;
 			}
-			if (ip_addr_get_ip4_u32(&netif.ip_addr) != 0) {
+			if (netif_ip4_addr(&netif) != 0) {
 #ifdef NETDEBUG
 				unsigned int ip4;
-				ip4 = ip_addr_get_ip4_u32(&netif.ip_addr);
+				ip4 = netif_ip4_addr(&netif);
 				xprintf("IP address : %d.%d.%d.%d\n",
 				    (ip4 >> 24) & 0xff,
 				    (ip4 >> 16) & 0xff,
@@ -243,6 +246,26 @@ int i;
 	} else {
 		dns_setserver(0, &dnsserver);
 	}
+#ifdef NETDEBUG
+	xprintf("%x:%x:%x:%x:%x:%x:%x:%x ",
+	    IP6_ADDR_BLOCK1(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK2(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK3(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK4(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK5(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK6(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK7(netif_ip6_addr(&netif, 0)),
+	    IP6_ADDR_BLOCK8(netif_ip6_addr(&netif, 0)));
+	xprintf("%x:%x:%x:%x:%x:%x:%x:%x ",
+	    IP6_ADDR_BLOCK1(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK2(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK3(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK4(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK5(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK6(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK7(netif_ip6_addr(&netif, 1)),
+	    IP6_ADDR_BLOCK8(netif_ip6_addr(&netif, 1)));
+#endif
 
 	udpsntp_raw_pcb = NULL;
 }
@@ -337,50 +360,79 @@ unsigned char buf[48];
 	}
 }
 
-void sntp(int addr)
+void sntp(int *addr, int type)
 {
 int port;
-static ip4_addr_t distaddr;
+static ip_addr_t distaddr;
 
 	if (udpsntp_raw_pcb != NULL) {
 		udp_remove(udpsntp_raw_pcb);
 	}
 
 	port = 123;
-	udpsntp_raw_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
-	udp_bind(udpsntp_raw_pcb, IP_ANY_TYPE, port);
+	if (type == 0) {
+		udpsntp_raw_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
+		udp_bind(udpsntp_raw_pcb, IP_ANY_TYPE, port);
+		ip_addr_set_ip4_u32(&distaddr, *addr);
+	} else {
+		udpsntp_raw_pcb = udp_new_ip_type(IPADDR_TYPE_V6);
+		udp_bind(udpsntp_raw_pcb, netif_ip6_addr(&netif, 1), port);
+		distaddr.u_addr.ip6.addr[0] = (addr[0] << 16) | addr[1] ;
+		distaddr.u_addr.ip6.addr[1] = (addr[2] << 16) | addr[3] ;
+		distaddr.u_addr.ip6.addr[2] = (addr[4] << 16) | addr[5] ;
+		distaddr.u_addr.ip6.addr[3] = (addr[6] << 16) | addr[7] ;
+		distaddr.type = IPADDR_TYPE_V6;
+	}
 	udp_recv(udpsntp_raw_pcb, udpsntp_raw_recv, NULL);
 
 	unsigned char msg[48]={0,0,0,0,0,0,0,0,0};
 
 	msg[0] = 4 << 3 | 3;
 
-	ip4_addr_set_u32(&distaddr, addr);
 	struct pbuf* b = pbuf_alloc(PBUF_TRANSPORT, sizeof(msg), PBUF_POOL);
 	memcpy(b->payload, msg, sizeof(msg));
 	udp_sendto(udpsntp_raw_pcb, b, &distaddr, port);
 	pbuf_free(b);
 }
 
+void cpip6addr(ip_addr_t *addr, int *dst)
+{
+	dst[0] = IP6_ADDR_BLOCK1((ip6_addr_t *)addr);
+	dst[1] = IP6_ADDR_BLOCK2((ip6_addr_t *)addr);
+	dst[2] = IP6_ADDR_BLOCK3((ip6_addr_t *)addr);
+	dst[3] = IP6_ADDR_BLOCK4((ip6_addr_t *)addr);
+	dst[4] = IP6_ADDR_BLOCK5((ip6_addr_t *)addr);
+	dst[5] = IP6_ADDR_BLOCK6((ip6_addr_t *)addr);
+	dst[6] = IP6_ADDR_BLOCK7((ip6_addr_t *)addr);
+	dst[7] = IP6_ADDR_BLOCK8((ip6_addr_t *)addr);
+}
+
 int
-lookup(char *host, int *addr)
+lookup(char *host, int *addr, int type)
 {
 err_t err;
 int res;
+ip_addr_t dnsres;
 
 	res = 0;
 	*addr = 0;
 	dnsstat = 0;
-	err = dns_gethostbyname(host,
-	    &dnsres, dns_found, NULL);
+	err = dns_gethostbyname_addrtype(host,
+	    &dnsres, dns_found, NULL, type);
 	if (err == ERR_OK) {
-		*addr = ip_addr_get_ip4_u32(&dnsres);
+		if (type == 0)
+			*addr = ip_addr_get_ip4_u32(&dnsres);
+		else
+			cpip6addr(&dnsres, addr);
 		res = 1;
 	} else {
 		while(dnsstat == 0)
 			delay_ms(10);
 		if (dnsstat == 1) {
-			*addr = resolvip;
+			if (type == 0)
+				*addr = ip_addr_get_ip4_u32(&resolvip);
+			else
+				cpip6addr(&resolvip, addr);
 			res = 1;
 		}
 	}
