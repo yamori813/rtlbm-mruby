@@ -293,3 +293,14 @@ https_connect(char *host, int addr, int port, char *header)
 	}
 	return 0;
 }
+
+void mksha256(unsigned char *data, int len, char *out)
+{
+br_sha256_context sc;
+
+	br_sha256_init(&sc);
+
+	br_sha256_update(&sc, data, len);
+
+	br_sha256_out(&sc, out);
+}

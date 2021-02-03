@@ -21,6 +21,8 @@ main(int argc, char *argv[])
 unsigned char hdrbuf[22];
 int mrbsize;
 unsigned char *mrbbuf;
+unsigned char hash[32];
+int i;
 
 	mt19937ar_init();
 
@@ -44,6 +46,11 @@ unsigned char *mrbbuf;
 		xprintf("MRB SIZE %d\n", mrbsize);
 		mrbbuf = malloc(mrbsize);
 		flashread(mrbbuf, MRBOFFSET, mrbsize);
+		mksha256(mrbbuf, mrbsize, hash);
+		xprintf("MRB SHA256 ");
+		for (i = 0; i < 32; ++i)
+			xprintf("%02x", hash[i]);
+		xprintf("\n");
 
 		mrb_state *mrb;
 		mrb = mrb_open();
