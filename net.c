@@ -123,20 +123,29 @@ my_tcp_close()
 }
 
 void
-tcphttp_raw_init(int disaddr, int disport)
+tcphttp_raw_init(int *addr, int disport, int type)
 {
-static ip4_addr_t addr;
+static ip_addr_t distaddr;
 
-  ip4_addr_set_u32(&addr, disaddr);
+  if (type == 0) {
+    ip_addr_set_ip4_u32(&distaddr, *addr);
+    tcphttp_raw_pcb = tcp_new_ip_type(IPADDR_TYPE_ANY);
+  } else {
+    distaddr.u_addr.ip6.addr[0] = (addr[0] << 16) | addr[1] ;
+    distaddr.u_addr.ip6.addr[1] = (addr[2] << 16) | addr[3] ;
+    distaddr.u_addr.ip6.addr[2] = (addr[4] << 16) | addr[5] ;
+    distaddr.u_addr.ip6.addr[3] = (addr[6] << 16) | addr[7] ;
+    distaddr.type = IPADDR_TYPE_V6;
+    tcphttp_raw_pcb = tcp_new_ip_type(IPADDR_TYPE_V6);
+  }
 
-  tcphttp_raw_pcb = tcp_new();
   if (tcphttp_raw_pcb != NULL) {
 //    tcp_arg(tcphttp_raw_pcb, NULL);
     tcp_recv(tcphttp_raw_pcb, http_recv);
     tcp_sent(tcphttp_raw_pcb, http_sent);
     tcp_err(tcphttp_raw_pcb, http_err);
     tcp_poll(tcphttp_raw_pcb, http_poll, 60);
-    tcp_connect(tcphttp_raw_pcb, &addr, disport, http_connected);
+    tcp_connect(tcphttp_raw_pcb, &distaddr, disport, http_connected);
     tcpstat = 0;
   }
 }
@@ -440,9 +449,9 @@ ip_addr_t dnsres;
 }
 
 int
-http_connect(int addr, int port, char *header)
+http_connect(int *addr, int port, char *header, int type)
 {
-        tcphttp_raw_init(addr, port);
+        tcphttp_raw_init(addr, port, type);
         while(tcpstat == 0)
                 delay_ms(10);
         if (tcpstat == 1) {

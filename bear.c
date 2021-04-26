@@ -282,9 +282,9 @@ https_close()
 extern int tcpstat;
 
 int
-https_connect(char *host, int addr, int port, char *header)
+https_connect(char *host, int *addr, int port, char *header, int type)
 {
-	tcphttp_raw_init(addr, port);
+	tcphttp_raw_init(addr, port, type);
 	while(tcpstat == 0)
 		delay_ms(10);
 	if (tcpstat == 1) {

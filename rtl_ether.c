@@ -57,6 +57,7 @@ static unsigned int*  txPkthdrRing;
 static unsigned int*  rxPkthdrRing;
 uint32_t* rxMbufRing;
 int txPos;
+int rxPos;
 
 #define TX_RING0	4
 #define TX_RING1	2
@@ -67,7 +68,7 @@ int txPos;
 #else
 #define TX_RING		(TX_RING0 + TX_RING1)
 #endif
-#define RX_RING		4
+#define RX_RING		8
 
 #define COMP_SIGNATURE_LEN	6
 #define COMP_HS_FLASH_ADDR	0x8000
@@ -382,6 +383,7 @@ long *lptr;
 //	REG32(MDCIOCR)=0x96181441;      // enable Giga port 8211B LED
 
 	txPos = 0;
+	rxPos = 0;
 
 	vlan_init();
 
@@ -532,9 +534,9 @@ int i;
 
 
 	for (i = 0; i < RX_RING; ++i) {
-		if ((rxPkthdrRing[i] & DESC_OWNED_BIT) ==
+		if ((rxPkthdrRing[rxPos] & DESC_OWNED_BIT) ==
 		    DESC_RISC_OWNED ) {
-			pPkthdr = (struct pktHdr *) (rxPkthdrRing[i] & 
+			pPkthdr = (struct pktHdr *) (rxPkthdrRing[rxPos] &
 					~(DESC_OWNED_BIT | DESC_WRAP));
 			data = (int)pPkthdr->ph_mbuf->m_data;
 			len = pPkthdr->ph_len;
@@ -560,8 +562,12 @@ sprintf(str, "inlen = %d vid= %d.", len, pPkthdr->ph_vlanId);print(str);
 			}
 
 			/* Reset OWN bit */
-			rxPkthdrRing[i] |= DESC_SWCORE_OWNED;
-			rxMbufRing[i] |= DESC_SWCORE_OWNED;
+			rxPkthdrRing[rxPos] |= DESC_SWCORE_OWNED;
+			rxMbufRing[rxPos] |= DESC_SWCORE_OWNED;
+
+			rxPos = (rxPos + 1) % RX_RING;
+		} else {
+			break;
 		}
 	}
 

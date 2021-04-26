@@ -26,8 +26,10 @@ MRuby::CrossBuild.new('rtl8196') do |conf|
 #  conf.cc.flags << "-mips16"
   conf.cc.include_paths = ["#{root}/include", "../newlib-2.5.0.20171222/newlib/libc/include"]
 
-  conf.gem :github => 'yamori813/mruby-yabm'
-  conf.gem :github => 'yamori813/mruby-simplehttp'
+#  conf.gem :github => 'yamori813/mruby-yabm'
+  conf.gem '/home/hiroki/mruby-yabm'
+#  conf.gem :github => 'yamori813/mruby-simplehttp'
+  conf.gem '/home/hiroki/mruby-simplehttp'
 # use in mruby-simplehttp'
   conf.gem :core => "mruby-string-ext"
 end
@@ -47,8 +49,11 @@ MRuby::CrossBuild.new('rtl8198') do |conf|
 #  conf.cc.flags << "-mips16"
   conf.cc.include_paths = ["#{root}/include", "../newlib-2.5.0.20171222/newlib/libc/include"]
 
-  conf.gem :github => 'yamori813/mruby-yabm'
-  conf.gem :github => 'yamori813/mruby-simplehttp'
+#  conf.gem :github => 'yamori813/mruby-yabm'
+  conf.gem '/home/hiroki/mruby-yabm'
+#  conf.gem :github => 'yamori813/mruby-simplehttp'
+  conf.gem '/home/hiroki/mruby-simplehttp'
+#  conf.gem :github => 'yamori813/mruby-simplehttp'
 # use in mruby-simplehttp'
   conf.gem :core => "mruby-string-ext"
 end
