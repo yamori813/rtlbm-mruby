@@ -24,7 +24,7 @@ MRuby::CrossBuild.new('rtl8196') do |conf|
   conf.cc.flags << "-g -fno-pic -mno-abicalls"
   conf.cc.flags << "-pipe -mlong-calls"
 #  conf.cc.flags << "-mips16"
-  conf.cc.include_paths = ["#{root}/include", "../newlib-2.5.0.20171222/newlib/libc/include"]
+  conf.cc.include_paths = ["#{root}/include", "../build/work/newlib-3.0.0.20180831/newlib/libc/include"]
 
   conf.gem :github => 'yamori813/mruby-yabm'
   conf.gem :github => 'yamori813/mruby-simplehttp'
@@ -45,7 +45,7 @@ MRuby::CrossBuild.new('rtl8198') do |conf|
   conf.cc.flags << "-g -fno-pic -mno-abicalls"
   conf.cc.flags << "-pipe -mlong-calls"
 #  conf.cc.flags << "-mips16"
-  conf.cc.include_paths = ["#{root}/include", "../newlib-2.5.0.20171222/newlib/libc/include"]
+  conf.cc.include_paths = ["#{root}/include", "../build/work/newlib-3.0.0.20180831/newlib/libc/include"]
 
   conf.gem :github => 'yamori813/mruby-yabm'
   conf.gem :github => 'yamori813/mruby-simplehttp'

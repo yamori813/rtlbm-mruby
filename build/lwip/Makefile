@@ -5,7 +5,7 @@
 CC=mips-cc
 AR=mips-ar
 
-NEWLIB=../../newlib-2.5.0.20171222
+NEWLIB=../../newlib-3.0.0.20180831
 
 CROSS_CFLAGS = -Iinclude -I$(SRC)/include -I$(NEWLIB)/newlib/libc/include
 

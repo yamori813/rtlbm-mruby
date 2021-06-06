@@ -1,6 +1,6 @@
 # Configuration for a native build on a generic Unix-like system.
 
-NEWLIB=../newlib-2.5.0.20171222
+NEWLIB=../newlib-3.0.0.20180831
 
 # Build directory.
 BUILD = build
