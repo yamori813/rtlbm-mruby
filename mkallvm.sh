@@ -5,6 +5,9 @@ PATH=${PATH}:${TOOLPATH}/mips-linux/bin:${TOOLPATH}/libexec/gcc/mips-linux/4.4.5
 
 START=`date '+%s'`
 
+cd rtktools;make
+cd ..
+
 rm *rtl
 make clean
 make TERGET=RTL8196E
