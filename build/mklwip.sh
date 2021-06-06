@@ -9,7 +9,7 @@ cd work
 
 rm -rf ${LWIP}
 
-tar -zxf ${LWIP}.zip
+unzip ${LWIP}.zip
 
 START=`date '+%s'`
 
