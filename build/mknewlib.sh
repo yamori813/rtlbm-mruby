@@ -1,5 +1,8 @@
 #!/bin/sh
 
+OS=`uname -s`
+
+
 NEWLIB=newlib-3.0.0.20180831
 
 TOOLPATH=$HOME/rtl819x-toolchain/toolchain/rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714
@@ -16,7 +19,12 @@ sed -i -e '/Unable to determine/d' ${NEWLIB}/newlib/libc/include/sys/_intsup.h
 
 START=`date '+%s'`
 
-cd ${NEWLIB};./configure --host=amd64 --target=mips;gmake
+if [ "$OS" = 'Linux' ]; then
+cd ${NEWLIB};./configure --target=mips;make
+else
+ARCH=`uname -p`
+cd ${NEWLIB};./configure --host=${ARCH} --target=mips;gmake
+fi
 
 END=`date '+%s'`
 
