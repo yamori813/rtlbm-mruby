@@ -17,4 +17,4 @@ END=`date '+%s'`
 
 TIME=`expr ${END} - ${START}`
 
-echo ${TIME}
+echo "${TIME} sec"
