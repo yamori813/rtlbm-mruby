@@ -1,0 +1,9 @@
+*.o
+*.rtl
+build/work/*
+build/mruby/build_config.rb.lock
+rtktools/cvimg
+ver.c
+main.bin
+main.elf
+main.map
