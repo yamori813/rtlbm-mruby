@@ -23,7 +23,9 @@
 #include "lwip/dns.h"
 #include "lwip/dhcp.h"
 
+#if defined(RTL8196) || defined(RTL8196E)
 #include "system.h"
+#endif
 
 //#define	NETDEBUG
 

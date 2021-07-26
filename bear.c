@@ -23,7 +23,10 @@
  */
 
 #include "bearssl.h"
+
+#if defined(RTL8196) || defined(RTL8196E)
 #include "system.h"
+#endif
 
 /*
  * Low-level data read callback for the simplified SSL I/O API.
