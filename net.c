@@ -133,10 +133,10 @@ static ip_addr_t distaddr;
     ip_addr_set_ip4_u32(&distaddr, *addr);
     tcphttp_raw_pcb = tcp_new_ip_type(IPADDR_TYPE_ANY);
   } else {
-    distaddr.u_addr.ip6.addr[0] = (addr[0] << 16) | addr[1] ;
-    distaddr.u_addr.ip6.addr[1] = (addr[2] << 16) | addr[3] ;
-    distaddr.u_addr.ip6.addr[2] = (addr[4] << 16) | addr[5] ;
-    distaddr.u_addr.ip6.addr[3] = (addr[6] << 16) | addr[7] ;
+    distaddr.u_addr.ip6.addr[0] = lwip_htonl((addr[0] << 16) | addr[1]) ;
+    distaddr.u_addr.ip6.addr[1] = lwip_htonl((addr[2] << 16) | addr[3]) ;
+    distaddr.u_addr.ip6.addr[2] = lwip_htonl((addr[4] << 16) | addr[5]) ;
+    distaddr.u_addr.ip6.addr[3] = lwip_htonl((addr[6] << 16) | addr[7]) ;
     distaddr.type = IPADDR_TYPE_V6;
     tcphttp_raw_pcb = tcp_new_ip_type(IPADDR_TYPE_V6);
   }
@@ -388,10 +388,10 @@ static ip_addr_t distaddr;
 	} else {
 		udpsntp_raw_pcb = udp_new_ip_type(IPADDR_TYPE_V6);
 		udp_bind(udpsntp_raw_pcb, netif_ip6_addr(&netif, 1), port);
-		distaddr.u_addr.ip6.addr[0] = (addr[0] << 16) | addr[1] ;
-		distaddr.u_addr.ip6.addr[1] = (addr[2] << 16) | addr[3] ;
-		distaddr.u_addr.ip6.addr[2] = (addr[4] << 16) | addr[5] ;
-		distaddr.u_addr.ip6.addr[3] = (addr[6] << 16) | addr[7] ;
+		distaddr.u_addr.ip6.addr[0] = lwip_htonl((addr[0] << 16) | addr[1]) ;
+		distaddr.u_addr.ip6.addr[1] = lwip_htonl((addr[2] << 16) | addr[3]) ;
+		distaddr.u_addr.ip6.addr[2] = lwip_htonl((addr[4] << 16) | addr[5]) ;
+		distaddr.u_addr.ip6.addr[3] = lwip_htonl((addr[6] << 16) | addr[7]) ;
 		distaddr.type = IPADDR_TYPE_V6;
 	}
 	udp_recv(udpsntp_raw_pcb, udpsntp_raw_recv, NULL);
