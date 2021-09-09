@@ -11,6 +11,7 @@ SECTIONS
   .fini : {
     KEEP (*(.fini))
   }
+  PROVIDE (etext = .);
   .rdata : { *(.rdata) }
   .data : { *(.data) }
   _gp = ALIGN(16);
