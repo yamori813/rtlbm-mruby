@@ -1,9 +1,9 @@
 This projct use these libraries.
 
-newlib-2.5.0.20171222  
+newlib-3.0.0.20180831  
 lwip-2.1.2  
+bearssl-0.6  
 mruby  
-BearSSL  
 
 Source code 
 
@@ -27,27 +27,26 @@ Build tools is this.
 
 rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714  
 
-I build on FreeBSD/amd64 11.2 used by linux emuration.  
+I build on FreeBSD/amd64 used by linux emuration.  
 
 Default build is RTL8196C. If you want build for RTL8196E do this.  
 
 % make TARGET=RTL8196E  
 
 ```
-+-- rsdk (synblic link to rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714)
-|
-+-- newlib-2.5.0.20171222  
-|       |  
-|       +--- mips  
-|  
-+-- mruby  
-|       |  
-|       +-- build/realtek/lib  
-|  
-+-- lwip-2.1.2  
-|       |  
-|       +-- realtek  
-+-- BearSSL
-        |
-        +-- build
+$ git clone --recursive https://github.com/yamori813/rtlbm-mruby.git
+$ git clone https://github.com/yamori813/rtl819x-toolchain.git
+$ cd rtlbm-mruby/build/
+$ ./getfiles.sh
+$ ./mknewlib.sh
+$ ./mklwip.sh
+$ ./mkbearssl.sh
+$ ./mkmruby.sh
+$ cd ..
+$ ./mkallvm.sh
 ```
+
+main.rtl --- RTL8196C  
+main_e.rtl --- RTL8196E  
+main_8198.rtl --- RTL8198  
+main_8197d_sw.rtl --- RTL8197 with SWITCH  
