@@ -10,13 +10,13 @@ cd ..
 
 rm *rtl
 make clean
-make TERGET=RTL8196E
+make TARGET=RTL8196E
 mv main.rtl main_e.rtl
 make clean
-make TERGET=RTL8197D_SW
+make TARGET=RTL8197D_SW
 mv main.rtl main_8197d_sw.rtl
 make clean
-make TERGET=RTL8198
+make TARGET=RTL8198
 mv main.rtl main_8198.rtl
 make clean
 make
