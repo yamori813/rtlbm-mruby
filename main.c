@@ -97,7 +97,7 @@ unsigned long rev = REG32(REVR);
 		return MODULE_RTL8196C;
 	else if (rev == RTL8198_REVISION_A || rev == RTL8198_REVISION_B)
 		return MODULE_RTL8198;
-	else if (rev == RTL8196E_REVISION)
+	else if ((rev & 0xfffff000) == RTL8196E_REVISION)
 		return MODULE_RTL8196E;
 	else if (rev == RTL8197D_REVISION)
 		return MODULE_RTL8197D;
