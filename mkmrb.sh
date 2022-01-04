@@ -1,9 +1,11 @@
 #!/bin/sh
 
-TARGET=`echo $1 | sed 's/\.rb//'`
+TARGET="hoge"
 
 MRBOFFSET=0x180000
 
-./mruby/build/host/mrbc/bin/mrbc ${TARGET}.rb
+./mruby/build/host/mrbc/bin/mrbc -o${TARGET}.mrb $*
 
 ./rtktools/cvimg root ${TARGET}.mrb ${TARGET}.img ${MRBOFFSET} ${MRBOFFSET}
+
+echo "build ${TARGET}.img"

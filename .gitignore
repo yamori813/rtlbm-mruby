@@ -1,5 +1,6 @@
 *.o
 *.rtl
+hoge.*
 build/work/*
 build/mruby/build_config.rb.lock
 rtktools/cvimg
