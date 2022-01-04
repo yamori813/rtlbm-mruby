@@ -549,14 +549,7 @@ sprintf(str, "inlen = %d vid= %d.", len, pPkthdr->ph_vlanId);print(str);
 #endif
 			if (p != NULL) {
 				pbuf_take(p, data, len);
-#if USE_INQUEUE
 				eninque(p);
-#else
-				if (netif->input(p, netif) != ERR_OK) {
-					pbuf_free(p);
-					p = NULL;
-				}
-#endif
 			} else {
 				/* pbuf error */
 			}
