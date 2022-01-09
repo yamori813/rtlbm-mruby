@@ -10,7 +10,7 @@ elif [ $# -eq 1 ]; then
 IMG=$1
 IPADDR=192.168.1.6
 else
-echo "flash.sh [-02] <img file>"
+echo "rtlflash.sh [-02] <img file>"
 exit
 fi
 
