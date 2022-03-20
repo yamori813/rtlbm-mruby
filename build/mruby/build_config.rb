@@ -18,7 +18,7 @@ MRuby::CrossBuild.new('rtl8196') do |conf|
 
   cc.defines << %w(MRB_METHOD_T_STRUCT)
   cc.defines << %w(MRB_DISABLE_STDIO)
-  cc.defines << %w(MRB_WITHOUT_FLOAT)
+  cc.defines << %w(MRB_NO_FLOAT)
   cc.defines << %w(YABM_REALTEK)
   conf.cc.flags << "-march=4181"
   conf.cc.flags << "-g -fno-pic -mno-abicalls"
