@@ -201,7 +201,8 @@ void net_startdhcp()
 int getmyaddress()
 {
 
-	return netif_ip4_addr(&netif);
+//	return netif_ip4_addr(&netif);
+	return ip_addr_get_ip4_u32(&netif.ip_addr);
 }
 
 void net_init(int use_dhcp)
@@ -242,7 +243,8 @@ int i;
 			if (netif_ip4_addr(&netif) != 0) {
 #ifdef NETDEBUG
 				unsigned int ip4;
-				ip4 = netif_ip4_addr(&netif);
+//				ip4 = netif_ip4_addr(&netif);
+				ip4 = ip_addr_get_ip4_u32(&netif.ip_addr);
 				xprintf("IP address : %d.%d.%d.%d\n",
 				    (ip4 >> 24) & 0xff,
 				    (ip4 >> 16) & 0xff,
