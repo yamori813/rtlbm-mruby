@@ -27,22 +27,15 @@ TOP_BUTTON = (1 << 3)
 SCL = 2
 SDA = 11
 
-
-def delay(yabm, val) 
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 def pointstr(p, c)
   if p == 0 then
-    return "0." + "0" * c
+    "0." + "0" * c
   elsif p.abs < 10 ** c
     l = c - p.abs.to_s.length + 1
     s = p.to_s.insert(p < 0 ? 1 : 0, "0" * l)
-    return s.insert(-1 - c, ".")
+    s.insert(-1 - c, ".")
   else
-    return p.to_s.insert(-1 - c, ".")
+    p.to_s.insert(-1 - c, ".")
   end
 end
 
@@ -67,7 +60,9 @@ def gpioinit(yabm)
   yabm.gpiosetdat(reg)
 end
 
+#
 # sensor class
+#
 
 class SI7021
   SIADDR = 0x40
@@ -79,17 +74,17 @@ class SI7021
 
   def getRevition
     @y.i2cwrites(SIADDR, [0x84, 0xb8], 0)
-    delay(@y, 1)
+    @y.msleep(1)
     siarr = @y.i2creads(SIADDR, 1)
-    return siarr[0]
+    siarr[0]
   end
 
   def getSerialBytes
     @y.i2cwrites(SIADDR, [0xfa, 0x0f], 0)
-    delay(@y, 1)
+    @y.msleep(1)
     siarr1 = @y.i2creads(SIADDR, 8)
     @y.i2cwrites(SIADDR, [0xfc, 0xc9], 0)
-    delay(@y, 1)
+    @y.msleep(1)
     siarr2 = @y.i2creads(SIADDR, 6)
     res = Array.new
     res.push(siarr1[0])
@@ -100,10 +95,11 @@ class SI7021
     res.push(siarr2[1])
     res.push(siarr2[3])
     res.push(siarr2[4])
-    return res
+    res
   end
 
 # not use
+=begin
   def chkcrc dat
     crc8 = 0xff
     for i in 0..1 do
@@ -123,10 +119,11 @@ class SI7021
       return false
     end
   end
+=end
 
   def getCelsiusHundredths
     while @y.i2cchk(SIADDR) == 0 do
-      delay(@y, 1)
+      @y.msleep(1)
     end
     if USECLOCKST then
       @y.i2cwrites(SIADDR, [0xe3], 1)
@@ -135,7 +132,7 @@ class SI7021
     end
     c = 0
     while 1 do
-      delay(@y, 1)
+      @y.msleep(1)
       siarr = @y.i2creads(SIADDR, 2)
       if siarr != nil then
         break
@@ -147,18 +144,17 @@ class SI7021
       end
     end
     tempcode = (siarr[0] << 8) | siarr[1]
-    t = (tempcode * 17572) / 65536 - 4685
-    return t
+    (tempcode * 17572) / 65536 - 4685
   end
 
   def getCelsiusPostHumidity
     while @y.i2cchk(SIADDR) == 0 do
-      delay(@y, 1)
+      @y.msleep(1)
     end
     @y.i2cwrites(SIADDR, [0xe0], 1)
     c = 0
     while 1 do
-      delay(@y, 1)
+      @y.msleep(1)
       siarr = @y.i2creads(SIADDR, 2)
       if siarr != nil then
         break
@@ -170,13 +166,12 @@ class SI7021
       end
     end
     tempcode = (siarr[0] << 8) | siarr[1]
-    t = (tempcode * 17572) / 65536 - 4685
-    return t
+    (tempcode * 17572) / 65536 - 4685
   end
 
   def getHumidityPercent
     while @y.i2cchk(SIADDR) == 0 do
-      delay(@y, 1)
+      @y.msleep(1)
     end
     if USECLOCKST then
       @y.i2cwrites(SIADDR, [0xe5], 1)
@@ -185,7 +180,7 @@ class SI7021
     end
     c = 0
     while 1 do
-      delay(@y, 1)
+      @y.msleep(1)
       siarr = @y.i2creads(SIADDR, 2)
       if siarr != nil then
         break
@@ -197,8 +192,7 @@ class SI7021
       end
     end
     rhcode = (siarr[0] << 8) | siarr[1]
-    rh = (125 * rhcode) / 65536 - 6
-    return rh
+    (125 * rhcode) / 65536 - 6
   end
 end
 
@@ -210,13 +204,11 @@ class BMP180
     msb = @y.i2cread(BMPADDR, 0xf6)
     lsb = @y.i2cread(BMPADDR, 0xf7)
     xlsb = @y.i2cread(BMPADDR, 0xf8)
-    val = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - @oss)
-    return val
+    ((msb << 16) + (lsb << 8) + xlsb) >> (8 - @oss)
   end
 
   def readu16 addr 
-    val = @y.i2cread(BMPADDR, addr) << 8 | @y.i2cread(BMPADDR, addr + 1)
-    return val
+    @y.i2cread(BMPADDR, addr) << 8 | @y.i2cread(BMPADDR, addr + 1)
   end
 
   def read16 addr 
@@ -224,7 +216,7 @@ class BMP180
     if val >= 0x8000 then
       val = val - 0x10000
     end
-    return val
+    val
   end
 
   def init yabm, oss
@@ -245,10 +237,10 @@ class BMP180
 
   def readTemperature
     while @y.i2cchk(BMPADDR) == 0 do
-      delay(@y, 1)
+      @y.msleep(1)
     end
     @y.i2cwrite(BMPADDR, 0xf4, 0x2e)
-    delay(@y, 5)
+    @y.msleep(5)
     ut = read16 0xf6
 #    @y.print ut.to_s + " "
 
@@ -257,19 +249,17 @@ class BMP180
     x1 = (ut - @ac6) * @ac5 >> 15
     x2 = (@mc << 11) / (x1 + @md)
     @b5 = x1 + x2
-    t = (@b5 + 8) >> 4
-
-    return t
+    (@b5 + 8) >> 4
   end
 
   def getChipid
-    return @y.i2cread(BMPADDR, 0xd0)
+    @y.i2cread(BMPADDR, 0xd0)
   end
 # calculate true pressure
 
   def readPressure
     @y.i2cwrite(BMPADDR, 0xf4, 0x34 + (@oss << 6))
-    delay(@y, PRESSURE_WAIT[@oss])
+    @y.msleep(PRESSURE_WAIT[@oss])
     up = readup
 #    @y.print up.to_s + " "
 
@@ -290,13 +280,14 @@ class BMP180
     x1 = (p >> 8) * (p >> 8)
     x1 = (x1 * 3038) >> 16
     x2 = (-7357 * p) >> 16
-    p = p + ((x1 + x2 + 3791) >> 4)
-    return p
+    p + ((x1 + x2 + 3791) >> 4)
   end
 
 end
 
+#
 # main
+#
 
 begin
 
@@ -306,7 +297,8 @@ begin
 
     yabm.netstartdhcp
 
-    yabm.print yabm.getaddress + "\n"
+    yabm.msleep 2_000
+    yabm.print "IP address : " + yabm.getaddress + "\r\n"
 
     ntpaddr = yabm.lookup("ntp.nict.jp")
     yabm.sntp(ntpaddr)
@@ -344,7 +336,7 @@ begin
 
   yabm.watchdogstart(256)
 
-  while 1 do
+  loop do
 
     reg = yabm.gpiogetdat()
     reg = reg & ~TOP_LED3
@@ -363,7 +355,7 @@ begin
       btstr = pointstr(lastbt, 1)
       error = error | (1 << 0)
     end
-    yabm.print " BMPT: " + btstr + " "
+    yabm.print "BMPT: " + btstr + " "
 
     bp = bmp.readPressure
     if count == 0 || (lastbp - bp).abs < 100 then
@@ -428,9 +420,9 @@ begin
 
     # ThingSpeak Free account need at intervals over 15 sec.
     if NONET then
-      delay(yabm, 5000)
+      yabm.msleep(5_000)
     else
-      delay(yabm, 20000)
+      yabm.msleep(20_000)
     end
 
   end
