@@ -49,7 +49,7 @@ yabm.watchdogstart(256)
 
 loop do
   yabm.print "."
-  count = count + 1
+  count += 1
   yabm.print " " + count.to_s
   reg = yabm.gpiogetdat()
   yabm.gpiosetdat(reg | RLED)

@@ -53,7 +53,7 @@ interval = 30
 yabm.watchdogstart(256)
 
 loop do
-  count = count + 1
+  count += 1
   ledon yabm
   yabm.print count.to_s
   res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + count.to_s, {'User-Agent' => "test-agent"})

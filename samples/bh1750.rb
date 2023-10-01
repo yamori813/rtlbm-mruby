@@ -129,7 +129,7 @@ loop do
     yabm.print res.status.to_s + "\r\n"
   end
   yabm.msleep(1000 * interval)
-  count = count + 1
+  count += 1
 end
 
 rescue => e

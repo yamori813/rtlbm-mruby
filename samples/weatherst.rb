@@ -404,7 +404,7 @@ begin
 #      yabm.print para
     end
     yabm.print "\r\n"
-    count = count + 1
+    count += 1
 
     reg = yabm.gpiogetdat()
     reg = reg | TOP_LED3

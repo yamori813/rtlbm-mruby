@@ -163,7 +163,7 @@ begin
 
       if !NONET then
         res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + tstr + "&field2=" + pstr + "&field3=" + count.to_s, {'User-Agent' => "test-agent"})
-        count = count + 1
+        count += 1
         if res 
           yabm.print " " + res.status.to_s
         end

@@ -52,7 +52,7 @@ times = 10
 yabm.watchdogstart(256)
 
 while count < times
-  count = count + 1
+  count += 1
   ledon yabm
   yabm.print count.to_s
   res = SimpleHttp.new("https", "v6.ipv6-test.com", 443, 1).request("GET", "/api/myip.php", {'User-Agent' => "test-agent"})

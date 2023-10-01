@@ -128,7 +128,7 @@ i = 0
 loop do
   rtl.print "."
   rtl.msleep(1000)
-  count = count + 1
+  count += 1
 
   if count % interval == 0 then
 
