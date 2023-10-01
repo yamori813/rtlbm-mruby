@@ -130,7 +130,7 @@ tcphttp_raw_init(int *addr, int disport, int type)
 static ip_addr_t distaddr;
 
   if (type == 0) {
-    ip_addr_set_ip4_u32(&distaddr, *addr);
+    ip_addr_set_ip4_u32(&distaddr, htonl(*addr));
     tcphttp_raw_pcb = tcp_new_ip_type(IPADDR_TYPE_ANY);
   } else {
     distaddr.u_addr.ip6.addr[0] = lwip_htonl((addr[0] << 16) | addr[1]) ;
@@ -181,10 +181,10 @@ dns_found(const char* hostname, const ip_addr_t *ipaddr, void *arg)
 
 void net_start(int myaddr, int mymask, int mygw, int mydns)
 {
-	ip_addr_set_ip4_u32(&ipaddr, myaddr);
-	ip_addr_set_ip4_u32(&netmask, mymask);
-	ip_addr_set_ip4_u32(&gw, mygw);
-	ip_addr_set_ip4_u32(&dnsserver, mydns);
+	ip_addr_set_ip4_u32(&ipaddr, htonl(myaddr));
+	ip_addr_set_ip4_u32(&netmask, htonl(mymask));
+	ip_addr_set_ip4_u32(&gw, htonl(mygw));
+	ip_addr_set_ip4_u32(&dnsserver, htonl(mydns));
 
 	net_init(0);
 }
@@ -201,8 +201,7 @@ void net_startdhcp()
 int getmyaddress()
 {
 
-//	return netif_ip4_addr(&netif);
-	return ip_addr_get_ip4_u32(&netif.ip_addr);
+	return ntohl(*(int *)netif_ip4_addr(&netif));
 }
 
 void net_init(int use_dhcp)
@@ -243,8 +242,7 @@ int i;
 			if (netif_ip4_addr(&netif) != 0) {
 #ifdef NETDEBUG
 				unsigned int ip4;
-//				ip4 = netif_ip4_addr(&netif);
-				ip4 = ip_addr_get_ip4_u32(&netif.ip_addr);
+				ip4 = *(unsigned int *)netif_ip4_addr(&netif);
 				xprintf("IP address : %d.%d.%d.%d\n",
 				    (ip4 >> 24) & 0xff,
 				    (ip4 >> 16) & 0xff,
@@ -330,8 +328,9 @@ rtl_udp_send(int addr, int port, char *buf, int len)
 {
 static ip4_addr_t distaddr;
 
+	// Still only support IPv4
 	if (udpecho_raw_pcb != NULL) {
-		ip4_addr_set_u32(&distaddr, addr);
+		ip4_addr_set_u32(&distaddr, htonl(addr));
 		struct pbuf* b = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_POOL);
 		memcpy(b->payload, buf, len);
 // UDP send must be live gateway. Because of gateware arp resolve at UDP send
@@ -386,7 +385,7 @@ static ip_addr_t distaddr;
 	if (type == 0) {
 		udpsntp_raw_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
 		udp_bind(udpsntp_raw_pcb, IP_ANY_TYPE, port);
-		ip_addr_set_ip4_u32(&distaddr, *addr);
+		ip_addr_set_ip4_u32(&distaddr, htonl(*addr));
 	} else {
 		udpsntp_raw_pcb = udp_new_ip_type(IPADDR_TYPE_V6);
 		udp_bind(udpsntp_raw_pcb, netif_ip6_addr(&netif, 1), port);
@@ -434,7 +433,7 @@ ip_addr_t dnsres;
 	    &dnsres, dns_found, NULL, type);
 	if (err == ERR_OK) {
 		if (type == 0)
-			*addr = ip_addr_get_ip4_u32(&dnsres);
+			*addr = ntohl(ip_addr_get_ip4_u32(&dnsres));
 		else
 			cpip6addr(&dnsres, addr);
 		res = 1;
@@ -443,7 +442,7 @@ ip_addr_t dnsres;
 			delay_ms(10);
 		if (dnsstat == 1) {
 			if (type == 0)
-				*addr = ip_addr_get_ip4_u32(&resolvip);
+				*addr = ntohl(ip_addr_get_ip4_u32(&resolvip));
 			else
 				cpip6addr(&resolvip, addr);
 			res = 1;
