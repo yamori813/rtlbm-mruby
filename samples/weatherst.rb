@@ -122,7 +122,7 @@ class SI7021
 =end
 
   def getCelsiusHundredths
-    while @y.i2cchk(SIADDR) == 0 do
+    while @y.i2cchk(SIADDR) == 0
       @y.msleep(1)
     end
     if USECLOCKST then
@@ -131,7 +131,7 @@ class SI7021
       @y.i2cwrites(SIADDR, [0xf3], 1)
     end
     c = 0
-    while 1 do
+    while true
       @y.msleep(1)
       siarr = @y.i2creads(SIADDR, 2)
       if siarr != nil then
@@ -148,12 +148,12 @@ class SI7021
   end
 
   def getCelsiusPostHumidity
-    while @y.i2cchk(SIADDR) == 0 do
+    while @y.i2cchk(SIADDR) == 0
       @y.msleep(1)
     end
     @y.i2cwrites(SIADDR, [0xe0], 1)
     c = 0
-    while 1 do
+    while true
       @y.msleep(1)
       siarr = @y.i2creads(SIADDR, 2)
       if siarr != nil then
@@ -170,7 +170,7 @@ class SI7021
   end
 
   def getHumidityPercent
-    while @y.i2cchk(SIADDR) == 0 do
+    while @y.i2cchk(SIADDR) == 0
       @y.msleep(1)
     end
     if USECLOCKST then
@@ -179,7 +179,7 @@ class SI7021
       @y.i2cwrites(SIADDR, [0xf5], 1)
     end
     c = 0
-    while 1 do
+    while true
       @y.msleep(1)
       siarr = @y.i2creads(SIADDR, 2)
       if siarr != nil then
@@ -236,7 +236,7 @@ class BMP180
   end
 
   def readTemperature
-    while @y.i2cchk(BMPADDR) == 0 do
+    while @y.i2cchk(BMPADDR) == 0
       @y.msleep(1)
     end
     @y.i2cwrite(BMPADDR, 0xf4, 0x2e)
