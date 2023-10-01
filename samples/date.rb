@@ -2,12 +2,6 @@
 # rtlbm-mruby mruby script
 #
 
-def delay(yabm, val)
-  start = yabm.count()
-  while yabm.count() < start + val do
-  end
-end
-    
 class YABMTIME
   def mkstr epoch
 
@@ -77,7 +71,7 @@ yabm.print yabm.getaddress + "\n"
   
 ntpaddr = yabm.lookup("ntp.nict.jp")
 yabm.sntp(ntpaddr)
-delay yabm, 3000
+yabm.msleep 3000
 
 d = YABMTIME.new
 date = d.mkstr yabm.now + 9 * 60 * 60
@@ -87,7 +81,7 @@ yabm.print date
     
 while 1 do
    yabm.print "."
-   delay yabm, 500
+   yabm.msleep 500
 end
     
 rescue => e

@@ -7,12 +7,6 @@
 # echo -n "MORIMORI" | nc -w 0 -u 10.10.10.2 7000
 #
 
-def delay(rtl, val) 
-  start = rtl.count() 
-  while rtl.count() < start + val do
-  end
-end
-
 begin
 
 # i2c lcd and eeprom address
@@ -42,9 +36,9 @@ rtl.i2cinit(3, 5, 1)
 tmpstr = ""
 
 rtl.i2cwrites(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c], 0)
-delay(rtl, 200)
+rtl.msleep(200)
 rtl.i2cwrites(LCDADDR, [0x38, 0x0d, 0x01], 0)
-delay(rtl, 10)
+rtl.msleep(10)
 
 restore = []
 
@@ -61,7 +55,7 @@ for addr in 0..127 do
   end
 end
 
-delay(rtl, 100)
+rtl.msleep(100)
 
 if restore[0] == 0x40 then
   rtl.print "*"
@@ -72,7 +66,7 @@ end
 i = 0
 while 1 do
   rtl.print "."
-  delay(rtl, 500)
+  rtl.msleep(500)
   udpstr = rtl.udprecv()
   if udpstr.length != 0 then
     rtl.i2cwrites(LCDADDR, [0x00, 0x01], 0)
@@ -86,7 +80,7 @@ while 1 do
       i = 0
       for num in lcdcmd do
         rtl.i2cwrite(ROMADDR, i, num)
-        delay(rtl, 20)
+        rtl.msleep(20)
         i = i + 1
       end
       rtl.i2cwrite(ROMADDR, i, 0)

@@ -14,29 +14,23 @@ I2CSDA = 5
 
 LCDADDR = 0x3e
 
-def delay(yabm, val) 
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 class I2CLCD
   def init yabm
     @y = yabm
     @y.i2cwrites(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c], 0)
-    delay(@y, 200)
+    @y.msleep(200)
     @y.i2cwrites(LCDADDR, [0x38, 0x0d, 0x01], 0)
-    delay(@y, 10)
+    @y.msleep(10)
   end
 
   def clear
     @y.i2cwrites(LCDADDR, [0x00, 0x01], 0)
-    delay(@y, 100)
+    @y.msleep(100)
   end
 
   def next
     @y.i2cwrites(LCDADDR, [0x00, 0xc0], 0)
-    delay(@y, 100)
+    @y.msleep(100)
   end
 
   def print str
@@ -77,7 +71,7 @@ str2 = "YABM"
 i = 0
 while 1 do
   yabm.print "."
-  delay(yabm, 500)
+  yabm.msleep(500)
   if i < str1.length
     lcd.print str1[i]
   else
@@ -88,14 +82,14 @@ while 1 do
     lcd.next
   end
   if i == str1.length + str2.length
-    delay(yabm, 1000)
+    yabm.msleep(1_000)
     5.times {
       yabm.gpiosetdat(gpio & ~(1 << 16))
-      delay(yabm, 200)
+      yabm.msleep(200)
       yabm.gpiosetdat(gpio | (1 << 16))
-      delay(yabm, 200)
+      yabm.msleep(200)
     }
-    delay(yabm, 3000)
+    yabm.msleep(3_000)
     lcd.clear
     i = 0
   end

@@ -8,12 +8,6 @@ MORSE_ALPH =["01","1000","1010","100","0","0010","110","0000","00","0111","101",
 
 LEN = 70
 
-def delay yabm, val
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 def ledon yabm
   reg = yabm.gpiogetdat()
   yabm.gpiosetdat(reg & ~TOP_LED1)
@@ -29,13 +23,13 @@ def morus yabm, str
   while i < str.length do
     ledon yabm
     if str[i] == '0'
-      delay yabm, LEN
+      yabm.msleep LEN
     else
-      delay yabm, LEN * 3
+      yabm.msleep LEN * 3
     end
     ledoff yabm
     i = i + 1
-    delay yabm, LEN
+    yabm.msleep LEN
   end
 end
 
@@ -65,7 +59,7 @@ while 1 do
   i = 0
   while i < str.length do
     if str[i] == ' '
-      delay yabm, LEN * 7
+      yabm.msleep LEN * 7
     elsif str[i] >= 'a' && str[i] <= 'z'
       morus yabm, MORSE_ALPH[str[i].ord - 'a'.ord]
     else
@@ -73,6 +67,6 @@ while 1 do
     end
     i = i + 1
   end
-  delay yabm, 3000
+  yabm.msleep 3000
 end
 

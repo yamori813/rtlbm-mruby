@@ -46,12 +46,6 @@ def read16(yabm, addr)
   return val
 end
 
-def delay(yabm, val) 
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 begin
 
   yabm = YABM.new
@@ -115,12 +109,12 @@ begin
     yabm.gpiosetdat(reg)
 
     yabm.i2cwrite(BMPADDR, 0xf4, 0x2e)
-    delay(yabm, 5)
+    yabm.msleep(5)
     ut = read16(yabm, 0xf6)
     yabm.print ut.to_s + " "
 
     yabm.i2cwrite(BMPADDR, 0xf4, 0x34 + (oss << 6))
-    delay(yabm, PRESSURE_WAIT[oss])
+    yabm.msleep(PRESSURE_WAIT[oss])
     up = readup(yabm, oss)
     yabm.print up.to_s + " "
 
@@ -189,7 +183,7 @@ begin
     end
 
     # ThingSpeak Free account need at intervals 15 sec.
-    delay(yabm, 20000)
+    yabm.msleep(20000)
 
   end
 

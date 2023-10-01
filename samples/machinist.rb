@@ -7,12 +7,6 @@
 APIKEY = "naisyo"
 INTERVAL = 10
 
-def delay(yabm, val) 
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 begin
 
 yabm = YABM.new
@@ -75,7 +69,7 @@ while 1 do
   yabm.gpiosetdat(reg & ~RLED)
   yabm.watchdogreset
   yabm.print "\n"
-  delay(yabm, INTERVAL * 1000)
+  yabm.msleep(INTERVAL * 1000)
 end
 
 rescue => e

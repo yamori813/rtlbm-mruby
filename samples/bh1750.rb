@@ -17,12 +17,6 @@ I2CSDA = 5
 
 BHADDR = 0x23
 
-def delay(yabm, val) 
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 def pointstr(p, c)
   if p == 0 then
     return "0." + "0" * c
@@ -59,9 +53,9 @@ class BH1750
   def setMTreg mtreg
     @mtreg = mtreg
     @y.i2cwrites(@addr, [0x40 | (@mtreg >> 5)], 0)
-    delay(@y, 200)
+    @y.msleep(200)
     @y.i2cwrites(@addr, [0x60 | (@mtreg & 0x1f)], 0)
-    delay(@y, 200)
+    @y.msleep(200)
   end
 
   def setMeasurement mode
@@ -77,10 +71,10 @@ class BH1750
     if @meas == ONE_TIME_HIGH_RES_MODE ||
       @meas == ONE_TIME_HIGH_RES_MODE_2 then
       @y.i2cwrites(@addr, [@meas], 0)
-      delay(@y, 120 * @mtreg / 69)
+      @y.msleep(120 * @mtreg / 69)
     elsif @meas == ONE_TIME_LOW_RES_MODE then
       @y.i2cwrites(@addr, [@meas], 0)
-      delay(@y, 16 * @mtreg / 69)
+      @y.msleep(16 * @mtreg / 69)
     end
     bharr = @y.i2creads(@addr, 2)
     val = (bharr[0] << 8) | bharr[1]
@@ -134,7 +128,7 @@ while 1 do
     yabm.print pointstr(lx, 2) + " "
     yabm.print res.status.to_s + "\r\n"
   end
-  delay(yabm, 1000 * interval)
+  yabm.msleep(1000 * interval)
   count = count + 1
 end
 

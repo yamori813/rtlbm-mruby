@@ -2,12 +2,6 @@
 # rtlbm-mruby mruby script
 # GPIO output check script for RTL8196E
 
-def delay(rtl, val) 
-  start = rtl.count() 
-  while rtl.count() < start + val do
-  end
-end
-
 begin
 
 rtl = YABM.new
@@ -34,7 +28,7 @@ while 1 do
     reg = ~(1 << (i - 16))
   end
   rtl.gpiosetdat(reg)
-  delay(rtl, 2000)
+  rtl.msleep(2_000)
   i = i + 1
   if i == 32
     i = 0

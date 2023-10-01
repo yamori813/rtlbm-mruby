@@ -17,12 +17,6 @@ I2CSDA = 5
 LCDADDR = 0x3e
 ROMADDR = 0x50
 
-def delay(yabm, val) 
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 class I2CEPROM
   def init yabm
     @y = yabm
@@ -48,16 +42,16 @@ class I2CEPROM
 
   def write str
     @y.i2cwrite(ROMADDR, 0, 0x40)
-      delay(@y, 20)
+      @y.msleep(20)
     arr = str.split("")
     i = 1
     for ch in arr do
       @y.i2cwrite(ROMADDR, i, ch.ord)
-      delay(@y, 20)
+      @y.msleep(20)
       i = i + 1
     end
     @y.i2cwrite(ROMADDR, i, 0)
-    delay(@y, 20)
+    @y.msleep(20)
   end
 end
 
@@ -65,19 +59,19 @@ class I2CLCD
   def init yabm
     @y = yabm
     @y.i2cwrites(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c], 0)
-    delay(@y, 200)
+    @y.msleep(200)
     @y.i2cwrites(LCDADDR, [0x38, 0x0d, 0x01], 0)
-    delay(@y, 10)
+    @y.msleep(10)
   end
 
   def clear
     @y.i2cwrites(LCDADDR, [0x00, 0x01], 0)
-    delay(@y, 100)
+    @y.msleep(100)
   end
 
   def next
     @y.i2cwrites(LCDADDR, [0x00, 0xc0], 0)
-    delay(@y, 100)
+    @y.msleep(100)
   end
 
   def print str
@@ -126,7 +120,7 @@ tmpstr = ""
 
 restore = rom.read
 
-delay(yabm, 100)
+yabm.msleep(100)
 
 if restore.length != 0 && restore[0] == 0x40 then
   lcd.clear
@@ -136,7 +130,7 @@ end
 laststr = ""
 while 1 do
   yabm.print "."
-  delay(yabm, 500)
+  yabm.msleep(500)
   udpstr = yabm.udprecv()
   if udpstr.length != 0 then
      lcd.clear

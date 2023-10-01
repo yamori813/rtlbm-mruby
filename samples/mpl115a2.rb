@@ -6,12 +6,6 @@
 
 APIKEY = "naisyo"
 
-def delay(rtl, val) 
-  start = rtl.count() 
-  while rtl.count() < start + val do
-  end
-end
-
 # This calculate code is based c source code in NXP AN3785 document
 
 def calculatePCompLong(padc, tadc, a0, b1, b2, c12)
@@ -133,13 +127,13 @@ count = 0
 i = 0
 while 1 do
   rtl.print "."
-  delay(rtl, 1000)
+  rtl.msleep(1000)
   count = count + 1
 
   if count % interval == 0 then
 
     rtl.i2cwrite(MPLADDR, 0x12, 0x00)
-    delay(rtl, 100)
+    rtl.msleep(100)
 
     padc = rtl.i2cread(MPLADDR, 0x00) << 8 | rtl.i2cread(MPLADDR, 0x01)
     tadc = rtl.i2cread(MPLADDR, 0x02) << 8 | rtl.i2cread(MPLADDR, 0x03)

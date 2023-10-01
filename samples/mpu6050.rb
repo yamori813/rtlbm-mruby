@@ -19,12 +19,6 @@ TOP_BUTTON = (1 << 3)
 SCL = 2
 SDA = 11
 
-def delay(yabm, val) 
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 def pointstr(p, c)
   if p == 0 then
     return "0." + "0" * c
@@ -114,13 +108,13 @@ begin
     reg = reg & ~curled
     yabm.gpiosetdat(reg)
 
-    delay(yabm, 2000)
+    yabm.msleep(2_000)
 
     reg = yabm.gpiogetdat()
     reg = reg | curled
     yabm.gpiosetdat(reg)
 
-    delay(yabm, 1000)
+    yabm.msleep(1_000)
 
   end
 

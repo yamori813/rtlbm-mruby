@@ -13,12 +13,6 @@ RESET_BUTTON = (1 << 5)
 SLIDE1_SWITCH = (1 << 2)
 SLIDE2_SWITCH = (1 << 11)
 
-def delay(yabm, val) 
-  start = yabm.count() 
-  while yabm.count() < start + val do
-  end
-end
-
 def dispin(yabm, val) 
   if val & WPS_BUTTON == 0 then
     yabm.print "0"
@@ -72,10 +66,10 @@ while 1 do
   yabm.print " "
   val = val & ~SYSTEM_LED
   yabm.gpiosetdat(val)
-  delay(yabm, 500)
+  yabm.msleep(500)
   val = val | SYSTEM_LED
   yabm.gpiosetdat(val)
-  delay(yabm, 500)
+  yabm.msleep(500)
 end
 
 rescue => e

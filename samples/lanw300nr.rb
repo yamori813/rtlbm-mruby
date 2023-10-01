@@ -2,12 +2,6 @@
 # rtlbm-mruby mruby script
 #
 
-def delay(rtl, val) 
-  start = rtl.count() 
-  while rtl.count() < start + val do
-  end
-end
-
 begin
 
 rtl = YABM.new
@@ -36,7 +30,7 @@ while 1 do
     reg = (reg | 0x7c7c) & ~(1 << (val + 0xa))
   end
   rtl.gpiosetdat(reg)
-  delay(rtl, 100)
+  rtl.msleep(100)
   i = i + 1
 end
 
