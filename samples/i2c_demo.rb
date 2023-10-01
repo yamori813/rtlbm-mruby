@@ -69,7 +69,7 @@ str1 = "mruby on"
 str2 = "YABM"
 
 i = 0
-while 1 do
+loop do
   yabm.print "."
   yabm.msleep(500)
   if i < str1.length

@@ -102,7 +102,7 @@ begin
   oss = 3
   count = 0
 
-  while 1 do
+  loop do
 
     reg = yabm.gpiogetdat()
     reg = reg & ~TOP_LED3

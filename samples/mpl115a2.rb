@@ -125,7 +125,7 @@ interval = 15
 count = 0
 
 i = 0
-while 1 do
+loop do
   rtl.print "."
   rtl.msleep(1000)
   count = count + 1

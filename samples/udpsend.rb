@@ -19,11 +19,9 @@ rtl.netstart(addr, mask, gw, dns)
 
 rtl.udpinit
 
-while 1 do
+loop do
    rtl.print "."
-   start = rtl.count() 
-   while rtl.count() < start + 1000 do
-   end
+   rtl.msleep 1_000
    rtl.udpsend(dist, 514, "Hello", 5)
 end
 

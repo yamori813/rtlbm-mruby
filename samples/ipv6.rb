@@ -40,9 +40,7 @@ yabm.gpiosetdat(reg | ALLLED)
 #ntpaddr = yabm.lookup("ntp.nict.jp")
 #yabm.sntp(ntpaddr)
 
-start = yabm.count()
-while yabm.count() < start + 3 * 1000 do
-end
+yabm.msleep 3_000
 ntpaddr6 = yabm.lookup6("ntp.nict.jp")
 yabm.print ntpaddr6 + "\r\n"
 yabm.sntp(ntpaddr6)
@@ -53,16 +51,14 @@ times = 10
 
 yabm.watchdogstart(256)
 
-while count < times do
+while count < times
   count = count + 1
   ledon yabm
   yabm.print count.to_s
   res = SimpleHttp.new("https", "v6.ipv6-test.com", 443, 1).request("GET", "/api/myip.php", {'User-Agent' => "test-agent"})
   ledoff yabm
   yabm.print " " + res.body.to_s + "\r\n"
-  start = yabm.count()
-  while yabm.count() < start + interval * 1000 do
-  end
+  yabm.msleep interval * 1000
   yabm.watchdogreset
 end
 

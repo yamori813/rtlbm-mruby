@@ -98,7 +98,7 @@ begin
   phase = 0
   period = rtl.count() + ontime
 
-  while 1 do
+  loop do
     if rtl.count() > period then
       if (phase % 2) == 1
         led(rtl, 1, 0)

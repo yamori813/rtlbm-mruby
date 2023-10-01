@@ -47,7 +47,7 @@ accesstoken = APIKEY
 
 yabm.watchdogstart(256)
 
-while 1 do
+loop do
   yabm.print "."
   count = count + 1
   yabm.print " " + count.to_s

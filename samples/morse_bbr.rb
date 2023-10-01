@@ -20,7 +20,7 @@ end
 
 def morus yabm, str
   i = 0
-  while i < str.length do
+  while i < str.length
     ledon yabm
     if str[i] == '0'
       yabm.sleep LEN
@@ -47,9 +47,9 @@ ledoff yabm
 
 str = "mruby on yet another bare metal"
 
-while 1 do
+loop do
   i = 0
-  while i < str.length do
+  while i < str.length
     if str[i] == ' '
       yabm.sleep LEN * 7
     elsif str[i] >= 'a' && str[i] <= 'z'

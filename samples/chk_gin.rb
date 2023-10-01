@@ -20,7 +20,7 @@ rtl.gpiosetdir(reg)
 rtl.print "GPIO input check\n"
 
 i = 0
-while 1 do
+loop do
   val = rtl.gpiogetdat()
   rtl.print val.to_s + "\n"
   rtl.msleep(2_000)

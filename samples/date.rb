@@ -26,7 +26,7 @@ class YABMTIME
     year      = 1970
     dayOfWeek = 4
     
-    while 1 do
+    while 1
       leapYear   = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
       daysInYear = leapYear ? 366 : 365
       if days >= daysInYear then
@@ -79,7 +79,7 @@ date = d.mkstr yabm.now + 9 * 60 * 60
 yabm.print "Hello Bear Metal mruby on YABM "
 yabm.print date
     
-while 1 do
+loop do
    yabm.print "."
    yabm.msleep 500
 end

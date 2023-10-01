@@ -8,11 +8,9 @@ rtl = YABM.new
 
 rtl.print "Hello Bear Metal mruby on YABM " + rtl.getarch.to_s
 
-while 1 do
+loop do
    rtl.print "."
-   start = rtl.count() 
-   while rtl.count() < start + 500 do
-   end
+   rtl.msleep 500
 end
 
 rescue => e

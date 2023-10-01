@@ -21,7 +21,7 @@ reg = reg | 0x7c7c
 rtl.gpiosetdat(reg)
 
 i = 0
-while 1 do
+loop do
   reg = rtl.gpiogetdat()
   val = i % 9
   if val > 4 then

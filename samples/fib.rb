@@ -11,7 +11,7 @@ begin
 
 rtl = YABM.new
 
-while 1 do
+while true
    rtl.print "."
    start = rtl.count() 
    fib(32)

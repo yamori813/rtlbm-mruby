@@ -59,7 +59,7 @@ val = val | WPS_LED & ~POWER_LED
 yabm.gpiosetdat(val)
 
 i = 0
-while 1 do
+loop do
   val = yabm.gpiogetdat()
   yabm.print "in:"
   dispin(yabm, val)

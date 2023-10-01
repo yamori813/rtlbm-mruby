@@ -18,7 +18,7 @@ rtl.udpinit
 rtl.udpbind(7000)
 
 i = 0
-while 1 do
+loop do
   rtl.print "."
   rtl.msleep(500)
   udpstr = rtl.udprecv()

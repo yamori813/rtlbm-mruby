@@ -79,7 +79,7 @@ begin
 # start 
   yabm.i2cwrite(MPUADDR, 0x6B, 0)
 
-  while 1 do
+  loop do
 
     ax = s16((yabm.i2cread(MPUADDR, 0x3b) << 8) | yabm.i2cread(MPUADDR, 0x3c))
     ay = s16((yabm.i2cread(MPUADDR, 0x3d) << 8) | yabm.i2cread(MPUADDR, 0x3e))

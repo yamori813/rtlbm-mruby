@@ -85,7 +85,7 @@ stat = 0
 lastbtn = button(rtl)
 
 i = 0
-while 1 do
+loop do
    udpstr = rtl.udprecv()
    if udpstr.length != 0 then
      if udpstr == "GREEN" then

@@ -20,7 +20,7 @@ rtl.gpiosetdir(reg)
 rtl.print "GPIO out check\n"
 
 i = 0
-while 1 do
+loop do
   rtl.print i.to_s + "\n"
   if i < 16 
     reg = 1 << i

@@ -128,7 +128,7 @@ if restore.length != 0 && restore[0] == 0x40 then
 end
 
 laststr = ""
-while 1 do
+loop do
   yabm.print "."
   yabm.msleep(500)
   udpstr = yabm.udprecv()

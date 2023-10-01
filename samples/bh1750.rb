@@ -118,7 +118,7 @@ count = 0
 bh.setMTreg(254)
 bh.setMeasurement(BH1750::ONE_TIME_HIGH_RES_MODE_2)
 
-while 1 do
+loop do
   lx = bh.getLightLevel
   para = "api_key=" + APIKEY
   para = para + "&field1=" + count.to_s + "&field2=" + pointstr(lx, 2)

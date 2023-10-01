@@ -64,7 +64,7 @@ if restore[0] == 0x40 then
 end
 
 i = 0
-while 1 do
+loop do
   rtl.print "."
   rtl.msleep(500)
   udpstr = rtl.udprecv()

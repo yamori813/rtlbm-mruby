@@ -10,10 +10,8 @@ begin
 rtl = YABM.new
 
 i = 0
-while 1 do
-  start = rtl.count() 
-  while rtl.count() < start + 500 do
-  end
+loop do
+  yabm.msleep 500
   uartstr = rtl.readuart()
   if uartstr.length != 0 then
     rtl.print uartstr

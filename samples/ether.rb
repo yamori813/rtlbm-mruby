@@ -17,12 +17,10 @@ ports = Array[0,1,2,3,4]
 
 i = 0
 
-while 1 do
+while true
   rtl.print "."
 
-  start = rtl.count() 
-  while rtl.count() < start + 200 do
-  end
+  rtl.msleep 200
 
   ports.each{|port|
     m = rtl.getmib(port, YABM::MIB_IN, YABM::MIB_IFINOCTETS)
