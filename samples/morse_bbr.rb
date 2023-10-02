@@ -23,13 +23,13 @@ def morus yabm, str
   while i < str.length
     ledon yabm
     if str[i] == '0'
-      yabm.sleep LEN
+      yabm.msleep LEN
     else
-      yabm.sleep LEN * 3
+      yabm.msleep LEN * 3
     end
     ledoff yabm
     i = i + 1
-    yabm.sleep LEN
+    yabm.msleep LEN
   end
 end
 
@@ -51,7 +51,7 @@ loop do
   i = 0
   while i < str.length
     if str[i] == ' '
-      yabm.sleep LEN * 7
+      yabm.msleep LEN * 7
     elsif str[i] >= 'a' && str[i] <= 'z'
       morus yabm, MORSE_ALPH[str[i].ord - 'a'.ord]
     else
@@ -59,6 +59,6 @@ loop do
     end
     i = i + 1
   end
-  yabm.sleep 3000
+  yabm.msleep 3000
 end
 
