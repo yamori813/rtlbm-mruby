@@ -77,12 +77,12 @@ begin
     for addr in 0..2 do
       arr[addr] = yabm.i2cread(4, addr)
     end
-    yabm.print arr[0].to_s(16) + ","
-    yabm.print arr[1].to_s(16) + ","
-    yabm.print arr[2].to_s(16) + " "
+    yabm.print arr[0].to_s(16).rjust(2, '0') + ","
+    yabm.print arr[1].to_s(16).rjust(2, '0') + ","
+    yabm.print arr[2].to_s(16).rjust(2, '0') + " "
     val = arr[0] * 0x100 + arr[1]
     crc = chkcrc(arr, 2)
-    yabm.print val.to_s + " " + crc.to_s(16) + "\r\n"
+    yabm.print val.to_s + " " + crc.to_s(16).rjust(2, '0') + "\r\n"
 
     yabm.msleep(5_000)
   end
