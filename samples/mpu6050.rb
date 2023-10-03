@@ -14,49 +14,37 @@ TOP_LED2 = (1 << 4)
 TOP_LED3 = (1 << 1)
 TOP_BUTTON = (1 << 3)
 
+ALLLED = (STATUS_LED1 | STATUS_LED2 | STATUS_LED3 |
+  TOP_LED1 | TOP_LED2 | TOP_LED3)
+
 # GPIO I2C Pin (SW12)
 
 SCL = 2
 SDA = 11
 
-def pointstr(p, c)
-  if p == 0 then
-    return "0." + "0" * c
-  elsif p.abs < 10 ** c
-    l = c - p.abs.to_s.length + 1
-    s = p.to_s.insert(p < 0 ? 1 : 0, "0" * l)
-    return s.insert(-1 - c, ".")
-  else
-    return p.to_s.insert(-1 - c, ".")
-  end
-end
-
 def gpioinit(yabm) 
   yabm.gpiosetsel(0x003c300c, 0x003c300c, 0x00001800, 0x00001800)
 
   reg = yabm.gpiogetctl()
-  reg = reg & ~(STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
-  reg = reg & ~(TOP_LED1 | TOP_LED2 | TOP_LED3)
-  reg = reg & ~(TOP_BUTTON)
+  reg &= ~ALLLED
+  reg &= ~TOP_BUTTON
   yabm.gpiosetctl(reg)
 
   reg = yabm.gpiogetdir()
-  reg = reg | (STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
-  reg = reg | (TOP_LED1 | TOP_LED2 | TOP_LED3)
-  reg = reg & ~(TOP_BUTTON)
+  reg |= ALLLED
+  reg &= ~TOP_BUTTON
   yabm.gpiosetdir(reg)
 
   reg = yabm.gpiogetdat()
-  reg = reg | (STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
-  reg = reg | (TOP_LED1 | TOP_LED2 | TOP_LED3)
+  reg |= ALLLED
   yabm.gpiosetdat(reg)
 end
 
 def s16(v)
   if v > 0x8000 then
-    return v - 0x10000
+    v - 0x10000
   else
-    return v
+    v
   end
 end
 
