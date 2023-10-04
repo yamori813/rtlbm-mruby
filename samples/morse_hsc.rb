@@ -1,5 +1,6 @@
 #
 # morus code generator on HomeSpotCube
+# use sub_hsc.rb
 #
 
 MORSE_NUM = ["01111","00111","00011","00001","00000","10000","11000","11100","11110","11111"]
@@ -36,21 +37,7 @@ end
 
 yabm = YABM.new
 
-yabm.gpiosetsel(0x003c3000, 0x003c3000, 0x00001800, 0x00001800)
-
-STATUS_LED1 = (1 << 0)
-STATUS_LED2 = (1 << 6)
-STATUS_LED3 = (1 << 17)
-TOP_LED1 = (1 << 16)
-TOP_LED2 = (1 << 4)
-TOP_LED3 = (1 << 1)
-TOP_BUTTON = (1 << 3)
-
-ALLLED = STATUS_LED1 | STATUS_LED2 | STATUS_LED3 | TOP_LED1 | TOP_LED2 | TOP_LED3
-
-yabm.gpiosetdir(ALLLED)
-reg = yabm.gpiogetdat()
-yabm.gpiosetdat(reg | ALLLED)
+gpioinit(yabm)
 
 str = "mruby on yet another bare metal"
 
