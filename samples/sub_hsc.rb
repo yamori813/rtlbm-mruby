@@ -3,6 +3,24 @@
 #
 
 # Homespotcube GPIO
+#
+# T2
+# 1	VCC
+# 2	96	GPIOA[3]	SW
+# 3	43	GPIOC[1]	Status LED
+# 4	109	GPIOC[0]	TOP LED
+# 5	98	GPIOA[6]	Status LED
+# 6	97	GPIOA[4]	TOP LED
+# 7	67	GPIOA[0]	Status LED
+# 8	40	GPIOA[1]	TOP LED
+# 9	GND
+# 10	GND
+# SW12
+# 	100	GPIOA[2]
+#	102	GPIOB[3]
+# Reset
+#	99	GPIOA[5]
+#
 
 STATUS_LED1 = (1 << 0)
 STATUS_LED2 = (1 << 6)
