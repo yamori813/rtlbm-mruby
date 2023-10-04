@@ -3,43 +3,13 @@
 #
 # PIC12F1822 I2C slave read sample script
 # [0] ADC Hi, [1] ACD Lo, [2], CRC
+# need sub_hsc.rb
 #
-
-# Homespotcube GPIO
-
-STATUS_LED1 = (1 << 0)
-STATUS_LED2 = (1 << 6)
-STATUS_LED3 = (1 << 17)
-TOP_LED1 = (1 << 16)
-TOP_LED2 = (1 << 4)
-TOP_LED3 = (1 << 1)
-TOP_BUTTON = (1 << 3)
 
 # GPIO I2C Pin (SW12)
 
 SCL = 2
 SDA = 11
-
-def gpioinit(yabm) 
-  yabm.gpiosetsel(0x003c300c, 0x003c300c, 0x00001800, 0x00001800)
-
-  reg = yabm.gpiogetctl()
-  reg = reg & ~(STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
-  reg = reg & ~(TOP_LED1 | TOP_LED2 | TOP_LED3)
-  reg = reg & ~(TOP_BUTTON)
-  yabm.gpiosetctl(reg)
-
-  reg = yabm.gpiogetdir()
-  reg = reg | (STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
-  reg = reg | (TOP_LED1 | TOP_LED2 | TOP_LED3)
-  reg = reg & ~(TOP_BUTTON)
-  yabm.gpiosetdir(reg)
-
-  reg = yabm.gpiogetdat()
-  reg = reg | (STATUS_LED1 | STATUS_LED2 | STATUS_LED3)
-  reg = reg | (TOP_LED1 | TOP_LED2 | TOP_LED3)
-  yabm.gpiosetdat(reg)
-end
 
 def chkcrc dat, n
   crc8 = 0xff
@@ -57,6 +27,7 @@ def chkcrc dat, n
   crc8 & 0xff
 end
 
+PICADDR = 4
 
 #
 # main
@@ -70,12 +41,12 @@ begin
 
   yabm.i2cinit(SCL, SDA, 1)
 
-  arr = Array.new
+  arr = Array.new(3)
 
   loop do
-    yabm.i2cwrite(4, 0, 0)
+    yabm.i2cwrite(PICADDR, 0, 0)
     for addr in 0..2 do
-      arr[addr] = yabm.i2cread(4, addr)
+      arr[addr] = yabm.i2cread(PICADDR, addr)
     end
     yabm.print arr[0].to_s(16).rjust(2, '0') + ","
     yabm.print arr[1].to_s(16).rjust(2, '0') + ","
