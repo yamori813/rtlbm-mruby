@@ -57,7 +57,7 @@ begin
 
   yabm.i2cinit(SCL, SDA, 1)
 
-  interval = 60
+  interval = 20
 
   yabm.watchdogstart(256)
 
