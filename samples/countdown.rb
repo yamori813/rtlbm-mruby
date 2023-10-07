@@ -42,6 +42,7 @@ loop do
     sum += n
   end
   yabm.msleep 1000
+  sum += 1
   yabm.print sum.to_s
 # do something
 end
