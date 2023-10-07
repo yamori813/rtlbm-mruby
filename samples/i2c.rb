@@ -9,6 +9,11 @@
 
 begin
 
+# i2c pin
+
+SCL = 3
+SDA = 5
+
 # i2c lcd and eeprom address
 
 LCDADDR = 0x3e
@@ -31,7 +36,7 @@ rtl.udpbind(7000)
 # use gpio pin
 rtl.gpiosetsel(0x300000, 0x300000, 0, 0)
 
-rtl.i2cinit(3, 5, 1)
+rtl.i2cinit(SCL, SDA, 10)
 
 tmpstr = ""
 
