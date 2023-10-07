@@ -51,7 +51,7 @@ for addr in 0..127 do
   end
   if skip == 0 then
     restore.push(val)
-    rtl.print val.to_s + " "
+    rtl.print val.to_s(16).rjust(2, '0') + " "
   end
 end
 
