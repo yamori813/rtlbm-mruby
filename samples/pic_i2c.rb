@@ -55,7 +55,7 @@ begin
   ntpaddr = yabm.lookup("ntp.nict.jp")
   yabm.sntp(ntpaddr)
 
-  yabm.i2cinit(SCL, SDA, 1)
+  yabm.i2cinit(SCL, SDA, 10)
 
   interval = 20
 
