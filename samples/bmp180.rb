@@ -4,10 +4,6 @@
 # need sub_hsc.rb
 #
 
-APIKEY = "naisyo"
-
-NONET = true
-
 # GPIO I2C Pin (SW12)
 
 SCL = 2
@@ -41,15 +37,6 @@ end
 begin
 
   yabm = YABM.new
-
-  if !NONET then
-    yabm.netstartdhcp
-
-    yabm.print yabm.getaddress + "\n"
-
-    ntpaddr = yabm.lookup("ntp.nict.jp")
-    yabm.sntp(ntpaddr)
-  end
 
   gpioinit(yabm)
 
@@ -136,29 +123,11 @@ begin
       end
       yabm.print pstr + " "
 
-      if !NONET then
-        res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + tstr + "&field2=" + pstr + "&field3=" + count.to_s, {'User-Agent' => "test-agent"})
-        count += 1
-        if res 
-          yabm.print " " + res.status.to_s
-        end
-      end
       yabm.print "\r\n"
 
     end
 
-    reg = yabm.gpiogetdat()
-    reg = reg | TOP_LED3
-    yabm.gpiosetdat(reg)
-
-    if count == 1000 then
-      reg = yabm.gpiogetdat()
-      reg = reg | STATUS_LED2
-      yabm.gpiosetdat(reg)
-    end
-
-    # ThingSpeak Free account need at intervals 15 sec.
-    yabm.msleep(20000)
+    yabm.msleep(10_000)
 
   end
 
