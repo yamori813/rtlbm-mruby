@@ -153,19 +153,17 @@ int i;
 unsigned char ch;
 
 	ch = 0;
+	setdir(IN);
 	/* Clock stretching */
 	setscldir(IN);
 	while (readscl() == 0)
 		DELAY;
-	setscl(HIGH);
+	ch |= readsda() << 7;
 	setscldir(OUT);
-	setdir(IN);
-	for (i = 0; i < 8; ++i) {
-		if (i != 0) {
-			setscl(LOW);
-			DELAY;
-			setscl(HIGH);
-		}
+	for (i = 1; i < 8; ++i) {
+		setscl(LOW);
+		DELAY;
+		setscl(HIGH);
 		ch |= readsda() << (7 - i);
 		DELAY;
 	}
