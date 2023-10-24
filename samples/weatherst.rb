@@ -7,9 +7,9 @@
 
 APIKEY = "naisyo"
 
+#NONET = false
 # for debug
-NONET = false
-#NONET = true
+NONET = true
 
 MAXFAILE = 10
 
@@ -36,7 +36,15 @@ end
 
 class SI7021
   SIADDR = 0x40
-  USECLOCKST = true
+  USEHOLD = true
+
+  TRIG_T_MEASUREMENT_HM    = 0xE3  # command trig. temp meas. hold master
+  TRIG_RH_MEASUREMENT_HM   = 0xE5  # command trig. humidity meas. hold master
+  TRIG_T_MEASUREMENT_POLL  = 0xF3  # command trig. temp meas. no hold master
+  TRIG_RH_MEASUREMENT_POLL = 0xF5  # command trig. humidity meas. no hold master
+  USER_REG_W               = 0xE6  # command writing user register
+  USER_REG_R               = 0xE7  # command reading user register
+  SOFT_RESET               = 0xFE  #command soft reset
 
   def init yabm
     @y = yabm
@@ -44,28 +52,21 @@ class SI7021
 
   def getRevition
     @y.i2cwrites(SIADDR, [0x84, 0xb8], 0)
-    @y.msleep(1)
     siarr = @y.i2creads(SIADDR, 1)
     siarr[0]
   end
 
-  def getSerialBytes
+  def getSerialStr
     @y.i2cwrites(SIADDR, [0xfa, 0x0f], 0)
-    @y.msleep(1)
-    siarr1 = @y.i2creads(SIADDR, 8)
+    siarr = @y.i2creads(SIADDR, 8)
     @y.i2cwrites(SIADDR, [0xfc, 0xc9], 0)
-    @y.msleep(1)
-    siarr2 = @y.i2creads(SIADDR, 6)
-    res = Array.new
-    res.push(siarr1[0])
-    res.push(siarr1[2])
-    res.push(siarr1[4])
-    res.push(siarr1[6])
-    res.push(siarr2[0])
-    res.push(siarr2[1])
-    res.push(siarr2[3])
-    res.push(siarr2[4])
-    res
+    siarr += @y.i2creads(SIADDR, 6)
+    serial_number = ""
+    values = [9, 8, 6, 4, 2, 0, 7, 8]
+    values.each do |n|
+      serial_number += siarr[n].to_s(16).rjust(2, '0')
+    end
+    serial_number
   end
 
 # not use
@@ -95,44 +96,23 @@ class SI7021
     while @y.i2cchk(SIADDR) == 0
       @y.msleep(1)
     end
-    if USECLOCKST then
-      @y.i2cwrites(SIADDR, [0xe3], 1)
+    if USEHOLD then
+      @y.i2cwrites(SIADDR, [TRIG_T_MEASUREMENT_HM], 0)
+      siarr = @y.i2creads(SIADDR, 3)
     else
-      @y.i2cwrites(SIADDR, [0xf3], 1)
-    end
-    c = 0
-    while true
-      @y.msleep(1)
-      siarr = @y.i2creads(SIADDR, 2)
-      if siarr != nil then
-        break
-      end
-      c = c + 1
-      if c == 1000 then
-        siarr = [0, 0]
-        break
-      end
-    end
-    tempcode = (siarr[0] << 8) | siarr[1]
-    (tempcode * 17572) / 65536 - 4685
-  end
-
-  def getCelsiusPostHumidity
-    while @y.i2cchk(SIADDR) == 0
-      @y.msleep(1)
-    end
-    @y.i2cwrites(SIADDR, [0xe0], 1)
-    c = 0
-    while true
-      @y.msleep(1)
-      siarr = @y.i2creads(SIADDR, 2)
-      if siarr != nil then
-        break
-      end
-      c = c + 1
-      if c == 1000 then
-        siarr = [0, 0]
-        break
+      @y.i2cwrites(SIADDR, [TRIG_T_MEASUREMENT_POLL], 1)
+      c = 0
+      while true
+        @y.msleep(10)
+        siarr = @y.i2creads(SIADDR, 3)
+        if siarr != nil then
+          break
+        end
+        c = c + 1
+        if c == 1000 then
+          siarr = [0, 0]
+          break
+        end
       end
     end
     tempcode = (siarr[0] << 8) | siarr[1]
@@ -143,22 +123,23 @@ class SI7021
     while @y.i2cchk(SIADDR) == 0
       @y.msleep(1)
     end
-    if USECLOCKST then
-      @y.i2cwrites(SIADDR, [0xe5], 1)
+    if USEHOLD then
+      @y.i2cwrites(SIADDR, [TRIG_RH_MEASUREMENT_HM], 0)
+      siarr = @y.i2creads(SIADDR, 3)
     else
-      @y.i2cwrites(SIADDR, [0xf5], 1)
-    end
-    c = 0
-    while true
-      @y.msleep(1)
-      siarr = @y.i2creads(SIADDR, 2)
-      if siarr != nil then
-        break
-      end
-      c = c + 1
-      if c == 1000 then
-        siarr = [0, 0]
-        break
+      @y.i2cwrites(SIADDR, [TRIG_RH_MEASUREMENT_POLL], 1)
+      c = 0
+      while true
+        @y.msleep(10)
+        siarr = @y.i2creads(SIADDR, 3)
+        if siarr != nil then
+          break
+        end
+        c = c + 1
+        if c == 1000 then
+          siarr = [0, 0]
+          break
+        end
       end
     end
     rhcode = (siarr[0] << 8) | siarr[1]
@@ -287,8 +268,8 @@ begin
   si = SI7021.new
   si.init(yabm)
   rev = si.getRevition
-  ser = si.getSerialBytes
-  yabm.print "Si70" + ser[4].to_s + " REV: " + rev.to_s + "\r\n"
+  ser = si.getSerialStr
+  yabm.print "Si SN: " + ser + " REV: " + rev.to_s + "\r\n"
 
   bmp = BMP180.new
 # 0 ultra low power, 1 standard, 2 high resolution, 3 ultra high resolution
@@ -356,7 +337,7 @@ begin
       ststr = pointstr(lastst, 2)
       error = error | (1 << 2)
     end
-    yabm.print count.to_s + " SIT: " + ststr + " RH: " + shstr + " "
+    yabm.print count.to_s + " SIT: " + ststr + " RH: " + shstr + " " + error.to_s
 
     para = "api_key=" + APIKEY + "&field1=" + count.to_s + "&field2=" + btstr + "&field3=" + bpstr + "&field4=" + ststr + "&field5=" + shstr + "&field6=" + error.to_s
     if !NONET then
