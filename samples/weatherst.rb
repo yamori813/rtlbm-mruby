@@ -295,6 +295,7 @@ begin
 
     error = 0
 
+    yabm.print count.to_s + " "
 
 # BMP180
 
@@ -316,7 +317,7 @@ begin
       bpstr = pointstr(lastbp, 2)
       error = error | (1 << 1)
     end
-    yabm.print "P: " + bpstr + " " + error.to_s
+    yabm.print "P: " + bpstr + " " + error.to_s + " "
 
 # Si7021
 
@@ -337,7 +338,7 @@ begin
       ststr = pointstr(lastst, 2)
       error = error | (1 << 2)
     end
-    yabm.print count.to_s + " SIT: " + ststr + " RH: " + shstr + " " + error.to_s
+    yabm.print "SIT: " + ststr + " RH: " + shstr + " " + error.to_s
 
     para = "api_key=" + APIKEY + "&field1=" + count.to_s + "&field2=" + btstr + "&field3=" + bpstr + "&field4=" + ststr + "&field5=" + shstr + "&field6=" + error.to_s
     if !NONET then
