@@ -7,8 +7,6 @@
 # need sub_hsc.rb
 #
 
-APIKEY = "naisyo"
-
 # GPIO I2C Pin (SW12)
 
 SCL = 2
@@ -47,19 +45,11 @@ begin
 
   yabm = YABM.new
 
-  yabm.netstartdhcp
-
   gpioinit(yabm)
-
-# sync date by ntp use https X.509
-  ntpaddr = yabm.lookup("ntp.nict.jp")
-  yabm.sntp(ntpaddr)
 
   yabm.i2cinit(SCL, SDA, 10)
 
-  interval = 20
-
-  yabm.watchdogstart(256)
+  interval = 5
 
   arr = Array.new
 
@@ -68,8 +58,9 @@ begin
     ledon yabm
 
     yabm.i2cwrite(PICADDR, 0, 0)
+    yabm.msleep 100
     for addr in 0..2 do
-      arr[addr] = yabm.i2cread(PICADDR, addr)
+      arr[addr] = yabm.i2cread(PICADDR, 1, addr)
     end
     yabm.print arr[0].to_s(16).rjust(2, '0') + ","
     yabm.print arr[1].to_s(16).rjust(2, '0') + ","
@@ -78,16 +69,8 @@ begin
     crc = chkcrc(arr, 2)
     yabm.print val.to_s + " " + crc.to_s(16).rjust(2, '0') + "\r\n"
 
-    # first time is not stabilize
-    if count != 0 && arr[2] == crc
-      obj = SimpleHttp.new("https", "api.thingspeak.com", 443)
-      res = obj.request("GET", "/update?api_key=" + APIKEY + "&field1=" +
-        val.to_s, {'User-Agent' => "test-agent"})
-       yabm.print "." + "\r\n"
-    end
     ledoff yabm
     yabm.msleep interval * 1000
-    yabm.watchdogreset
     count += 1
   end
 

@@ -14,20 +14,20 @@ BMPADDR = 0x77
 PRESSURE_WAIT = [5, 8, 14, 26]
 
 def readup(yabm, oss) 
-  msb = yabm.i2cread(BMPADDR, 0xf6)
-  lsb = yabm.i2cread(BMPADDR, 0xf7)
-  xlsb = yabm.i2cread(BMPADDR, 0xf8)
+  msb = yabm.i2cread(BMPADDR, 1, 0xf6)
+  lsb = yabm.i2cread(BMPADDR, 1, 0xf7)
+  xlsb = yabm.i2cread(BMPADDR, 1, 0xf8)
   val = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - oss)
   return val
 end
 
 def readu16(yabm, addr) 
-  val = yabm.i2cread(BMPADDR, addr) << 8 | yabm.i2cread(BMPADDR, addr + 1)
+  val = yabm.i2cread(BMPADDR, 1, addr) << 8 | yabm.i2cread(BMPADDR, 1, addr + 1)
   return val
 end
 
 def read16(yabm, addr) 
-  val = yabm.i2cread(BMPADDR, addr) << 8 | yabm.i2cread(BMPADDR, addr + 1)
+  val = yabm.i2cread(BMPADDR, 1, addr) << 8 | yabm.i2cread(BMPADDR, 1, addr + 1)
   if val >= 0x8000 then
     val = val - 0x10000
   end

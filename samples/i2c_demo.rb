@@ -4,32 +4,31 @@
 # This is demonstration of I2C LCD
 #
 
-
 # i2c pin
 
 I2CSCK = 3
 I2CSDA = 5
 
-# i2c lcd and eeprom address
+# i2c lcd address
 
 LCDADDR = 0x3e
 
 class I2CLCD
-  def init yabm
+  def initialize yabm
     @y = yabm
-    @y.i2cwrites(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c], 0)
+    @y.i2cwrite(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c])
     @y.msleep(200)
-    @y.i2cwrites(LCDADDR, [0x38, 0x0d, 0x01], 0)
+    @y.i2cwrite(LCDADDR, [0x38, 0x0d, 0x01])
     @y.msleep(10)
   end
 
   def clear
-    @y.i2cwrites(LCDADDR, [0x00, 0x01], 0)
+    @y.i2cwrite(LCDADDR, [0x00, 0x01])
     @y.msleep(100)
   end
 
   def next
-    @y.i2cwrites(LCDADDR, [0x00, 0xc0], 0)
+    @y.i2cwrite(LCDADDR, [0x00, 0xc0])
     @y.msleep(100)
   end
 
@@ -40,11 +39,7 @@ class I2CLCD
       lcdcmd.push(ch.ord)
     end
     @y.print lcdcmd.to_s
-    @y.i2cwrites(LCDADDR, lcdcmd, 0)
-  end
-
-  def cmd para
-    @y.i2cwrites(LCDADDR, para, 0)
+    @y.i2cwrite(LCDADDR, lcdcmd)
   end
 end
 
@@ -60,8 +55,7 @@ yabm.gpiosetdat(gpio | (1 << 16) | 0x7c00)
 
 yabm.i2cinit(I2CSCK, I2CSDA, 1)
 
-lcd = I2CLCD.new
-lcd.init yabm
+lcd = I2CLCD.new yabm
 
 lcd.clear
 
@@ -77,7 +71,7 @@ loop do
   else
     lcd.print str2[i-8]
   end
-  i = i + 1
+  i += 1
   if i == str1.length
     lcd.next
   end

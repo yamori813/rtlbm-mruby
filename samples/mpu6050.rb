@@ -30,7 +30,7 @@ begin
 
   yabm.i2cinit(SCL, SDA, 1)
 
-  whoiam = yabm.i2cread(MPUADDR, 117)
+  whoiam = yabm.i2cread(MPUADDR, 1, 117)
 
   yabm.print "Who Am I: " + whoiam.to_s + "\r\n"
 
@@ -39,13 +39,13 @@ begin
 
   loop do
 
-    ax = s16((yabm.i2cread(MPUADDR, 0x3b) << 8) | yabm.i2cread(MPUADDR, 0x3c))
-    ay = s16((yabm.i2cread(MPUADDR, 0x3d) << 8) | yabm.i2cread(MPUADDR, 0x3e))
-    az = s16((yabm.i2cread(MPUADDR, 0x3f) << 8) | yabm.i2cread(MPUADDR, 0x40))
+    ax = s16((yabm.i2cread(MPUADDR, 1, 0x3b) << 8) | yabm.i2cread(MPUADDR, 1, 0x3c))
+    ay = s16((yabm.i2cread(MPUADDR, 1, 0x3d) << 8) | yabm.i2cread(MPUADDR, 1, 0x3e))
+    az = s16((yabm.i2cread(MPUADDR, 1, 0x3f) << 8) | yabm.i2cread(MPUADDR, 1, 0x40))
     yabm.print ax.to_s + ":" + ay.to_s + ":" + az.to_s + ":"
-    gx = s16((yabm.i2cread(MPUADDR, 0x43) << 8) | yabm.i2cread(MPUADDR, 0x44))
-    gy = s16((yabm.i2cread(MPUADDR, 0x45) << 8) | yabm.i2cread(MPUADDR, 0x46))
-    gz = s16((yabm.i2cread(MPUADDR, 0x47) << 8) | yabm.i2cread(MPUADDR, 0x48))
+    gx = s16((yabm.i2cread(MPUADDR, 1, 0x43) << 8) | yabm.i2cread(MPUADDR, 1, 0x44))
+    gy = s16((yabm.i2cread(MPUADDR, 1, 0x45) << 8) | yabm.i2cread(MPUADDR, 1, 0x46))
+    gz = s16((yabm.i2cread(MPUADDR, 1, 0x47) << 8) | yabm.i2cread(MPUADDR, 1, 0x48))
     yabm.print gx.to_s + ":" + gy.to_s + ":" + gz.to_s + "\r\n"
 
     if ay < -16000 then

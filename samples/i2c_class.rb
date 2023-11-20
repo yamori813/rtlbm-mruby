@@ -28,7 +28,7 @@ class I2CEPROM
     skip = 0
 
     for addr in 0..127 do
-      val = @y.i2cread(ROMADDR, addr)
+      val = @y.i2cread(ROMADDR, 1, addr)
       if val == 0 then
         skip = 1
       end
@@ -58,19 +58,19 @@ end
 class I2CLCD
   def init yabm
     @y = yabm
-    @y.i2cwrites(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c], 0)
+    @y.i2cwrite(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c])
     @y.msleep(200)
-    @y.i2cwrites(LCDADDR, [0x38, 0x0d, 0x01], 0)
+    @y.i2cwrite(LCDADDR, [0x38, 0x0d, 0x01])
     @y.msleep(10)
   end
 
   def clear
-    @y.i2cwrites(LCDADDR, [0x00, 0x01], 0)
+    @y.i2cwrite(LCDADDR, [0x00, 0x01])
     @y.msleep(100)
   end
 
   def next
-    @y.i2cwrites(LCDADDR, [0x00, 0xc0], 0)
+    @y.i2cwrite(LCDADDR, [0x00, 0xc0])
     @y.msleep(100)
   end
 
@@ -81,11 +81,11 @@ class I2CLCD
       lcdcmd.push(ch.ord)
     end
     @y.print lcdcmd.to_s
-    @y.i2cwrites(LCDADDR, lcdcmd, 0)
+    @y.i2cwrite(LCDADDR, lcdcmd)
   end
 
   def cmd para
-    @y.i2cwrites(LCDADDR, para, 0)
+    @y.i2cwrite(LCDADDR, para)
   end
 end
 

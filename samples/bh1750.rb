@@ -52,9 +52,9 @@ class BH1750
 
   def setMTreg mtreg
     @mtreg = mtreg
-    @y.i2cwrites(@addr, [0x40 | (@mtreg >> 5)], 0)
+    @y.i2cwrite(@addr, [0x40 | (@mtreg >> 5)])
     @y.msleep(200)
-    @y.i2cwrites(@addr, [0x60 | (@mtreg & 0x1f)], 0)
+    @y.i2cwrite(@addr, [0x60 | (@mtreg & 0x1f)])
     @y.msleep(200)
   end
 
@@ -63,20 +63,20 @@ class BH1750
     if @meas == CONTINUOUS_HIGH_RES_MODE ||
       @meas == CONTINUOUS_HIGH_RES_MODE_2 ||
       @meas == CONTINUOUS_LOW_RES_MODE then
-      @y.i2cwrites(@addr, [@meas], 0)
+      @y.i2cwrite(@addr, [@meas])
     end
   end
 
   def getLightLevel
     if @meas == ONE_TIME_HIGH_RES_MODE ||
       @meas == ONE_TIME_HIGH_RES_MODE_2 then
-      @y.i2cwrites(@addr, [@meas], 0)
+      @y.i2cwrite(@addr, [@meas])
       @y.msleep(120 * @mtreg / 69)
     elsif @meas == ONE_TIME_LOW_RES_MODE then
-      @y.i2cwrites(@addr, [@meas], 0)
+      @y.i2cwrite(@addr, [@meas])
       @y.msleep(16 * @mtreg / 69)
     end
-    bharr = @y.i2creads(@addr, 2)
+    bharr = @y.i2cread(@addr, 2)
     val = (bharr[0] << 8) | bharr[1]
     if @meas == CONTINUOUS_HIGH_RES_MODE_2 ||
       @meas == ONE_TIME_HIGH_RES_MODE_2 then

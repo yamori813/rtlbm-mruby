@@ -67,16 +67,14 @@ end
   end
 
   def reset
-    @y.i2cwrites(HTU21ADDR, HTU21_RESET_COMMAND, 1)
+    @y.i2cwrite(HTU21ADDR, HTU21_RESET_COMMAND)
     @y.msleep 15
   end
 
   def htu21_read_serial_number
-    @y.i2cwrites(HTU21ADDR, HTU21_READ_SERIAL_FIRST_8BYTES_COMMAND, 0)
-    rcv_data = @y.i2creads(HTU21ADDR, 8)
+    rcv_data = @y.i2cread(HTU21ADDR, 8, HTU21_READ_SERIAL_FIRST_8BYTES_COMMAND)
 
-    @y.i2cwrites(HTU21ADDR, HTU21_READ_SERIAL_LAST_6BYTES_COMMAND, 0)
-    rcv_data += @y.i2creads(HTU21ADDR, 6)
+    rcv_data += @y.i2cread(HTU21ADDR, 6, HTU21_READ_SERIAL_LAST_6BYTES_COMMAND)
 
     serial_number = ""
     values = [0, 2, 4, 6, 8, 9, 11, 12]
@@ -88,13 +86,15 @@ end
   end
 
   def getCelsiusHundredths
+=begin
     while @y.i2cchk(HTU21ADDR) == 0
       @y.msleep(1)
     end
-    @y.i2cwrites(HTU21ADDR, HTU21_READ_TEMPERATURE_W_HOLD_COMMAND, 0)
-#    @y.i2cwrites(HTU21ADDR, HTU21_READ_TEMPERATURE_WO_HOLD_COMMAND, 1)
-#    @y.msleep(HTU21_TEMPERATURE_CONVERSION_TIME_T_14b_RH_12b/1000)
-    arr = @y.i2creads(HTU21ADDR, 3)
+    @y.i2cwrite(HTU21ADDR, HTU21_READ_TEMPERATURE_WO_HOLD_COMMAND)
+    @y.msleep(HTU21_TEMPERATURE_CONVERSION_TIME_T_14b_RH_12b/1000)
+    arr = @y.i2cread(HTU21ADDR, 3)
+=end
+    arr = @y.i2cread(HTU21ADDR, 3, HTU21_READ_TEMPERATURE_W_HOLD_COMMAND)
     crc = htu21_crc (arr[0] << 8) | arr[1]
     if crc != arr[2] then
       @y.print arr.to_s + "," + crc.to_s

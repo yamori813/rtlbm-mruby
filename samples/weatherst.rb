@@ -51,16 +51,12 @@ class SI7021
   end
 
   def getRevition
-    @y.i2cwrites(SIADDR, [0x84, 0xb8], 0)
-    siarr = @y.i2creads(SIADDR, 1)
-    siarr[0]
+    @y.i2cread(SIADDR, 1, [0x84, 0xb8])
   end
 
   def getSerialStr
-    @y.i2cwrites(SIADDR, [0xfa, 0x0f], 0)
-    siarr = @y.i2creads(SIADDR, 8)
-    @y.i2cwrites(SIADDR, [0xfc, 0xc9], 0)
-    siarr += @y.i2creads(SIADDR, 6)
+    siarr = @y.i2cread(SIADDR, 8, [0xfa, 0x0f])
+    siarr += @y.i2cread(SIADDR, 6, [0xfc, 0xc9])
     serial_number = ""
     values = [9, 8, 6, 4, 2, 0, 7, 8]
     values.each do |n|
@@ -97,14 +93,13 @@ class SI7021
       @y.msleep(1)
     end
     if USEHOLD then
-      @y.i2cwrites(SIADDR, [TRIG_T_MEASUREMENT_HM], 0)
-      siarr = @y.i2creads(SIADDR, 3)
+      siarr = @y.i2cread(SIADDR, 3, [TRIG_T_MEASUREMENT_HM])
     else
-      @y.i2cwrites(SIADDR, [TRIG_T_MEASUREMENT_POLL], 1)
+      @y.i2cwrite(SIADDR, [TRIG_T_MEASUREMENT_POLL])
       c = 0
       while true
         @y.msleep(10)
-        siarr = @y.i2creads(SIADDR, 3)
+        siarr = @y.i2cread(SIADDR, 3)
         if siarr != nil then
           break
         end
@@ -124,14 +119,13 @@ class SI7021
       @y.msleep(1)
     end
     if USEHOLD then
-      @y.i2cwrites(SIADDR, [TRIG_RH_MEASUREMENT_HM], 0)
-      siarr = @y.i2creads(SIADDR, 3)
+      siarr = @y.i2cread(SIADDR, 3, [TRIG_RH_MEASUREMENT_HM])
     else
-      @y.i2cwrites(SIADDR, [TRIG_RH_MEASUREMENT_POLL], 1)
+      @y.i2cwrite(SIADDR, [TRIG_RH_MEASUREMENT_POLL])
       c = 0
       while true
         @y.msleep(10)
-        siarr = @y.i2creads(SIADDR, 3)
+        siarr = @y.i2cread(SIADDR, 3)
         if siarr != nil then
           break
         end
@@ -152,18 +146,18 @@ class BMP180
   PRESSURE_WAIT = [5, 8, 14, 26]
 
   def readup
-    msb = @y.i2cread(BMPADDR, 0xf6)
-    lsb = @y.i2cread(BMPADDR, 0xf7)
-    xlsb = @y.i2cread(BMPADDR, 0xf8)
+    msb = @y.i2cread(BMPADDR, 1, 0xf6)
+    lsb = @y.i2cread(BMPADDR, 1, 0xf7)
+    xlsb = @y.i2cread(BMPADDR, 1, 0xf8)
     ((msb << 16) + (lsb << 8) + xlsb) >> (8 - @oss)
   end
 
   def readu16 addr 
-    @y.i2cread(BMPADDR, addr) << 8 | @y.i2cread(BMPADDR, addr + 1)
+    @y.i2cread(BMPADDR, 1, addr) << 8 | @y.i2cread(BMPADDR, 1, addr + 1)
   end
 
   def read16 addr 
-    val = @y.i2cread(BMPADDR, addr) << 8 | @y.i2cread(BMPADDR, addr + 1)
+    val = @y.i2cread(BMPADDR, 1, addr) << 8 | @y.i2cread(BMPADDR, 1, addr + 1)
     if val >= 0x8000 then
       val = val - 0x10000
     end
@@ -204,7 +198,7 @@ class BMP180
   end
 
   def getChipid
-    @y.i2cread(BMPADDR, 0xd0)
+    @y.i2cread(BMPADDR, 1, 0xd0)
   end
 # calculate true pressure
 
