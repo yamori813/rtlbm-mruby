@@ -45,7 +45,7 @@ class BH1750
   # Measurement at 4 lux resolution. Measurement time is approx 16ms.
   ONE_TIME_LOW_RES_MODE = 0x23
 
-  def init yabm, addr
+  def initialize yabm, addr
     @y = yabm
     @addr = addr
   end
@@ -107,9 +107,7 @@ yabm.gpiosetdat(gpio | (1 << 16) | 0x7c00)
 
 yabm.i2cinit(I2CSCK, I2CSDA, 1)
 
-bh = BH1750.new
-
-bh.init(yabm, BHADDR)
+bh = BH1750.new(yabm, BHADDR)
 
 interval = 20
 

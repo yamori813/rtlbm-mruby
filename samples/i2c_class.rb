@@ -18,7 +18,7 @@ LCDADDR = 0x3e
 ROMADDR = 0x50
 
 class I2CEPROM
-  def init yabm
+  def initialize yabm
     @y = yabm
   end
 
@@ -56,7 +56,7 @@ class I2CEPROM
 end
 
 class I2CLCD
-  def init yabm
+  def initialize yabm
     @y = yabm
     @y.i2cwrite(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c])
     @y.msleep(200)
@@ -110,11 +110,9 @@ yabm.gpiosetsel(0x300000, 0x300000, 0, 0)
 
 yabm.i2cinit(I2CSCK, I2CSDA, 1)
 
-lcd = I2CLCD.new
-lcd.init yabm
+lcd = I2CLCD.new yabm
 
-rom = I2CEPROM.new
-rom.init yabm
+rom = I2CEPROM.new yabm
 
 tmpstr = ""
 

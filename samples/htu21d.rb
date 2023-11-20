@@ -62,7 +62,7 @@ def htu21_crc value
   result
 end
 
-  def init yabm
+  def initialize yabm
     @y = yabm
   end
 
@@ -115,9 +115,7 @@ begin
 
   yabm.i2cinit(SCL, SDA, 10)
 
-  h = HTU21D.new
-
-  h.init yabm
+  h = HTU21D.new yabm
 
   h.reset
 

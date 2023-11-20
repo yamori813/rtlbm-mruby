@@ -46,7 +46,7 @@ class SI7021
   USER_REG_R               = 0xE7  # command reading user register
   SOFT_RESET               = 0xFE  #command soft reset
 
-  def init yabm
+  def initialize yabm
     @y = yabm
   end
 
@@ -164,7 +164,7 @@ class BMP180
     val
   end
 
-  def init yabm, oss
+  def initialize yabm, oss
     @y = yabm
     @oss = oss
     @ac1 = read16 0xaa
@@ -259,15 +259,13 @@ begin
   lastsh = 0
 
 # Si7021 Firmware Revision
-  si = SI7021.new
-  si.init(yabm)
+  si = SI7021.new(yabm)
   rev = si.getRevition
   ser = si.getSerialStr
   yabm.print "Si SN: " + ser + " REV: " + rev.to_s + "\r\n"
 
-  bmp = BMP180.new
 # 0 ultra low power, 1 standard, 2 high resolution, 3 ultra high resolution
-  bmp.init(yabm, 3)
+  bmp = BMP180.new(yabm, 3)
   id = bmp.getChipid
   yabm.print "BMP180 ID: " + id.to_s + "\r\n"
 
