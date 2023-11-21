@@ -8,10 +8,10 @@ class YABMTIME
     wday_names = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     mon_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     tm = mktm epoch
-    hstr = tm[2] < 10 ? "0" + tm[2].to_s : tm[2].to_s
-    mstr = tm[1] < 10 ? "0" + tm[1].to_s : tm[1].to_s
-    sstr = tm[0] < 10 ? "0" + tm[0].to_s : tm[0].to_s
-    return wday_names[tm[6]] + " " + mon_names[tm[4]] + " " + tm[3].to_s + " " + hstr + ":" + mstr + ":" + sstr + " " + tm[5].to_s
+    hstr = tm[2].to_s(10).rjust(2, '0')
+    mstr = tm[1].to_s(10).rjust(2, '0')
+    sstr = tm[0].to_s(10).rjust(2, '0')
+    wday_names[tm[6]] + " " + mon_names[tm[4]] + " " + tm[3].to_s + " " + hstr + ":" + mstr + ":" + sstr + " " + tm[5].to_s
   end
     
   def mktm epoch
@@ -56,7 +56,7 @@ class YABMTIME
       end
     end
     
-    return [seconds, minutes, hours, (days + 1), month, year, dayOfWeek, ydays]
+    [seconds, minutes, hours, (days + 1), month, year, dayOfWeek, ydays]
     
   end
 end
@@ -67,21 +67,21 @@ yabm = YABM.new
 
 yabm.netstartdhcp
 
-yabm.print yabm.getaddress + "\n"
+yabm.print yabm.getaddress + "\r\n"
   
 ntpaddr = yabm.lookup("ntp.nict.jp")
 yabm.sntp(ntpaddr)
-yabm.msleep 3000
+yabm.msleep 3_000
 
 d = YABMTIME.new
-date = d.mkstr yabm.now + 9 * 60 * 60
 
-yabm.print "Hello Bear Metal mruby on YABM "
-yabm.print date
+yabm.print "Hello Bear Metal mruby on YABM\r\n"
     
 loop do
-   yabm.print "."
-   yabm.msleep 500
+  now = 0x7fffffff + yabm.now
+  date = d.mkstr now + 9 * 60 * 60
+  yabm.print date + "\r\n"
+  yabm.msleep 60_000
 end
     
 rescue => e
