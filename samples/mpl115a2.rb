@@ -1,10 +1,8 @@
 #
 # rtlbm-mruby mruby script
 #
-# get from i2c mpl115a2 pressure data to update thingspeak channel
+# test from i2c mpl115a2 pressure data
 #
-
-APIKEY = "naisyo"
 
 # This calculate code is based c source code in NXP AN3785 document
 
@@ -92,22 +90,9 @@ MPLADDR = 0x60
 SCL = 3
 SDA = 5
 
-# ip address setting
-
-addr = "10.10.10.2"
-mask = "255.255.255.0"
-gw = "10.10.10.1"
-dns = "10.10.10.1"
-
 # start processing
 
 rtl = YABM.new
-
-rtl.netstart(addr, mask, gw, dns)
-
-# sync date by ntp use https X.509
-ntpaddr = rtl.lookup("ntp.nict.jp")
-rtl.sntp(ntpaddr)
 
 rtl.i2cinit(SCL, SDA, 1)
 
@@ -150,7 +135,6 @@ loop do
     end
     rtl.print kpa + "\n"
 
-    res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?api_key=" + APIKEY + "&field1=" + kpa, {'User-Agent' => "test-agent"})
   end
 
 end
