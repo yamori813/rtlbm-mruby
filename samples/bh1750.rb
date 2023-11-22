@@ -4,8 +4,6 @@
 # This is demonstration for BH1750 
 # Used BBR-4MG V2
 
-APIKEY = "naisyo"
-
 # i2c pin
 
 # TRST# (1) has internal pull-up resistor
@@ -92,13 +90,6 @@ begin
 
 yabm = YABM.new
 
-yabm.netstartdhcp
-
-yabm.print yabm.getaddress + "\n"
-
-ntpaddr = yabm.lookup("ntp.nict.jp")
-yabm.sntp(ntpaddr)
-
 # use gpio pin
 yabm.gpiosetsel(0x300000, 0x300000, 0, 0)
 
@@ -118,14 +109,8 @@ bh.setMeasurement(BH1750::ONE_TIME_HIGH_RES_MODE_2)
 
 loop do
   lx = bh.getLightLevel
-  para = "api_key=" + APIKEY
-  para = para + "&field1=" + count.to_s + "&field2=" + pointstr(lx, 2)
-  res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?" + para, {'User-Agent' => "test-agent"})
-  if res != nil && res.status.to_s.length != 0 then
-    yabm.print count.to_s + " "
-    yabm.print pointstr(lx, 2) + " "
-    yabm.print res.status.to_s + "\r\n"
-  end
+  yabm.print count.to_s + " "
+  yabm.print pointstr(lx, 2) + "\r\n"
   yabm.msleep(1000 * interval)
   count += 1
 end
