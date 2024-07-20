@@ -49,4 +49,4 @@ $ ./mkallvm.sh
 main.rtl --- RTL8196C  
 main_e.rtl --- RTL8196E  
 main_8198.rtl --- RTL8198  
-main_8197d_sw.rtl --- RTL8197 with SWITCH  
+main_sw.rtl --- RTL8197 with SWITCH  
