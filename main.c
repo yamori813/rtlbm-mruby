@@ -28,7 +28,8 @@ int i;
 
 	uart_init();
 
-	print(version);
+	xprintf(version, MRUBY_RELEASE_MAJOR, MRUBY_RELEASE_MINOR,
+	    MRUBY_RELEASE_TEENY);
 
 	intr_init();
 
