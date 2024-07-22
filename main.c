@@ -3,9 +3,8 @@
  */
 
 #include <mruby.h>
-#include <mruby/irep.h>
 #include <mruby/string.h>
-#include <mruby/error.h>
+#include <mruby/irep.h>
 
 #include "asicregs.h"
 
