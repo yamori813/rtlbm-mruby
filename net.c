@@ -362,6 +362,7 @@ unsigned char buf[48];
 			    buf[42] << 8 | buf[43];
 			timestamp -= 2208988800UL;
 			reset_counter();
+			sys_restart_timeouts();   // lwip
 			starttime = timestamp;
 		}
  		/* free the pbuf */
