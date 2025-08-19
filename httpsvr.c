@@ -218,7 +218,7 @@ httpsvr_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
       reqbuff[p->tot_len - 2] == '\r' && reqbuff[p->tot_len - 1] == '\n')) {
 
       struct pbuf* b = pbuf_alloc(PBUF_TRANSPORT, reslen, PBUF_POOL);
-      memcpy(b->payload, resbuff, reslen);
+      pbuf_take(b, (char*)resbuff, reslen);
       es->p = b;
       httpsvr_send(tpcb, es);
     }
