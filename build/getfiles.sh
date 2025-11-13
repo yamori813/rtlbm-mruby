@@ -15,3 +15,5 @@ ${CMD} ftp://sourceware.org/pub/newlib/newlib-3.0.0.20180831.tar.gz
 ${CMD} http://download.savannah.nongnu.org/releases/lwip/lwip-2.1.2.zip
 
 ${CMD} https://bearssl.org/bearssl-0.6.tar.gz
+
+${CMD} https://github.com/mruby/mruby/archive/refs/tags/3.4.0.tar.gz

@@ -5,7 +5,7 @@ TARGET="hoge"
 
 MRBOFFSET=0x180000
 
-./mruby/build/host/bin/mrbc -o${TARGET}.mrb $*
+./build/work/mruby/build/host/bin/mrbc -o${TARGET}.mrb $*
 
 sha256 ${TARGET}.mrb
 

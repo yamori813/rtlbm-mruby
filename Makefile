@@ -7,7 +7,7 @@ CROSS_LD = mips-ld
 CROSS_OBJCOPY = mips-objcopy
 
 RSDK=../rtl819x-toolchain/toolchain/rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714
-MRUBYDIR = mruby
+MRUBYDIR = build/work/mruby
 NEWLIBDIR = newlib-3.0.0.20180831
 LWIPDIR = lwip-2.1.2
 BEARSSLDIR = bearssl-0.6

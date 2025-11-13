@@ -9,7 +9,17 @@ START=`date '+%s'`
 
 rm -f mruby/build_config.rb.lock
 
-cd ../mruby
+cd work
+
+if [ ! -d mruby ]; then
+
+mkdir mruby
+
+tar -zxf 3.4.0.tar.gz -C mruby --strip-components 1
+
+fi
+
+cd mruby
 
 rm -rf build
 
