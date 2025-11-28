@@ -207,7 +207,8 @@ httpsvr_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
   }
   else if(es->state == ES_ACCEPTED) {
     /* first data chunk in p->payload */
-    es->state = ES_RECEIVED;
+//    es->state = ES_RECEIVED;
+    es->state = ES_CLOSING;
     /* store reference to incoming pbuf (chain) */
 //    es->p = p;
 //    httpsvr_send(tpcb, es);
