@@ -36,7 +36,7 @@ static struct tcp_pcb *httpsvr_pcb;
 
 char reqbuff[1024];
 char resbuff[1024*32];
-int reslen;
+int reslen, reqlen;
 
 enum httpsvr_states
 {
@@ -212,7 +212,11 @@ httpsvr_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
     /* store reference to incoming pbuf (chain) */
 //    es->p = p;
 //    httpsvr_send(tpcb, es);
-    pbuf_copy_partial(p, reqbuff, p->tot_len, 0);
+    if (p->tot_len > sizeof(reqbuff))
+      reqlen = sizeof(reqbuff);
+    else
+      reqlen = p->tot_len;
+    pbuf_copy_partial(p, reqbuff, reqlen, 0);
     pbuf_free(p);
     if ((reqbuff[p->tot_len - 2] == '\n' && reqbuff[p->tot_len - 1] == '\n') ||
       (reqbuff[p->tot_len - 4] == '\r' && reqbuff[p->tot_len - 3] == '\n' &&
@@ -290,6 +294,7 @@ httpsvr_init()
   reslen = sizeof(http_html_hdr) + sizeof(http_index_html) - 2;
   memcpy(resbuff, http_html_hdr, sizeof(http_html_hdr) - 1);
   memcpy(resbuff + sizeof(http_html_hdr) - 1, http_index_html, sizeof(http_index_html) - 1);
+  reqlen = 0;
 }
 
 void
@@ -320,3 +325,16 @@ httpsvr_setres(char *buff, int len)
   }
   sti();
 }
+
+int
+httpsvr_copyreq(char *buff)
+{
+  int res;
+  res = reqlen;
+  if (reqlen) {
+    memcpy(buff, reqbuff, reqlen);
+    reqlen = 0;
+  }
+  return res;
+}
+
