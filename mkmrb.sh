@@ -5,7 +5,11 @@ TARGET="hoge"
 
 MRBOFFSET=0x180000
 
+if [ -e "build/work/mruby/build/host/bin/mrbc" ]; then
+./build/work/mruby/build/host/bin/mrbc -o${TARGET}.mrb $*
+else
 mrbc -o${TARGET}.mrb $*
+fi
 
 sha256 ${TARGET}.mrb
 

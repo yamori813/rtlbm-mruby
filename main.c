@@ -5,6 +5,7 @@
 #include <mruby.h>
 #include <mruby/string.h>
 #include <mruby/irep.h>
+#include <mruby/dump.h>
 
 #include "asicregs.h"
 
@@ -41,26 +42,30 @@ int i;
 	flashread(hdrbuf, MRBOFFSET, sizeof(hdrbuf));
 	if (hdrbuf[0x0] == 0x52 && hdrbuf[0x1] == 0x49 &&
 	    hdrbuf[0x2] == 0x54 && hdrbuf[0x3] == 0x45) {
-		mrbsize = (hdrbuf[0x8] << 24) | (hdrbuf[0x9] << 16) |
-		    (hdrbuf[0xa] << 8) | hdrbuf[0xb];
-		xprintf("MRB SIZE %d\n", mrbsize);
-		mrbbuf = malloc(mrbsize);
-		flashread(mrbbuf, MRBOFFSET, mrbsize);
-		mksha256(mrbbuf, mrbsize, hash);
-		xprintf("MRB SHA256 ");
-		for (i = 0; i < 32; ++i)
-			xprintf("%02x", hash[i]);
-		xprintf("\n");
+		if (strncmp(hdrbuf + 4, RITE_VM_VER, 4) != 0) {
+			print("mrb vm version is mismatch\n");
+		} else {
+			mrbsize = (hdrbuf[0x8] << 24) | (hdrbuf[0x9] << 16) |
+			    (hdrbuf[0xa] << 8) | hdrbuf[0xb];
+			xprintf("MRB SIZE %d\n", mrbsize);
+			mrbbuf = malloc(mrbsize);
+			flashread(mrbbuf, MRBOFFSET, mrbsize);
+			mksha256(mrbbuf, mrbsize, hash);
+			xprintf("MRB SHA256 ");
+			for (i = 0; i < 32; ++i)
+				xprintf("%02x", hash[i]);
+			xprintf("\n");
 
-		mrb_state *mrb;
-		mrb = mrb_open();
-		mrb_load_irep( mrb, mrbbuf);
-		if (mrb->exc) {
-			mrb_value exc = mrb_obj_value(mrb->exc);
-			mrb_value inspect = mrb_inspect(mrb, exc);
-			print(mrb_str_to_cstr(mrb, inspect));
+			mrb_state *mrb;
+			mrb = mrb_open();
+			mrb_load_irep( mrb, mrbbuf);
+			if (mrb->exc) {
+				mrb_value exc = mrb_obj_value(mrb->exc);
+				mrb_value inspect = mrb_inspect(mrb, exc);
+				print(mrb_str_to_cstr(mrb, inspect));
+			}
+			mrb_close(mrb);
 		}
-		mrb_close(mrb);
 	} else {
 		print("can't find mrb code on flash\n");
 	}
