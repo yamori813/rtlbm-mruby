@@ -11,13 +11,13 @@ cd ..
 rm *rtl
 make clean
 make TARGET=RTL8196E
-#mv main.rtl main_e.rtl
+
 make clean
 make TARGET=RTL8197D_SW
-#mv main.rtl main_8197d_sw.rtl
+
 make clean
 make TARGET=RTL8198
-#mv main.rtl main_8198.rtl
+
 make clean
 make
 
@@ -26,4 +26,4 @@ END=`date '+%s'`
 
 TIME=`expr ${END} - ${START}`
 
-echo ${TIME}
+echo ${TIME} sec
