@@ -19,4 +19,5 @@ jobs:
       with:
         path: rtl819x-toolchain
         key: rtl819x-toolchain
-
+    - name get files
+      run: build/getfiles.sh
