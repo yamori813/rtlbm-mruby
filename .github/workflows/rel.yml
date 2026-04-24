@@ -28,8 +28,8 @@ jobs:
       run: cd rtlbm-mruby/build;./getfiles.sh
     - name: make newlib
       run: cd rtlbm-mruby/build;./mknewlib.sh
-#    - name: make lwip
-#      run: cd build;./mklwip.sh
+    - name: make lwip
+      run: cd rtlbm-mruby/build;./mklwip.sh
 #    - name: make bearssl
 #      run: cd build;./mkbearssl.sh
 #    - name: make mruby
