@@ -29,12 +29,12 @@ jobs:
       run: cd build;./getfiles.sh
     - name: make newlib
       run: cd build;./mknewlib.sh
-#    - name: make lwip
-#      run: ./build/mklwip.sh
-#    - name: make bearssl
-#      run: ./build/mkbearssl.sh
-#    - name: make mruby
-#      run: ./build/mkmruby.sh
-#    - name: make allvm
-#      run: ./mkallvm.sh
+    - name: make lwip
+      run: cd build;./mklwip.sh
+    - name: make bearssl
+      run: cd build;./mkbearssl.sh
+    - name: make mruby
+      run: cd build;./mkmruby.sh
+    - name: make allvm
+      run: ./mkallvm.sh
 
