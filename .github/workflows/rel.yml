@@ -19,7 +19,7 @@ jobs:
         repository: yamori813/rtl819x-toolchain
         path: rtl819x-toolchain
     - name: dir
-      run: find /usr/lib -name libz.so.1;env
+      run: find /usr/lib -name libz.so.1;ldconfig -p | grep libz
 #    - name: dir
 #      run: ls -l ${RUNNER_WORKSPACE}/rtlbm-mruby/;pwd;uname -s
 #    - name: get files
