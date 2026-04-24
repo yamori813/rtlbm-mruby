@@ -30,3 +30,4 @@ jobs:
       run: chmod +x rtlbm-mruby/build/*.sh
     - name: get files
         run: make
+
