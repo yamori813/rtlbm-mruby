@@ -30,4 +30,6 @@ jobs:
       run: ./rtlbm-mruby/build/mklwip.sh
     - name: make bearssl
       run: ./rtlbm-mruby/build/mkbearssl.sh
+    - name: make mruby
+      run: ./rtlbm-mruby/build/mkmruby.sh
 
