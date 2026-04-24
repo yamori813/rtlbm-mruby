@@ -19,11 +19,13 @@ jobs:
         repository: yamori813/rtl819x-toolchain
         path: rtl819x-toolchain
     - name: dir
-      run: ls -l ${RUNNER_WORKSPACE}/rtlbm-mruby/;pwd;uname -s
-    - name: get files
-      run: cd rtlbm-mruby/build;./getfiles.sh
-    - name: make newlib
-      run: cd rtlbm-mruby/build;./mknewlib.sh
+      run: sudo apt-get install zlib1g
+#    - name: dir
+#      run: ls -l ${RUNNER_WORKSPACE}/rtlbm-mruby/;pwd;uname -s
+#    - name: get files
+#      run: cd rtlbm-mruby/build;./getfiles.sh
+#    - name: make newlib
+#      run: cd rtlbm-mruby/build;./mknewlib.sh
 #    - name: make lwip
 #      run: cd build;./mklwip.sh
 #    - name: make bearssl
