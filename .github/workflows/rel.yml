@@ -11,10 +11,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - uses: actions/checkout@v2
+      with:
+        path: rtlbm-mruby
     - name: Checkout tools repo
       uses: actions/checkout@v4
       with:
         repository: yamori813/rtl819x-toolchain
+        path: rtl819x-toolchain
     - uses: actions/cache@v4
       with:
         path: rtl819x-toolchain
