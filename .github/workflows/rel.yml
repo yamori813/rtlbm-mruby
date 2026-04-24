@@ -28,7 +28,7 @@ jobs:
     - name: get files
       run: cd build;./getfiles.sh
     - name: make newlib
-      run: cd bild;./mknewlib.sh
+      run: cd build;./mknewlib.sh
 #    - name: make lwip
 #      run: ./build/mklwip.sh
 #    - name: make bearssl
