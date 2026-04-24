@@ -29,5 +29,5 @@ jobs:
     - name: Make the script files executable
       run: chmod +x rtlbm-mruby/build/*.sh
     - name: get files
-        run: make
+      run: make
 
