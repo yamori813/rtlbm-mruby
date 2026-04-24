@@ -18,10 +18,6 @@ jobs:
       with:
         repository: yamori813/rtl819x-toolchain
         path: rtl819x-toolchain
-    - uses: actions/cache@v4
-      with:
-        path: rtl819x-toolchain
-        key: rtl819x-toolchain
     - name: get files
       run: cd rtlbm-mruby/build;./getfiles.sh
     - name: make newlib
