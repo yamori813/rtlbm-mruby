@@ -19,8 +19,6 @@ jobs:
         repository: yamori813/rtl819x-toolchain
         path: rtl819x-toolchain
     - name: dir
-      run: apt install build-essential
-    - name: dir
       run: ls -l ${RUNNER_WORKSPACE}/rtlbm-mruby/;pwd;uname -p
     - name: get files
       run: cd rtlbm-mruby/build;./getfiles.sh
