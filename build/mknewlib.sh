@@ -25,10 +25,10 @@ sed -i -e '/Unable to determine/d' ${NEWLIB}/newlib/libc/include/sys/_intsup.h
 START=`date '+%s'`
 
 if [ "$OS" = 'Linux' ]; then
-cd ${NEWLIB};./configure --target=mips CC=cc;make
-#else
-#ARCH=`uname -p`
-#cd ${NEWLIB};./configure --host=${ARCH} --target=mips;gmake
+cd ${NEWLIB};./configure --target=mips;make
+else
+ARCH=`uname -p`
+cd ${NEWLIB};./configure --host=${ARCH} --target=mips;gmake
 fi
 
 END=`date '+%s'`
