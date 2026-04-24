@@ -26,15 +26,15 @@ jobs:
         path: rtl819x-toolchain
         key: rtl819x-toolchain
     - name: get files
-      run: ./build/getfiles.sh
+      run: cd build;./getfiles.sh
     - name: make newlib
-      run: ./build/mknewlib.sh
-    - name: make lwip
-      run: ./build/mklwip.sh
-    - name: make bearssl
-      run: ./build/mkbearssl.sh
-    - name: make mruby
-      run: ./build/mkmruby.sh
-    - name: make allvm
-      run: ./mkallvm.sh
+      run: cd bild;./mknewlib.sh
+#    - name: make lwip
+#      run: ./build/mklwip.sh
+#    - name: make bearssl
+#      run: ./build/mkbearssl.sh
+#    - name: make mruby
+#      run: ./build/mkmruby.sh
+#    - name: make allvm
+#      run: ./mkallvm.sh
 
