@@ -24,4 +24,6 @@ jobs:
         key: rtl819x-toolchain
     - name: get files
       run: ./rtlbm-mruby/build/getfiles.sh
+    - name: make newlib
+      run: ./rtlbm-mruby/build/mknewlib.sh
 
