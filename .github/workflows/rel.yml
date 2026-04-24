@@ -26,8 +26,6 @@ jobs:
       with:
         path: rtl819x-toolchain
         key: rtl819x-toolchain
-    - name: Make the script files executable
-      run: chmod +x rtlbm-mruby/build/*.sh
     - name: get files
-      run: make
+      run: ./rtlbm-mruby/build/getfiles.sh
 
