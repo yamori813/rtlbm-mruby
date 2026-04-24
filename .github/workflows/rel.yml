@@ -15,4 +15,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: yamori813/rtl819x-toolchain
+    - uses: actions/cache@v4
+      with:
+        path: rtl819x-toolchain
+        key: rtl819x-toolchain
 
