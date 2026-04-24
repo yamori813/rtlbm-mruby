@@ -8,7 +8,7 @@ NEWLIB=newlib-3.0.0.20180831
 if [ -z "$RUNNER_WORKSPACE" ]; then
 TOOLPATH=${HOME}/rtl819x-toolchain/toolchain/rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714
 else
-TOOLPATH=${RUNNER_WORKSPACE}/rtlbm-mruby/rtl819x-toolchain/toolchain/rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714
+TOOLPATH=/home/runner/work/rtlbm-mruby/rtl819x-toolchain/toolchain/rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714
 fi
 PATH=${TOOLPATH}/mips-linux/bin:${TOOLPATH}/libexec/gcc/mips-linux/4.4.5-1.5.5p4:${PATH}
 
