@@ -19,7 +19,7 @@ jobs:
         repository: yamori813/rtl819x-toolchain
         path: rtl819x-toolchain
     - name: get files
-      run: env
+      run: env;pwd
 #    - name: get files
 #      run: cd rtlbm-mruby/build;./getfiles.sh
 #    - name: make newlib
