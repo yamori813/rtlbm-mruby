@@ -21,7 +21,9 @@ jobs:
     - name: get files
       run: cd rtlbm-mruby/build;./getfiles.sh
     - name: make newlib
-      run: cd rtlbm-mruby/build;./mknewlib.sh
+      run: ls $HOME
+#    - name: make newlib
+#      run: cd rtlbm-mruby/build;./mknewlib.sh
 #    - name: make lwip
 #      run: cd build;./mklwip.sh
 #    - name: make bearssl
