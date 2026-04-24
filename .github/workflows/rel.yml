@@ -19,9 +19,11 @@ jobs:
         repository: yamori813/rtl819x-toolchain
         path: rtl819x-toolchain
     - name: get files
-      run: cd rtlbm-mruby/build;./getfiles.sh
-    - name: make newlib
-      run: cd rtlbm-mruby/build;./mknewlib.sh
+      run: ls -l ${RUNNER_WORKSPACE}/rtl819x-toolchain/toolchain/rsdk-1.5.5-5281-EB-2.6.30-0.9.30.3-110714/mips-linux/bin
+#    - name: get files
+#      run: cd rtlbm-mruby/build;./getfiles.sh
+#    - name: make newlib
+#      run: cd rtlbm-mruby/build;./mknewlib.sh
 #    - name: make lwip
 #      run: cd build;./mklwip.sh
 #    - name: make bearssl
