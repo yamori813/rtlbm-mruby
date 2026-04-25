@@ -40,7 +40,7 @@ jobs:
     - name: make allvm
       run: cd rtlbm-mruby;./mkallvm.sh
     - name: Archive vm files
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         path: rtlbm-mruby/*.rtl
 
