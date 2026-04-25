@@ -30,10 +30,10 @@ jobs:
       run: cd rtlbm-mruby/build;./mknewlib.sh
     - name: make lwip
       run: cd rtlbm-mruby/build;./mklwip.sh
-#    - name: make bearssl
-#      run: cd build;./mkbearssl.sh
-#    - name: make mruby
-#      run: cd build;./mkmruby.sh
-#    - name: make allvm
-#      run: ./mkallvm.sh
+    - name: make bearssl
+      run: cd rtlbm-mruby/build;./mkbearssl.sh
+    - name: make mruby
+      run: cd rtlbm-mruby/build;./mkmruby.sh
+    - name: make allvm
+      run: cd rtlbm-mruby;./mkallvm.sh
 
