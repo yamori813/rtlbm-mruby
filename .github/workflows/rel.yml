@@ -22,8 +22,8 @@ jobs:
       run: sudo apt-get install lib32z1
 #    - name: check lib
 #      run: find /usr/lib -name libz.so.1;ldconfig -p | grep libz
-    - name: dir
-      run: ls -l ${RUNNER_WORKSPACE}/rtlbm-mruby/;pwd;uname -s
+#    - name: dir
+#      run: ls -l ${RUNNER_WORKSPACE}/rtlbm-mruby/;pwd;uname -s
     - name: get files
       run: cd rtlbm-mruby/build;./getfiles.sh
     - name: make newlib
@@ -38,4 +38,8 @@ jobs:
       run: cd rtlbm-mruby;./mkallvm.sh
     - name: check vm file
       run: ls -l rtlbm-mruby/*.rtl
+    - name: Archive vm files
+      uses: actions/upload-artifact@v4
+      with:
+        path: rtlbm-mruby/*.rtl
 
