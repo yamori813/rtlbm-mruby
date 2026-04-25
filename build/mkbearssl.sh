@@ -6,7 +6,9 @@ BEARSSL=bearssl-0.6
 
 cd work
 
-rm -rf ${BEARSSL}
+#rm -rf ${BEARSSL}
+
+if [ ! -d ${BEARSSL} ]; then
 
 tar -zxf ${BEARSSL}.tar.gz
 
@@ -21,3 +23,5 @@ END=`date '+%s'`
 TIME=`expr ${END} - ${START}`
 
 echo "${TIME} sec"
+
+fi

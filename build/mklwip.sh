@@ -6,7 +6,9 @@ LWIP=lwip-2.1.2
 
 cd work
 
-rm -rf ${LWIP}
+#rm -rf ${LWIP}
+
+if [ ! -d ${LWIP} ]; then
 
 unzip ${LWIP}.zip
 
@@ -21,3 +23,5 @@ END=`date '+%s'`
 TIME=`expr ${END} - ${START}`
 
 echo "${TIME} sec"
+
+fi
