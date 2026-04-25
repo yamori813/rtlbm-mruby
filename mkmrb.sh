@@ -13,6 +13,10 @@ fi
 
 sha256 ${TARGET}.mrb
 
+if [ -e "rtktools/cvimg" ]; then
 ./rtktools/cvimg root ${TARGET}.mrb ${TARGET}.img ${MRBOFFSET} ${MRBOFFSET}
+else
+cvimg root ${TARGET}.mrb ${TARGET}.img ${MRBOFFSET} ${MRBOFFSET}
+fi
 
 echo "build ${TARGET}.img"

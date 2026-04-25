@@ -15,7 +15,7 @@ intr.c -- inturrupt code
 inthandler.S -- excemtion assembra  
 traps.c -- cache control code  
 
-uart.c -- rtl8196 uart code
+uart.c -- rtl8196 uart code  
 rtl_timer.c -- rtl8196 timer code  
 rtl_ether.c -- rt8196 ethernet nic support code  
 rtl_switch.c -- rtl8196 switch vlan setup code  
@@ -34,7 +34,7 @@ Default build is RTL8196C. If you want build for RTL8196E do this.
 % make TARGET=RTL8196E  
 
 ```
-$ git clone --recursive https://github.com/yamori813/rtlbm-mruby.git
+$ git clone https://github.com/yamori813/rtlbm-mruby.git
 $ git clone https://github.com/yamori813/rtl819x-toolchain.git
 $ cd rtlbm-mruby/build/
 $ ./getfiles.sh
@@ -50,3 +50,5 @@ main.rtl --- RTL8196C
 main_e.rtl --- RTL8196E  
 main_8198.rtl --- RTL8198  
 main_sw.rtl --- RTL8197 with SWITCH  
+
+You can get vm file from github workflow artifacts.
