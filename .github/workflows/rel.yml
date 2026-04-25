@@ -27,10 +27,6 @@ jobs:
         key: rtlbm-mruby-build-work_newlib-3.0.0.20180831_lwip-2.1.2_bearssl-0.6
         restore-keys: |
           rtlbm-mruby-build-work
-#    - name: check lib
-#      run: find /usr/lib -name libz.so.1;ldconfig -p | grep libz
-#    - name: dir
-#      run: ls -l ${RUNNER_WORKSPACE}/rtlbm-mruby/;pwd;uname -s
     - name: get files
       run: cd rtlbm-mruby/build;./getfiles.sh
     - name: make newlib
