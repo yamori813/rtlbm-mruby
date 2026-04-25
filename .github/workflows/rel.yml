@@ -21,7 +21,7 @@ jobs:
     - name: install 32bit libz.so.1
       run: sudo apt-get install lib32z1
     - name: Cache build/work
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: rtlbm-mruby/build/work
         key: rtlbm-mruby-build-work_newlib-3.0.0.20180831_lwip-2.1.2_bearssl-0.6
