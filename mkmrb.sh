@@ -1,7 +1,10 @@
 #!/bin/sh
 # if you use multi file then you need subroutine file first
 
-TARGET="hoge"
+if [ $# -eq 0 ]; then
+echo "usage: mkmrb.sh <files>"
+else
+TARGET=`basename $(eval echo '$'{$#}) | sed 's/\..*//'`
 
 MRBOFFSET=0x180000
 
@@ -20,3 +23,4 @@ cvimg root ${TARGET}.mrb ${TARGET}.img ${MRBOFFSET} ${MRBOFFSET}
 fi
 
 echo "build ${TARGET}.img"
+fi
