@@ -9,7 +9,9 @@ NEWLIB=newlib-3.0.0.20180831
 
 cd work
 
-rm -rf ${NEWLIB}
+#rm -rf ${NEWLIB}
+
+if [ ! -d ${NEWLIB} ]; then
 
 tar -zxf ${NEWLIB}.tar.gz
 
@@ -25,8 +27,10 @@ ARCH=`uname -p`
 cd ${NEWLIB};./configure --host=${ARCH} --target=mips;gmake
 fi
 
+
 END=`date '+%s'`
 
 TIME=`expr ${END} - ${START}`
 
+fi
 echo "${TIME} sec"
